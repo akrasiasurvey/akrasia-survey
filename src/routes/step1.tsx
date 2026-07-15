@@ -25,10 +25,10 @@ export const Route = createFileRoute("/step1")({
   component: Step1,
 });
 
-const SVG_SIZE = 560;
+const SVG_SIZE = 620;
 const CENTER = SVG_SIZE / 2;
-const INNER_RADIUS = 150;
-const OUTER_RADIUS = 250;
+const INNER_RADIUS = 170;
+const OUTER_RADIUS = 290;
 
 function computeLayout(positions: IPosition[]) {
   const internal = positions.filter((p) => p.belonging === "internal");
