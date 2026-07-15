@@ -269,33 +269,48 @@ function Step1() {
                 </text>
 
                 {/* Positions */}
-                {laidOut.map((p) => (
-                  <g key={p.id}>
-                    <circle
-                      cx={p.x}
-                      cy={p.y}
-                      r={p.radius}
-                      fill="oklch(0.55 0.05 240)"
-                      fillOpacity={0.6}
-                      stroke="oklch(0.35 0.05 240)"
-                      strokeOpacity={0.5}
-                      strokeWidth={1}
-                    />
-                    <text
-                      x={p.x}
-                      y={p.y}
-                      textAnchor="middle"
-                      dominantBaseline="middle"
-                      className="pointer-events-none fill-background"
-                      style={{
-                        fontSize: Math.max(9, Math.min(13, p.radius / 5)),
-                        fontWeight: 500,
-                      }}
-                    >
-                      {p.label}
-                    </text>
-                  </g>
-                ))}
+                {laidOut.map((p) => {
+                  const showInside = p.radius >= 22;
+                  return (
+                    <g key={p.id}>
+                      <circle
+                        cx={p.x}
+                        cy={p.y}
+                        r={p.radius}
+                        fill="oklch(0.55 0.05 240)"
+                        fillOpacity={0.6}
+                        stroke="oklch(0.35 0.05 240)"
+                        strokeOpacity={0.6}
+                        strokeWidth={1}
+                      />
+                      {showInside ? (
+                        <text
+                          x={p.x}
+                          y={p.y}
+                          textAnchor="middle"
+                          dominantBaseline="middle"
+                          className="pointer-events-none fill-background"
+                          style={{
+                            fontSize: Math.max(9, Math.min(12, p.radius / 3.5)),
+                            fontWeight: 500,
+                          }}
+                        >
+                          {p.label}
+                        </text>
+                      ) : (
+                        <text
+                          x={p.x}
+                          y={p.y + p.radius + 10}
+                          textAnchor="middle"
+                          className="pointer-events-none fill-foreground"
+                          style={{ fontSize: 10, fontWeight: 500 }}
+                        >
+                          {p.label}
+                        </text>
+                      )}
+                    </g>
+                  );
+                })}
 
                 {positions.length === 0 && (
                   <text
