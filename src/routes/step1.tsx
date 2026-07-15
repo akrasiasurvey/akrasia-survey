@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,59 +12,19 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ProgressSteps } from "@/components/ProgressSteps";
+import { Instruction } from "@/components/Instruction";
+import { SelfGraph } from "@/components/SelfGraph";
 import {
   DIMENSIONS,
   useResearchStore,
   type Belonging,
   type DimensionKey,
-  type IPosition,
 } from "@/store/research";
 import { X } from "lucide-react";
 
 export const Route = createFileRoute("/step1")({
   component: Step1,
 });
-
-const SVG_SIZE = 620;
-const CENTER = SVG_SIZE / 2;
-const INNER_RADIUS = 170;
-const OUTER_RADIUS = 290;
-
-function computeLayout(positions: IPosition[]) {
-  const internal = positions.filter((p) => p.belonging === "internal");
-  const external = positions.filter((p) => p.belonging === "external");
-
-  const place = (list: IPosition[], isInternal: boolean) => {
-    const n = list.length;
-    return list.map((p, i) => {
-      const angle = (i / Math.max(n, 1)) * Math.PI * 2 - Math.PI / 2;
-      let r: number;
-      if (isInternal) {
-        if (n === 1) {
-          r = 0;
-        } else {
-          // distribute across a couple of concentric rings inside inner circle
-          const maxR = Math.max(INNER_RADIUS - p.radius - 10, 0);
-          const ring = i % 2 === 0 ? 0.45 : 0.85;
-          r = maxR * ring;
-        }
-      } else {
-        const min = INNER_RADIUS + p.radius + 12;
-        const max = OUTER_RADIUS - p.radius - 8;
-        const width = Math.max(max - min, 0);
-        const ring = (i % 3) / 2; // 0, 0.5, 1
-        r = min + width * ring;
-      }
-      return {
-        ...p,
-        x: CENTER + Math.cos(angle) * r,
-        y: CENTER + Math.sin(angle) * r,
-      };
-    });
-  };
-
-  return [...place(internal, true), ...place(external, false)];
-}
 
 function Step1() {
   const positions = useResearchStore((s) => s.positions);
@@ -75,18 +35,11 @@ function Step1() {
   const [belonging, setBelonging] = useState<Belonging>("internal");
   const [dimension, setDimension] = useState<DimensionKey>("intermedia");
 
-  const laidOut = useMemo(() => computeLayout(positions), [positions]);
-
   function handleAdd() {
     const trimmed = label.trim();
     if (!trimmed) return;
     const dim = DIMENSIONS.find((d) => d.key === dimension)!;
-    addPosition({
-      label: trimmed,
-      belonging,
-      dimension,
-      radius: dim.radius,
-    });
+    addPosition({ label: trimmed, belonging, dimension, radius: dim.radius });
     setLabel("");
   }
 
@@ -100,21 +53,26 @@ function Step1() {
         <h1 className="mt-3 font-serif text-3xl font-medium">
           Mappatura della Struttura del Sé
         </h1>
-        <p className="mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground">
-          Dichiara le posizioni identitarie (I-Positions) che ti rappresentano.
-          Per ciascuna, specifica se appartiene al tuo Sé Interno o Esterno e
-          l'importanza percepita su una scala di sette dimensioni.
-        </p>
 
-        <div className="mt-10 grid gap-8 lg:grid-cols-[380px_1fr]">
-          {/* INPUT PANEL */}
+        <div className="mt-6">
+          <Instruction>
+            Digita le posizioni che descrivono chi sei (es. "Io-Professionista",
+            "Io-Padre") e definisci per ognuna se appartiene al tuo Sé Interno o
+            Esterno e la sua importanza. Compariranno automaticamente nel
+            grafico a fianco.
+          </Instruction>
+        </div>
+
+        <div className="mt-2 grid gap-8 lg:grid-cols-[380px_1fr]">
           <section className="space-y-6">
             <div className="rounded-lg border border-border bg-card p-5">
               <h2 className="text-sm font-semibold">Nuova I-Position</h2>
-
               <div className="mt-4 space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="label" className="text-xs uppercase tracking-widest text-muted-foreground">
+                  <Label
+                    htmlFor="label"
+                    className="text-xs uppercase tracking-widest text-muted-foreground"
+                  >
                     Denominazione
                   </Label>
                   <Input
@@ -173,7 +131,11 @@ function Step1() {
                   </Select>
                 </div>
 
-                <Button onClick={handleAdd} className="w-full" disabled={!label.trim()}>
+                <Button
+                  onClick={handleAdd}
+                  className="w-full"
+                  disabled={!label.trim()}
+                >
                   Aggiungi Posizione
                 </Button>
               </div>
@@ -215,116 +177,13 @@ function Step1() {
             </div>
           </section>
 
-          {/* GRAPH */}
           <section className="rounded-lg border border-border bg-card p-4">
             <div className="mb-3 flex items-center justify-between text-[10px] uppercase tracking-widest text-muted-foreground">
               <span>Società del Sé</span>
               <span>Visualizzazione automatica</span>
             </div>
             <div className="flex justify-center">
-              <svg
-                viewBox={`0 0 ${SVG_SIZE} ${SVG_SIZE}`}
-                className="w-full max-w-[620px]"
-                role="img"
-                aria-label="Grafico del Sé"
-              >
-                {/* Outer boundary */}
-                <circle
-                  cx={CENTER}
-                  cy={CENTER}
-                  r={OUTER_RADIUS}
-                  fill="none"
-                  stroke="var(--color-border)"
-                  strokeWidth={1}
-                />
-                {/* Inner circle */}
-                <circle
-                  cx={CENTER}
-                  cy={CENTER}
-                  r={INNER_RADIUS}
-                  fill="var(--color-muted)"
-                  stroke="var(--color-border)"
-                  strokeDasharray="4 4"
-                  strokeWidth={1}
-                />
-
-                {/* Zone labels */}
-                <text
-                  x={CENTER}
-                  y={CENTER - INNER_RADIUS - 8}
-                  textAnchor="middle"
-                  className="fill-muted-foreground"
-                  style={{ fontSize: 10, letterSpacing: 2, textTransform: "uppercase" }}
-                >
-                  Spazio Interno
-                </text>
-                <text
-                  x={CENTER}
-                  y={CENTER - OUTER_RADIUS - 8}
-                  textAnchor="middle"
-                  className="fill-muted-foreground"
-                  style={{ fontSize: 10, letterSpacing: 2 }}
-                >
-                  SPAZIO ESTERNO
-                </text>
-
-                {/* Positions */}
-                {laidOut.map((p) => {
-                  const showInside = p.radius >= 22;
-                  return (
-                    <g key={p.id}>
-                      <circle
-                        cx={p.x}
-                        cy={p.y}
-                        r={p.radius}
-                        fill="oklch(0.55 0.05 240)"
-                        fillOpacity={0.6}
-                        stroke="oklch(0.35 0.05 240)"
-                        strokeOpacity={0.6}
-                        strokeWidth={1}
-                      />
-                      {showInside ? (
-                        <text
-                          x={p.x}
-                          y={p.y}
-                          textAnchor="middle"
-                          dominantBaseline="middle"
-                          className="pointer-events-none fill-background"
-                          style={{
-                            fontSize: Math.max(9, Math.min(12, p.radius / 3.5)),
-                            fontWeight: 500,
-                          }}
-                        >
-                          {p.label}
-                        </text>
-                      ) : (
-                        <text
-                          x={p.x}
-                          y={p.y + p.radius + 10}
-                          textAnchor="middle"
-                          className="pointer-events-none fill-foreground"
-                          style={{ fontSize: 10, fontWeight: 500 }}
-                        >
-                          {p.label}
-                        </text>
-                      )}
-                    </g>
-                  );
-                })}
-
-                {positions.length === 0 && (
-                  <text
-                    x={CENTER}
-                    y={CENTER}
-                    textAnchor="middle"
-                    dominantBaseline="middle"
-                    className="fill-muted-foreground"
-                    style={{ fontSize: 12 }}
-                  >
-                    Aggiungi una I-Position per iniziare
-                  </text>
-                )}
-              </svg>
+              <SelfGraph positions={positions} />
             </div>
           </section>
         </div>
