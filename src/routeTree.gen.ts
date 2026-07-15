@@ -9,8 +9,32 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as Step1RouteImport } from './routes/step1'
+import { Route as SessionInfoRouteImport } from './routes/session-info'
+import { Route as ResearcherRouteImport } from './routes/researcher'
+import { Route as ConsentRouteImport } from './routes/consent'
 import { Route as IndexRouteImport } from './routes/index'
 
+const Step1Route = Step1RouteImport.update({
+  id: '/step1',
+  path: '/step1',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SessionInfoRoute = SessionInfoRouteImport.update({
+  id: '/session-info',
+  path: '/session-info',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResearcherRoute = ResearcherRouteImport.update({
+  id: '/researcher',
+  path: '/researcher',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConsentRoute = ConsentRouteImport.update({
+  id: '/consent',
+  path: '/consent',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -19,28 +43,72 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/consent': typeof ConsentRoute
+  '/researcher': typeof ResearcherRoute
+  '/session-info': typeof SessionInfoRoute
+  '/step1': typeof Step1Route
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/consent': typeof ConsentRoute
+  '/researcher': typeof ResearcherRoute
+  '/session-info': typeof SessionInfoRoute
+  '/step1': typeof Step1Route
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/consent': typeof ConsentRoute
+  '/researcher': typeof ResearcherRoute
+  '/session-info': typeof SessionInfoRoute
+  '/step1': typeof Step1Route
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/consent' | '/researcher' | '/session-info' | '/step1'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/consent' | '/researcher' | '/session-info' | '/step1'
+  id: '__root__' | '/' | '/consent' | '/researcher' | '/session-info' | '/step1'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ConsentRoute: typeof ConsentRoute
+  ResearcherRoute: typeof ResearcherRoute
+  SessionInfoRoute: typeof SessionInfoRoute
+  Step1Route: typeof Step1Route
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/step1': {
+      id: '/step1'
+      path: '/step1'
+      fullPath: '/step1'
+      preLoaderRoute: typeof Step1RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/session-info': {
+      id: '/session-info'
+      path: '/session-info'
+      fullPath: '/session-info'
+      preLoaderRoute: typeof SessionInfoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/researcher': {
+      id: '/researcher'
+      path: '/researcher'
+      fullPath: '/researcher'
+      preLoaderRoute: typeof ResearcherRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/consent': {
+      id: '/consent'
+      path: '/consent'
+      fullPath: '/consent'
+      preLoaderRoute: typeof ConsentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -53,7 +121,21 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ConsentRoute: ConsentRoute,
+  ResearcherRoute: ResearcherRoute,
+  SessionInfoRoute: SessionInfoRoute,
+  Step1Route: Step1Route,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
