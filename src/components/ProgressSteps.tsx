@@ -4,8 +4,8 @@ const STEPS = [
   { label: "Consenso", to: "/consent" },
   { label: "Info Sessione", to: "/session-info" },
   { label: "Step 1: Struttura del Sé", to: "/step1" },
-  { label: "Step 2: Continuum", to: "/step2" },
-  { label: "Step 3", to: "/step2" },
+  { label: "Step 2: Continuum & Narrazioni", to: "/step2" },
+  { label: "Step 3: Vignette", to: "/step3" },
 ];
 
 export function ProgressSteps({ current }: { current: number }) {

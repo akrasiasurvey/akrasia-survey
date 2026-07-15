@@ -38,10 +38,85 @@ export const PROTECTIVE_NARRATIVES = [
   "Il valore di un'esperienza non si misura dai risultati quantificabili",
 ] as const;
 
+// Mixed/scrambled order for the colonization screen — participants
+// must NOT see which domain each narrative belongs to.
+export const NARRATIVES_SHUFFLED: readonly string[] = [
+  PERFORMATIVE_NARRATIVES[1],
+  PROTECTIVE_NARRATIVES[2],
+  PERFORMATIVE_NARRATIVES[3],
+  PROTECTIVE_NARRATIVES[0],
+  PERFORMATIVE_NARRATIVES[0],
+  PROTECTIVE_NARRATIVES[3],
+  PERFORMATIVE_NARRATIVES[2],
+  PROTECTIVE_NARRATIVES[1],
+];
+
+export function narrativeDomain(n: string): "performative" | "protective" | "unknown" {
+  if ((PERFORMATIVE_NARRATIVES as readonly string[]).includes(n)) return "performative";
+  if ((PROTECTIVE_NARRATIVES as readonly string[]).includes(n)) return "protective";
+  return "unknown";
+}
+
 export interface ContinuumEntry {
   value: number; // 0..100
-  narratives: string[];
+  narratives: string[]; // legacy: kept but unused by new UI
 }
+
+export type ScenarioId = "s1" | "s2" | "s3";
+export type ScenarioChoice = "A" | "B";
+
+export interface ScenarioEntry {
+  openResponse: string;
+  locked: boolean;
+  choice: ScenarioChoice | null;
+  winningVoiceId: string | null;
+  losingVoiceId: string | null;
+}
+
+export interface ScenarioDef {
+  id: ScenarioId;
+  title: string;
+  theme: string;
+  text: string;
+  optionA: string;
+  optionB: string;
+}
+
+export const SCENARIOS: readonly ScenarioDef[] = [
+  {
+    id: "s1",
+    title: "Scenario 1 — La Soglia del Limite",
+    theme: "Abnegazione psicofisica, controllo emotivo, lavoro-identità",
+    text:
+      "Da settimane sei il responsabile di un lancio di prodotto cruciale. Lavori 14 ore al giorno, dormi pochissimo e il tuo corpo inizia a inviarti segnali d'allarme netti: tachicardia costante e attacchi d'ansia prima di entrare in riunione. Sai che mostrare questa fragilità comprometterebbe la tua immagine di leader imperturbabile e solido, una reputazione che coincide interamente con l'idea che hai di te stesso. Sabato mattina, il giorno prima del lancio, ti svegli con una forte emicrania che ti impedisce quasi di tenere gli occhi aperti, ma c'è un'ultima riunione di allineamento non obbligatoria ma strategicamente importante per fare pressione sul team.",
+    optionA:
+      "Decido di delegare la riunione al mio secondo. Riconosco il limite del mio corpo, accetto la vulnerabilità emotiva e scelgo di riposare per preservare la mia salute, anche se questo potrebbe essere percepito come un momento di cedimento.",
+    optionB:
+      "Prendo un forte antidolorifico, reprimo l'ansia e mi presento in riunione mostrando massima energia. Ritengo che l'abnegazione e il controllo emotivo di fronte alle difficoltà siano l'unico modo lodevole di dimostrare chi sono veramente.",
+  },
+  {
+    id: "s2",
+    title: "Scenario 2 — Il Prezzo del Successo",
+    theme: "Competitività come sviluppo, impegno unico fattore, giudizio morale del fallimento",
+    text:
+      "Un tuo collega e amico storico all'interno dell'azienda sta attraversando un momento di grave difficoltà personale che si sta riflettendo sulle sue performance lavorative. La direzione ha fatto capire che nel prossimo trimestre ci sarà spazio per promuovere solo uno di voi due, e che chi non otterrà la promozione rischia il ridimensionamento o il licenziamento. Sai che se lo aiutassi attivamente a coprire le sue mancanze divideresti le tue energie, rischiando di non raggiungere i tuoi obiettivi iper-competitivi e di essere etichettato come un professionista che 'non si impegna abbastanza' o che sta fallendo.",
+    optionA:
+      "Decido di rallentare i miei ritmi lavorativi per affiancare e supportare il mio collega. Accetto di mettere momentaneamente a rischio la mia promozione, ritenendo che la solidarietà e la relazione umana abbiano più valore della competizione selvaggia.",
+    optionB:
+      "Mi concentro esclusivamente sui miei obiettivi, spingendo al massimo per assicurarmi la promozione. Penso che la competitività sia il motore della crescita professionale e che se il mio collega non riesce a tenere il passo sia indice di una sua temporanea mancanza di dedizione, della quale non posso farmi carico.",
+  },
+  {
+    id: "s3",
+    title: "Scenario 3 — La Metrica del Valore",
+    theme: "Interesse economico, produttività come scopo supremo",
+    text:
+      "Stai gestendo una trattativa per un importante contratto di consulenza. Ti rendi conto che, applicando in modo estremamente rigido le clausole contrattuali, potresti far fatturare alla tua azienda un surplus del 30% a spese di un cliente (un'associazione no-profit locale che si occupa di assistenza sociale), la quale subirebbe un danno relazionale ed economico enorme. Il tuo capo ti ricorda che l'unico scopo dell'azione aziendale è la massimizzazione del profitto e che i tuoi KPI di produttività personale per questo mese dipendono strettamente dal valore totale di questo contratto.",
+    optionA:
+      "Propongo una rinegoziazione etica del contratto per non gravare sulla no-profit, accettando di non raggiungere il massimo dei miei KPI mensili. Credo che la responsabilità sociale e l'etica relazionale debbano prevalere sull'interesse puramente economico.",
+    optionB:
+      "Applico rigidamente le clausole per massimizzare la fatturazione e garantire i miei standard di produttività. Ritengo che nel business l'interesse economico debba prevalere su considerazioni di tipo etico o relazionale, e che l'efficienza produttiva sia lo scopo ultimo del mio lavoro.",
+  },
+];
 
 interface ResearchState {
   consent: boolean;
@@ -50,6 +125,8 @@ interface ResearchState {
   startedAt: number | null;
   positions: IPosition[];
   continuum: Record<string, ContinuumEntry>;
+  narrativeColonization: Record<string, string[]>; // narrative -> position ids
+  scenarios: Record<ScenarioId, ScenarioEntry>;
   setConsent: (v: boolean) => void;
   setParticipantId: (v: string) => void;
   setContext: (v: Context) => void;
@@ -58,7 +135,24 @@ interface ResearchState {
   removePosition: (id: string) => void;
   setContinuumValue: (id: string, value: number) => void;
   toggleNarrative: (id: string, narrative: string) => void;
+  toggleColonization: (narrative: string, positionId: string) => void;
+  setScenarioResponse: (id: ScenarioId, text: string) => void;
+  lockScenarioResponse: (id: ScenarioId) => void;
+  setScenarioChoice: (id: ScenarioId, choice: ScenarioChoice) => void;
+  setScenarioVoice: (
+    id: ScenarioId,
+    kind: "winning" | "losing",
+    positionId: string,
+  ) => void;
 }
+
+const emptyScenario = (): ScenarioEntry => ({
+  openResponse: "",
+  locked: false,
+  choice: null,
+  winningVoiceId: null,
+  losingVoiceId: null,
+});
 
 export const useResearchStore = create<ResearchState>((set) => ({
   consent: false,
@@ -67,6 +161,12 @@ export const useResearchStore = create<ResearchState>((set) => ({
   startedAt: null,
   positions: [],
   continuum: {},
+  narrativeColonization: {},
+  scenarios: {
+    s1: emptyScenario(),
+    s2: emptyScenario(),
+    s3: emptyScenario(),
+  },
   setConsent: (v) => set({ consent: v }),
   setParticipantId: (v) => set({ participantId: v }),
   setContext: (v) => set({ context: v }),
@@ -82,9 +182,14 @@ export const useResearchStore = create<ResearchState>((set) => ({
   removePosition: (id) =>
     set((s) => {
       const { [id]: _, ...rest } = s.continuum;
+      const nc: Record<string, string[]> = {};
+      for (const [k, arr] of Object.entries(s.narrativeColonization)) {
+        nc[k] = arr.filter((x) => x !== id);
+      }
       return {
         positions: s.positions.filter((x) => x.id !== id),
         continuum: rest,
+        narrativeColonization: nc,
       };
     }),
   setContinuumValue: (id, value) =>
@@ -113,4 +218,45 @@ export const useResearchStore = create<ResearchState>((set) => ({
         },
       };
     }),
+  toggleColonization: (narrative, positionId) =>
+    set((s) => {
+      const list = s.narrativeColonization[narrative] ?? [];
+      const has = list.includes(positionId);
+      return {
+        narrativeColonization: {
+          ...s.narrativeColonization,
+          [narrative]: has
+            ? list.filter((x) => x !== positionId)
+            : [...list, positionId],
+        },
+      };
+    }),
+  setScenarioResponse: (id, text) =>
+    set((s) => ({
+      scenarios: {
+        ...s.scenarios,
+        [id]: { ...s.scenarios[id], openResponse: text },
+      },
+    })),
+  lockScenarioResponse: (id) =>
+    set((s) => ({
+      scenarios: { ...s.scenarios, [id]: { ...s.scenarios[id], locked: true } },
+    })),
+  setScenarioChoice: (id, choice) =>
+    set((s) => ({
+      scenarios: { ...s.scenarios, [id]: { ...s.scenarios[id], choice } },
+    })),
+  setScenarioVoice: (id, kind, positionId) =>
+    set((s) => ({
+      scenarios: {
+        ...s.scenarios,
+        [id]: {
+          ...s.scenarios[id],
+          winningVoiceId:
+            kind === "winning" ? positionId : s.scenarios[id].winningVoiceId,
+          losingVoiceId:
+            kind === "losing" ? positionId : s.scenarios[id].losingVoiceId,
+        },
+      },
+    })),
 }));
