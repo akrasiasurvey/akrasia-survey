@@ -9,12 +9,18 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as Step2RouteImport } from './routes/step2'
 import { Route as Step1RouteImport } from './routes/step1'
 import { Route as SessionInfoRouteImport } from './routes/session-info'
 import { Route as ResearcherRouteImport } from './routes/researcher'
 import { Route as ConsentRouteImport } from './routes/consent'
 import { Route as IndexRouteImport } from './routes/index'
 
+const Step2Route = Step2RouteImport.update({
+  id: '/step2',
+  path: '/step2',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const Step1Route = Step1RouteImport.update({
   id: '/step1',
   path: '/step1',
@@ -47,6 +53,7 @@ export interface FileRoutesByFullPath {
   '/researcher': typeof ResearcherRoute
   '/session-info': typeof SessionInfoRoute
   '/step1': typeof Step1Route
+  '/step2': typeof Step2Route
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -54,6 +61,7 @@ export interface FileRoutesByTo {
   '/researcher': typeof ResearcherRoute
   '/session-info': typeof SessionInfoRoute
   '/step1': typeof Step1Route
+  '/step2': typeof Step2Route
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -62,13 +70,27 @@ export interface FileRoutesById {
   '/researcher': typeof ResearcherRoute
   '/session-info': typeof SessionInfoRoute
   '/step1': typeof Step1Route
+  '/step2': typeof Step2Route
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/consent' | '/researcher' | '/session-info' | '/step1'
+  fullPaths:
+    | '/'
+    | '/consent'
+    | '/researcher'
+    | '/session-info'
+    | '/step1'
+    | '/step2'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/consent' | '/researcher' | '/session-info' | '/step1'
-  id: '__root__' | '/' | '/consent' | '/researcher' | '/session-info' | '/step1'
+  to: '/' | '/consent' | '/researcher' | '/session-info' | '/step1' | '/step2'
+  id:
+    | '__root__'
+    | '/'
+    | '/consent'
+    | '/researcher'
+    | '/session-info'
+    | '/step1'
+    | '/step2'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -77,10 +99,18 @@ export interface RootRouteChildren {
   ResearcherRoute: typeof ResearcherRoute
   SessionInfoRoute: typeof SessionInfoRoute
   Step1Route: typeof Step1Route
+  Step2Route: typeof Step2Route
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/step2': {
+      id: '/step2'
+      path: '/step2'
+      fullPath: '/step2'
+      preLoaderRoute: typeof Step2RouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/step1': {
       id: '/step1'
       path: '/step1'
@@ -125,6 +155,7 @@ const rootRouteChildren: RootRouteChildren = {
   ResearcherRoute: ResearcherRoute,
   SessionInfoRoute: SessionInfoRoute,
   Step1Route: Step1Route,
+  Step2Route: Step2Route,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
