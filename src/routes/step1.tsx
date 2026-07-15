@@ -25,31 +25,35 @@ export const Route = createFileRoute("/step1")({
   component: Step1,
 });
 
-const SVG_SIZE = 560;
+const SVG_SIZE = 620;
 const CENTER = SVG_SIZE / 2;
-const INNER_RADIUS = 150;
-const OUTER_RADIUS = 250;
+const INNER_RADIUS = 170;
+const OUTER_RADIUS = 290;
 
 function computeLayout(positions: IPosition[]) {
   const internal = positions.filter((p) => p.belonging === "internal");
   const external = positions.filter((p) => p.belonging === "external");
 
-  const place = (list: IPosition[], baseRadius: number, isInternal: boolean) => {
+  const place = (list: IPosition[], isInternal: boolean) => {
+    const n = list.length;
     return list.map((p, i) => {
-      const n = list.length;
-      // Angle spread starting from top
       const angle = (i / Math.max(n, 1)) * Math.PI * 2 - Math.PI / 2;
       let r: number;
       if (isInternal) {
-        // Center-out but keep circles inside inner circle
-        r = n === 1 ? 0 : Math.min(baseRadius - p.radius - 8, 60 + (i % 2) * 20);
-        if (r < 0) r = 0;
+        if (n === 1) {
+          r = 0;
+        } else {
+          // distribute across a couple of concentric rings inside inner circle
+          const maxR = Math.max(INNER_RADIUS - p.radius - 10, 0);
+          const ring = i % 2 === 0 ? 0.45 : 0.85;
+          r = maxR * ring;
+        }
       } else {
-        // Between INNER + margin and OUTER - margin
-        const min = INNER_RADIUS + p.radius + 10;
-        const max = OUTER_RADIUS - p.radius + 20;
-        const ringWidth = Math.max(max - min, 20);
-        r = min + ((i % 3) / 2) * ringWidth * 0.6;
+        const min = INNER_RADIUS + p.radius + 12;
+        const max = OUTER_RADIUS - p.radius - 8;
+        const width = Math.max(max - min, 0);
+        const ring = (i % 3) / 2; // 0, 0.5, 1
+        r = min + width * ring;
       }
       return {
         ...p,
@@ -59,10 +63,7 @@ function computeLayout(positions: IPosition[]) {
     });
   };
 
-  return [
-    ...place(internal, INNER_RADIUS, true),
-    ...place(external, OUTER_RADIUS, false),
-  ];
+  return [...place(internal, true), ...place(external, false)];
 }
 
 function Step1() {
@@ -97,7 +98,7 @@ function Step1() {
           Step 1 di 3
         </p>
         <h1 className="mt-3 font-serif text-3xl font-medium">
-          Mappatura della Struttura Basale del Sé
+          Mappatura della Struttura del Sé
         </h1>
         <p className="mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground">
           Dichiara le posizioni identitarie (I-Positions) che ti rappresentano.
@@ -165,10 +166,7 @@ function Step1() {
                     <SelectContent>
                       {DIMENSIONS.map((d) => (
                         <SelectItem key={d.key} value={d.key}>
-                          {d.label}{" "}
-                          <span className="text-muted-foreground">
-                            · {d.radius}px
-                          </span>
+                          {d.label}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -226,7 +224,7 @@ function Step1() {
             <div className="flex justify-center">
               <svg
                 viewBox={`0 0 ${SVG_SIZE} ${SVG_SIZE}`}
-                className="w-full max-w-[560px]"
+                className="w-full max-w-[620px]"
                 role="img"
                 aria-label="Grafico del Sé"
               >
@@ -271,33 +269,48 @@ function Step1() {
                 </text>
 
                 {/* Positions */}
-                {laidOut.map((p) => (
-                  <g key={p.id}>
-                    <circle
-                      cx={p.x}
-                      cy={p.y}
-                      r={p.radius}
-                      fill="oklch(0.55 0.05 240)"
-                      fillOpacity={0.6}
-                      stroke="oklch(0.35 0.05 240)"
-                      strokeOpacity={0.5}
-                      strokeWidth={1}
-                    />
-                    <text
-                      x={p.x}
-                      y={p.y}
-                      textAnchor="middle"
-                      dominantBaseline="middle"
-                      className="pointer-events-none fill-background"
-                      style={{
-                        fontSize: Math.max(9, Math.min(13, p.radius / 5)),
-                        fontWeight: 500,
-                      }}
-                    >
-                      {p.label}
-                    </text>
-                  </g>
-                ))}
+                {laidOut.map((p) => {
+                  const showInside = p.radius >= 22;
+                  return (
+                    <g key={p.id}>
+                      <circle
+                        cx={p.x}
+                        cy={p.y}
+                        r={p.radius}
+                        fill="oklch(0.55 0.05 240)"
+                        fillOpacity={0.6}
+                        stroke="oklch(0.35 0.05 240)"
+                        strokeOpacity={0.6}
+                        strokeWidth={1}
+                      />
+                      {showInside ? (
+                        <text
+                          x={p.x}
+                          y={p.y}
+                          textAnchor="middle"
+                          dominantBaseline="middle"
+                          className="pointer-events-none fill-background"
+                          style={{
+                            fontSize: Math.max(9, Math.min(12, p.radius / 3.5)),
+                            fontWeight: 500,
+                          }}
+                        >
+                          {p.label}
+                        </text>
+                      ) : (
+                        <text
+                          x={p.x}
+                          y={p.y + p.radius + 10}
+                          textAnchor="middle"
+                          className="pointer-events-none fill-foreground"
+                          style={{ fontSize: 10, fontWeight: 500 }}
+                        >
+                          {p.label}
+                        </text>
+                      )}
+                    </g>
+                  );
+                })}
 
                 {positions.length === 0 && (
                   <text
@@ -320,7 +333,9 @@ function Step1() {
           <Button variant="ghost" asChild>
             <Link to="/session-info">← Indietro</Link>
           </Button>
-          <Button disabled>Avanti →</Button>
+          <Button asChild disabled={positions.length === 0}>
+            <Link to="/step2">Avanti →</Link>
+          </Button>
         </div>
       </div>
     </main>
