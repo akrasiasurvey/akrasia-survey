@@ -333,7 +333,9 @@ function Step1() {
           <Button variant="ghost" asChild>
             <Link to="/session-info">← Indietro</Link>
           </Button>
-          <Button disabled>Avanti →</Button>
+          <Button asChild disabled={positions.length === 0}>
+            <Link to="/step2">Avanti →</Link>
+          </Button>
         </div>
       </div>
     </main>
