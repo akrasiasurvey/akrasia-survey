@@ -98,7 +98,7 @@ function Step1() {
           Step 1 di 3
         </p>
         <h1 className="mt-3 font-serif text-3xl font-medium">
-          Mappatura della Struttura Basale del Sé
+          Mappatura della Struttura del Sé
         </h1>
         <p className="mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground">
           Dichiara le posizioni identitarie (I-Positions) che ti rappresentano.
