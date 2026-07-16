@@ -12,4 +12,12 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
+  // Configure Vite to build a static site suitable for GitHub Pages
+  vite: {
+    base: './',
+    build: {
+      outDir: 'docs',
+      emptyOutDir: true,
+    },
+  },
 });
