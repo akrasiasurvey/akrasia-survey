@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Mappatura fenomenologica del Sé</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        line-height: 1.5;
+        --bg: #07111f;
+        --panel: #101a2d;
+        --text: #f7f9fc;
+        --muted: #9db0c8;
+        --accent: #72d7c1;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        background: linear-gradient(135deg, var(--bg), #14243f);
+        color: var(--text);
+      }
+      main {
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 2rem;
+      }
+      .card {
+        width: min(980px, 100%);
+        background: rgba(16, 26, 45, 0.95);
+        border: 1px solid rgba(255,255,255,0.12);
+        border-radius: 24px;
+        padding: 2rem;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+      }
+      .eyebrow {
+        text-transform: uppercase;
+        letter-spacing: 0.3em;
+        color: var(--accent);
+        font-size: 0.8rem;
+        font-weight: 700;
+      }
+      h1 {
+        margin: 0.8rem 0 1rem;
+        font-size: clamp(2rem, 3.3vw, 3rem);
+        line-height: 1.15;
+      }
+      p { color: var(--muted); }
+      .grid {
+        display: grid;
+        gap: 1rem;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        margin-top: 2rem;
+      }
+      .tile {
+        border: 1px solid rgba(255,255,255,0.12);
+        border-radius: 16px;
+        padding: 1.2rem;
+        background: rgba(255,255,255,0.03);
+        text-decoration: none;
+        color: inherit;
+        transition: transform 180ms ease, border-color 180ms ease;
+      }
+      .tile:hover {
+        transform: translateY(-2px);
+        border-color: var(--accent);
+      }
+      .tile h2 { margin: 0 0 0.5rem; font-size: 1.1rem; }
+      .tile span { color: var(--accent); font-weight: 600; }
+      .footer { margin-top: 1.6rem; font-size: 0.95rem; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div class="card">
+        <p class="eyebrow">Studio di ricerca — Sé Dialogico</p>
+        <h1>Mappatura fenomenologica del Sé e dei processi decisionali</h1>
+        <p>Questa home raccoglie le principali aree del programma e consente di entrare nelle sezioni dedicate al partecipante e al ricercatore.</p>
+
+        <div class="grid">
+          <a class="tile" href="./consent/">
+            <h2>Area partecipante</h2>
+            <p>Accedi al percorso di ricerca e al consenso informato.</p>
+            <span>Entra →</span>
+          </a>
+          <a class="tile" href="./researcher/">
+            <h2>Area ricercatore</h2>
+            <p>Consulta gli strumenti e i dati di analisi riservati.</p>
+            <span>Entra →</span>
+          </a>
+          <a class="tile" href="#struttura">
+            <h2>Struttura del programma</h2>
+            <p>Panoramica delle fasi e delle aree di lavoro.</p>
+            <span>Scopri di più →</span>
+          </a>
+        </div>
+
+        <section id="struttura" class="footer">
+          <h2 style="font-size: 1.15rem; margin-bottom: 0.4rem;">Struttura del programma</h2>
+          <p>Il progetto prevede un percorso guidato per l’utente e un’area separata per il ricercatore, con accesso ai dati, ai passi di ricerca e alle informazioni di supporto.</p>
+        </section>
+      </div>
+    </main>
+  </body>
+</html>
