@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
 
 const STEPS = [
@@ -20,25 +21,30 @@ export function ProgressSteps({ current }: { current: number }) {
           const done = i < current;
           return (
             <li key={step.label} className="flex items-center gap-2">
-              <span
-                className={cn(
-                  "flex h-5 w-5 items-center justify-center rounded-full border text-[10px] font-medium",
-                  active && "border-foreground bg-foreground text-background",
-                  done && "border-muted-foreground/40 bg-muted text-foreground",
-                  !active && !done && "border-border text-muted-foreground",
-                )}
+              <Link
+                to={step.to}
+                className="flex items-center gap-2 rounded-md px-1 py-0.5 transition-colors hover:bg-muted/60"
               >
-                {i + 1}
-              </span>
-              <span
-                className={cn(
-                  "uppercase",
-                  active && "font-semibold text-foreground",
-                  done && "text-foreground/70",
-                )}
-              >
-                {step.label}
-              </span>
+                <span
+                  className={cn(
+                    "flex h-5 w-5 items-center justify-center rounded-full border text-[10px] font-medium",
+                    active && "border-foreground bg-foreground text-background",
+                    done && "border-muted-foreground/40 bg-muted text-foreground",
+                    !active && !done && "border-border text-muted-foreground",
+                  )}
+                >
+                  {i + 1}
+                </span>
+                <span
+                  className={cn(
+                    "uppercase",
+                    active && "font-semibold text-foreground",
+                    done && "text-foreground/70",
+                  )}
+                >
+                  {step.label}
+                </span>
+              </Link>
               {i < STEPS.length - 1 && (
                 <span className="mx-1 text-muted-foreground/40">›</span>
               )}
