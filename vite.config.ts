@@ -6,28 +6,22 @@
 // You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
-// Detect GitHub Pages / static builds via env vars set by the CI workflow.
-// `NITRO_PRESET=github-pages` (or `static`) switches nitro to a fully static
-// output under `.output/public`; `BASE_PATH` is the sub-path the site is
-// served from on GitHub Pages (e.g. `/repo-name/` for project sites, `/` for
-// user/org sites or custom domains).
-const nitroPreset = process.env.NITRO_PRESET;
+// GitHub Pages builds set `GITHUB_PAGES=1` and `BASE_PATH` (e.g. `/repo/`).
+// In that mode we produce a pure client-side SPA (no server) into
+// `dist/client/`, which the workflow uploads to Pages.
+const isPagesBuild = process.env.GITHUB_PAGES === "1";
 const basePath = process.env.BASE_PATH ?? "/";
-const isStaticBuild =
-  nitroPreset === "github-pages" ||
-  nitroPreset === "static" ||
-  nitroPreset === "gitlab-pages";
 
 export default defineConfig({
   tanstackStart: {
-    // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
-    // nitro/vite builds from this
+    // Redirect TanStack Start's bundled server entry to src/server.ts.
     server: { entry: "server" },
+    // On Pages we want a fully static SPA — no SSR, no server functions.
+    ...(isPagesBuild ? { spa: { enabled: true } } : {}),
   },
-  // When building for GitHub Pages, hand off to nitro's `github-pages` preset
-  // which prerenders every route, writes `.nojekyll` and outputs a pure static
-  // site under `.output/public`. Otherwise leave nitro on its default preset.
-  nitro: nitroPreset ? { preset: nitroPreset } : undefined,
+  // Nitro (Cloudflare Worker output) is the default. Disable it for Pages so
+  // the build produces only the client bundle under `dist/client/`.
+  nitro: isPagesBuild ? false : undefined,
   vite: {
     base: basePath,
   },
