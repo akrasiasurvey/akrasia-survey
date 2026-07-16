@@ -22,3 +22,5 @@ npm run build:gh
 Notes:
 - Vite is configured with a relative `base` so the site should work as a project page.
 - If you want automated deploys, you can add a GitHub Action or use the `gh-pages` package instead.
+
+The website is live at https://dallanluca3-tech.github.io/dialogic-self-explorer-2/
