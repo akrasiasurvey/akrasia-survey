@@ -1,26 +1,17 @@
-# dialogic-self-explorer-2
+# Mappatura fenomenologica del Sé e dei processi decisionali
 
-This project is configured to publish a static build to GitHub Pages using the `docs/` folder.
+Questo progetto presenta una landing page per il programma di ricerca e consente di raggiungere le principali aree del percorso.
 
-Quick steps to publish:
+## Aree disponibili
 
-1. Install dependencies:
+- [Area partecipante](docs/consent/index.html)
+- [Area ricercatore](docs/researcher/index.html)
+- [Home della landing page](docs/index.html)
 
-```bash
-npm install
-```
+## Nota importante
 
-2. Build the static site (outputs to `docs/`):
+L’URL del repository GitHub mostra sempre il contenuto del file README. Per vedere la vera home pubblicata con GitHub Pages, apri:
 
-```bash
-npm run build:gh
-```
+https://dallanluca3-tech.github.io/dialogic-self-explorer-2/
 
-3. Commit and push the `docs/` folder to your `main` (or chosen) branch, then enable GitHub Pages in the repository Settings:
-   - Source: `Branch: main`, `Folder: /docs`
-
-Notes:
-- Vite is configured with a relative `base` so the site should work as a project page.
-- If you want automated deploys, you can add a GitHub Action or use the `gh-pages` package instead.
-
-The website is live at https://dallanluca3-tech.github.io/dialogic-self-explorer-2/
+Se la pagina non appare ancora, è necessario verificare in GitHub che la sezione Pages sia configurata con Source = Deploy from a branch e Folder = /docs.
