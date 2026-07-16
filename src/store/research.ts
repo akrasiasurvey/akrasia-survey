@@ -24,6 +24,12 @@ export interface IPosition {
 
 export type Context = "home" | "workplace" | "workplace_common";
 
+export const CONTEXT_LABEL: Record<Context, string> = {
+  home: "Casa",
+  workplace: "Ufficio",
+  workplace_common: "Spazio comune",
+};
+
 export const PERFORMATIVE_NARRATIVES = [
   "Devi essere sempre reperibile e pronto a rispondere",
   "La produttività e l'efficienza definiscono il tuo valore",
@@ -38,8 +44,6 @@ export const PROTECTIVE_NARRATIVES = [
   "Il valore di un'esperienza non si misura dai risultati quantificabili",
 ] as const;
 
-// Mixed/scrambled order for the colonization screen — participants
-// must NOT see which domain each narrative belongs to.
 export const NARRATIVES_SHUFFLED: readonly string[] = [
   PERFORMATIVE_NARRATIVES[1],
   PROTECTIVE_NARRATIVES[2],
@@ -51,26 +55,36 @@ export const NARRATIVES_SHUFFLED: readonly string[] = [
   PROTECTIVE_NARRATIVES[1],
 ];
 
-export function narrativeDomain(n: string): "performative" | "protective" | "unknown" {
-  if ((PERFORMATIVE_NARRATIVES as readonly string[]).includes(n)) return "performative";
-  if ((PROTECTIVE_NARRATIVES as readonly string[]).includes(n)) return "protective";
+export function narrativeDomain(
+  n: string,
+): "performative" | "protective" | "unknown" {
+  if ((PERFORMATIVE_NARRATIVES as readonly string[]).includes(n))
+    return "performative";
+  if ((PROTECTIVE_NARRATIVES as readonly string[]).includes(n))
+    return "protective";
   return "unknown";
 }
 
 export interface ContinuumEntry {
-  value: number; // 0..100
-  narratives: string[]; // legacy: kept but unused by new UI
+  value: number;
+  narratives: string[];
 }
 
 export type ScenarioId = "s1" | "s2" | "s3";
-export type ScenarioChoice = "A" | "B";
+export type ScenarioChoice = "A" | "B" | "C";
+
+export const CHOICE_POLARITY: Record<ScenarioChoice, string> = {
+  A: "Autotutela",
+  B: "Iper-performance",
+  C: "Compromesso",
+};
 
 export interface ScenarioEntry {
   openResponse: string;
   locked: boolean;
   choice: ScenarioChoice | null;
-  winningVoiceId: string | null;
-  losingVoiceId: string | null;
+  winningVoiceIds: string[];
+  losingVoiceIds: string[];
 }
 
 export interface ScenarioDef {
@@ -80,6 +94,7 @@ export interface ScenarioDef {
   text: string;
   optionA: string;
   optionB: string;
+  optionC: string;
 }
 
 export const SCENARIOS: readonly ScenarioDef[] = [
@@ -93,17 +108,22 @@ export const SCENARIOS: readonly ScenarioDef[] = [
       "Decido di delegare la riunione al mio secondo. Riconosco il limite del mio corpo, accetto la vulnerabilità emotiva e scelgo di riposare per preservare la mia salute, anche se questo potrebbe essere percepito come un momento di cedimento.",
     optionB:
       "Prendo un forte antidolorifico, reprimo l'ansia e mi presento in riunione mostrando massima energia. Ritengo che l'abnegazione e il controllo emotivo di fronte alle difficoltà siano l'unico modo lodevole di dimostrare chi sono veramente.",
+    optionC:
+      "Cerco una via di mezzo: decido di non andare fisicamente alla riunione, ma mi collego da remoto con la videocamera spenta mentre sono a letto, provando a riposare ma senza disconnettermi del tutto per non perdere il controllo della situazione.",
   },
   {
     id: "s2",
     title: "Scenario 2 — Il Prezzo del Successo",
-    theme: "Competitività come sviluppo, impegno unico fattore, giudizio morale del fallimento",
+    theme:
+      "Competitività come sviluppo, impegno unico fattore, giudizio morale del fallimento",
     text:
       "Un tuo collega e amico storico all'interno dell'azienda sta attraversando un momento di grave difficoltà personale che si sta riflettendo sulle sue performance lavorative. La direzione ha fatto capire che nel prossimo trimestre ci sarà spazio per promuovere solo uno di voi due, e che chi non otterrà la promozione rischia il ridimensionamento o il licenziamento. Sai che se lo aiutassi attivamente a coprire le sue mancanze divideresti le tue energie, rischiando di non raggiungere i tuoi obiettivi iper-competitivi e di essere etichettato come un professionista che 'non si impegna abbastanza' o che sta fallendo.",
     optionA:
       "Decido di rallentare i miei ritmi lavorativi per affiancare e supportare il mio collega. Accetto di mettere momentaneamente a rischio la mia promozione, ritenendo che la solidarietà e la relazione umana abbiano più valore della competizione selvaggia.",
     optionB:
       "Mi concentro esclusivamente sui miei obiettivi, spingendo al massimo per assicurarmi la promozione. Penso che la competitività sia il motore della crescita professionale e che se il mio collega non riesce a tenere il passo sia indice di una sua temporanea mancanza di dedizione, della quale non posso farmi carico.",
+    optionC:
+      "Cerco di bilanciare le due cose: dedico il minimo tempo indispensabile ad aiutare il mio collega fuori dall'orario di lavoro per non intaccare i miei KPI personali, sperando che riesca a farcela senza che io debba sacrificare la mia performance.",
   },
   {
     id: "s3",
@@ -115,6 +135,8 @@ export const SCENARIOS: readonly ScenarioDef[] = [
       "Propongo una rinegoziazione etica del contratto per non gravare sulla no-profit, accettando di non raggiungere il massimo dei miei KPI mensili. Credo che la responsabilità sociale e l'etica relazionale debbano prevalere sull'interesse puramente economico.",
     optionB:
       "Applico rigidamente le clausole per massimizzare la fatturazione e garantire i miei standard di produttività. Ritengo che nel business l'interesse economico debba prevalere su considerazioni di tipo etico o relazionale, e che l'efficienza produttiva sia lo scopo ultimo del mio lavoro.",
+    optionC:
+      "Provo a mediare: applico le clausole rigide per ottenere il 30% in più come richiesto dal capo, ma propongo informalmente alla no-profit di compensare il danno dilazionando i pagamenti o promettendo loro uno sconto futuro su altri servizi.",
   },
 ];
 
@@ -125,7 +147,7 @@ interface ResearchState {
   startedAt: number | null;
   positions: IPosition[];
   continuum: Record<string, ContinuumEntry>;
-  narrativeColonization: Record<string, string[]>; // narrative -> position ids
+  narrativeColonization: Record<string, string[]>;
   scenarios: Record<ScenarioId, ScenarioEntry>;
   setConsent: (v: boolean) => void;
   setParticipantId: (v: string) => void;
@@ -134,12 +156,11 @@ interface ResearchState {
   addPosition: (p: Omit<IPosition, "id">) => void;
   removePosition: (id: string) => void;
   setContinuumValue: (id: string, value: number) => void;
-  toggleNarrative: (id: string, narrative: string) => void;
   toggleColonization: (narrative: string, positionId: string) => void;
   setScenarioResponse: (id: ScenarioId, text: string) => void;
   lockScenarioResponse: (id: ScenarioId) => void;
   setScenarioChoice: (id: ScenarioId, choice: ScenarioChoice) => void;
-  setScenarioVoice: (
+  toggleScenarioVoice: (
     id: ScenarioId,
     kind: "winning" | "losing",
     positionId: string,
@@ -150,8 +171,8 @@ const emptyScenario = (): ScenarioEntry => ({
   openResponse: "",
   locked: false,
   choice: null,
-  winningVoiceId: null,
-  losingVoiceId: null,
+  winningVoiceIds: [],
+  losingVoiceIds: [],
 });
 
 export const useResearchStore = create<ResearchState>((set) => ({
@@ -186,38 +207,32 @@ export const useResearchStore = create<ResearchState>((set) => ({
       for (const [k, arr] of Object.entries(s.narrativeColonization)) {
         nc[k] = arr.filter((x) => x !== id);
       }
+      const scenarios = { ...s.scenarios };
+      (Object.keys(scenarios) as ScenarioId[]).forEach((sid) => {
+        scenarios[sid] = {
+          ...scenarios[sid],
+          winningVoiceIds: scenarios[sid].winningVoiceIds.filter(
+            (x) => x !== id,
+          ),
+          losingVoiceIds: scenarios[sid].losingVoiceIds.filter(
+            (x) => x !== id,
+          ),
+        };
+      });
       return {
         positions: s.positions.filter((x) => x.id !== id),
         continuum: rest,
         narrativeColonization: nc,
+        scenarios,
       };
     }),
   setContinuumValue: (id, value) =>
     set((s) => ({
       continuum: {
         ...s.continuum,
-        [id]: {
-          value,
-          narratives: s.continuum[id]?.narratives ?? [],
-        },
+        [id]: { value, narratives: s.continuum[id]?.narratives ?? [] },
       },
     })),
-  toggleNarrative: (id, narrative) =>
-    set((s) => {
-      const entry = s.continuum[id] ?? { value: 50, narratives: [] };
-      const has = entry.narratives.includes(narrative);
-      return {
-        continuum: {
-          ...s.continuum,
-          [id]: {
-            value: entry.value,
-            narratives: has
-              ? entry.narratives.filter((n) => n !== narrative)
-              : [...entry.narratives, narrative],
-          },
-        },
-      };
-    }),
   toggleColonization: (narrative, positionId) =>
     set((s) => {
       const list = s.narrativeColonization[narrative] ?? [];
@@ -232,12 +247,15 @@ export const useResearchStore = create<ResearchState>((set) => ({
       };
     }),
   setScenarioResponse: (id, text) =>
-    set((s) => ({
-      scenarios: {
-        ...s.scenarios,
-        [id]: { ...s.scenarios[id], openResponse: text },
-      },
-    })),
+    set((s) => {
+      if (s.scenarios[id].locked) return {};
+      return {
+        scenarios: {
+          ...s.scenarios,
+          [id]: { ...s.scenarios[id], openResponse: text },
+        },
+      };
+    }),
   lockScenarioResponse: (id) =>
     set((s) => ({
       scenarios: { ...s.scenarios, [id]: { ...s.scenarios[id], locked: true } },
@@ -246,17 +264,22 @@ export const useResearchStore = create<ResearchState>((set) => ({
     set((s) => ({
       scenarios: { ...s.scenarios, [id]: { ...s.scenarios[id], choice } },
     })),
-  setScenarioVoice: (id, kind, positionId) =>
-    set((s) => ({
-      scenarios: {
-        ...s.scenarios,
-        [id]: {
-          ...s.scenarios[id],
-          winningVoiceId:
-            kind === "winning" ? positionId : s.scenarios[id].winningVoiceId,
-          losingVoiceId:
-            kind === "losing" ? positionId : s.scenarios[id].losingVoiceId,
+  toggleScenarioVoice: (id, kind, positionId) =>
+    set((s) => {
+      const entry = s.scenarios[id];
+      const key = kind === "winning" ? "winningVoiceIds" : "losingVoiceIds";
+      const list = entry[key];
+      const has = list.includes(positionId);
+      return {
+        scenarios: {
+          ...s.scenarios,
+          [id]: {
+            ...entry,
+            [key]: has
+              ? list.filter((x) => x !== positionId)
+              : [...list, positionId],
+          },
         },
-      },
-    })),
+      };
+    }),
 }));
