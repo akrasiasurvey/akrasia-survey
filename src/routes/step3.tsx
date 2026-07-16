@@ -3,13 +3,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 import { ProgressSteps } from "@/components/ProgressSteps";
 import { Instruction } from "@/components/Instruction";
 import {
@@ -18,6 +12,7 @@ import {
   type ScenarioChoice,
   type ScenarioId,
 } from "@/store/research";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/step3")({
   component: Step3,
@@ -29,7 +24,7 @@ function Step3() {
   const setResp = useResearchStore((s) => s.setScenarioResponse);
   const lockResp = useResearchStore((s) => s.lockScenarioResponse);
   const setChoice = useResearchStore((s) => s.setScenarioChoice);
-  const setVoice = useResearchStore((s) => s.setScenarioVoice);
+  const toggleVoice = useResearchStore((s) => s.toggleScenarioVoice);
 
   const [idx, setIdx] = useState(0);
 
@@ -61,11 +56,32 @@ function Step3() {
     return (
       e.locked &&
       !!e.choice &&
-      !!e.winningVoiceId &&
-      !!e.losingVoiceId
+      e.winningVoiceIds.length > 0 &&
+      e.losingVoiceIds.length > 0
     );
   };
   const allComplete = SCENARIOS.every((s) => complete(s.id));
+
+  const OPTIONS: {
+    k: ScenarioChoice;
+    tag: string;
+    polarity: string;
+    label: string;
+  }[] = [
+    { k: "A", tag: "Opzione A", polarity: "Autotutela", label: scenario.optionA },
+    {
+      k: "B",
+      tag: "Opzione B",
+      polarity: "Iper-performance",
+      label: scenario.optionB,
+    },
+    {
+      k: "C",
+      tag: "Opzione C",
+      polarity: "Via di mezzo",
+      label: scenario.optionC,
+    },
+  ];
 
   return (
     <main className="min-h-screen bg-background text-foreground">
@@ -80,11 +96,13 @@ function Step3() {
 
         <div className="mt-6">
           <Instruction>
-            Leggi con attenzione ciascuno dei seguenti 3 scenari reali di vita
-            professionale. Per ognuno ti verrà chiesto prima di descrivere
-            brevemente e liberamente come agiresti, e successivamente di
-            compiere una scelta strutturata identificando le voci del tuo Sé
-            coinvolte.
+            Leggi attentamente ciascuno dei seguenti scenari. Per rispondere in
+            modo efficace, ti invitiamo a immaginare vivamente la situazione,
+            provando a immedesimarti nel protagonista. Se ti aiuta, ripensa a
+            eventi del tuo passato che ti hanno fatto sentire in modo simile.
+            Rispondi nel modo più sincero e autentico possibile: non esistono
+            risposte giuste o sbagliate, ma solo modi diversi di dialogare con
+            se stessi.
           </Instruction>
         </div>
 
@@ -94,13 +112,14 @@ function Step3() {
             <button
               key={s.id}
               onClick={() => setIdx(i)}
-              className={`rounded-md border px-3 py-1.5 uppercase tracking-widest transition-colors ${
+              className={cn(
+                "rounded-md border px-3 py-1.5 uppercase tracking-widest transition-colors",
                 i === idx
                   ? "border-foreground bg-foreground text-background"
                   : complete(s.id)
                     ? "border-foreground/40 bg-muted text-foreground"
-                    : "border-border text-muted-foreground hover:text-foreground"
-              }`}
+                    : "border-border text-muted-foreground hover:text-foreground",
+              )}
             >
               Scenario {i + 1}
               {complete(s.id) && " ✓"}
@@ -117,7 +136,7 @@ function Step3() {
             {scenario.text}
           </p>
 
-          {/* PHASE A: open response */}
+          {/* Fase A */}
           <div className="mt-8 border-t border-border pt-6">
             <Label
               htmlFor={`resp-${scenario.id}`}
@@ -141,6 +160,8 @@ function Step3() {
               <span>
                 {entry.openResponse.trim().length} caratteri
                 {!entry.locked && !canUnlock && " · minimo 10 per procedere"}
+                {entry.locked &&
+                  " · risposta congelata (non più modificabile)"}
               </span>
               {!entry.locked && (
                 <Button
@@ -151,41 +172,33 @@ function Step3() {
                   Procedi alla scelta guidata →
                 </Button>
               )}
-              {entry.locked && (
-                <span className="text-foreground/60">
-                  Risposta bloccata
-                </span>
-              )}
             </div>
           </div>
 
-          {/* PHASE B: choice + voices */}
+          {/* Fase B */}
           {entry.locked && (
             <div className="mt-8 border-t border-border pt-6">
               <div className="mb-4 text-xs uppercase tracking-widest text-muted-foreground">
                 Fase B — Scelta guidata & Mappatura delle voci
               </div>
 
-              <div className="grid gap-3 md:grid-cols-2">
-                {(
-                  [
-                    { k: "A" as ScenarioChoice, label: scenario.optionA, tag: "Opzione A" },
-                    { k: "B" as ScenarioChoice, label: scenario.optionB, tag: "Opzione B" },
-                  ]
-                ).map((o) => {
+              <div className="grid gap-3 md:grid-cols-3">
+                {OPTIONS.map((o) => {
                   const selected = entry.choice === o.k;
                   return (
                     <button
                       key={o.k}
                       onClick={() => setChoice(scenario.id, o.k)}
-                      className={`rounded-md border p-4 text-left text-sm leading-relaxed transition-colors ${
+                      className={cn(
+                        "rounded-md border p-4 text-left text-sm leading-relaxed transition-colors",
                         selected
                           ? "border-foreground bg-muted"
-                          : "border-border bg-background hover:border-foreground/40"
-                      }`}
+                          : "border-border bg-background hover:border-foreground/40",
+                      )}
                     >
-                      <div className="mb-1 text-[10px] uppercase tracking-widest text-muted-foreground">
-                        {o.tag}
+                      <div className="mb-1 flex items-center justify-between text-[10px] uppercase tracking-widest text-muted-foreground">
+                        <span>{o.tag}</span>
+                        <span>{o.polarity}</span>
                       </div>
                       {o.label}
                     </button>
@@ -195,54 +208,24 @@ function Step3() {
 
               {entry.choice && (
                 <div className="mt-6 grid gap-5 md:grid-cols-2">
-                  <div>
-                    <Label className="text-xs uppercase tracking-widest text-muted-foreground">
-                      Voce Vincente (Alleanza)
-                    </Label>
-                    <p className="mt-1 mb-2 text-xs text-muted-foreground">
-                      Quale parte di te ha guidato la scelta?
-                    </p>
-                    <Select
-                      value={entry.winningVoiceId ?? ""}
-                      onValueChange={(v) =>
-                        setVoice(scenario.id, "winning", v)
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Seleziona una I-Position" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {positions.map((p) => (
-                          <SelectItem key={p.id} value={p.id}>
-                            {p.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Label className="text-xs uppercase tracking-widest text-muted-foreground">
-                      Voce Perdente (Sottomissione)
-                    </Label>
-                    <p className="mt-1 mb-2 text-xs text-muted-foreground">
-                      Quale parte di te è stata messa a tacere?
-                    </p>
-                    <Select
-                      value={entry.losingVoiceId ?? ""}
-                      onValueChange={(v) => setVoice(scenario.id, "losing", v)}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Seleziona una I-Position" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {positions.map((p) => (
-                          <SelectItem key={p.id} value={p.id}>
-                            {p.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
+                  <VoiceMultiSelect
+                    title="Voci Vincenti (Alleanza)"
+                    hint="Quali parti di te senti che hanno guidato o si sono alleate maggiormente con questa decisione?"
+                    positions={positions}
+                    selectedIds={entry.winningVoiceIds}
+                    onToggle={(pid) =>
+                      toggleVoice(scenario.id, "winning", pid)
+                    }
+                  />
+                  <VoiceMultiSelect
+                    title="Voci Perdenti (Sottomissione)"
+                    hint="Quali parti di te senti che sono state messe a tacere, ignorate o sacrificate?"
+                    positions={positions}
+                    selectedIds={entry.losingVoiceIds}
+                    onToggle={(pid) =>
+                      toggleVoice(scenario.id, "losing", pid)
+                    }
+                  />
                 </div>
               )}
             </div>
@@ -259,7 +242,7 @@ function Step3() {
             </Button>
             <Button
               size="sm"
-              disabled={idx >= SCENARIOS.length - 1}
+              disabled={idx >= SCENARIOS.length - 1 || !complete(scenario.id)}
               onClick={() =>
                 setIdx((i) => Math.min(SCENARIOS.length - 1, i + 1))
               }
@@ -279,5 +262,56 @@ function Step3() {
         </div>
       </div>
     </main>
+  );
+}
+
+function VoiceMultiSelect({
+  title,
+  hint,
+  positions,
+  selectedIds,
+  onToggle,
+}: {
+  title: string;
+  hint: string;
+  positions: { id: string; label: string }[];
+  selectedIds: string[];
+  onToggle: (id: string) => void;
+}) {
+  return (
+    <div>
+      <Label className="text-xs uppercase tracking-widest text-muted-foreground">
+        {title}
+      </Label>
+      <p className="mt-1 mb-3 text-xs text-muted-foreground">{hint}</p>
+      <ul className="space-y-1.5">
+        {positions.map((p) => {
+          const checked = selectedIds.includes(p.id);
+          return (
+            <li key={p.id}>
+              <label
+                className={cn(
+                  "flex cursor-pointer items-center gap-2 rounded-md border px-3 py-2 text-sm transition-colors",
+                  checked
+                    ? "border-foreground bg-muted"
+                    : "border-border bg-background hover:border-foreground/40",
+                )}
+              >
+                <Checkbox
+                  checked={checked}
+                  onCheckedChange={() => onToggle(p.id)}
+                />
+                <span>{p.label}</span>
+              </label>
+            </li>
+          );
+        })}
+      </ul>
+      <p className="mt-2 text-[10px] text-muted-foreground">
+        {selectedIds.length === 0
+          ? "Almeno una selezione obbligatoria."
+          : `${selectedIds.length} selezionata${selectedIds.length > 1 ? "e" : ""}`}
+      </p>
+    </div>
   );
 }
