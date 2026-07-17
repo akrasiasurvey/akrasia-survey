@@ -5,6 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { SelfGraph, type DiagnosticColor } from "@/components/SelfGraph";
+import { InterviewSection } from "@/components/InterviewSection";
+import { buildSegments, MATRIX_LABEL } from "@/lib/lexicon";
 import {
   CHOICE_POLARITY,
   PERFORMATIVE_NARRATIVES,
@@ -14,6 +16,7 @@ import {
   narrativeDomain,
   useResearchStore,
   type ScenarioId,
+  type InterviewData,
 } from "@/store/research";
 import { DEMO_PROFILES, type Profile } from "@/data/demoProfiles";
 import { cn } from "@/lib/utils";
@@ -534,6 +537,11 @@ function ProfileAnalysis({
             );
           })}
         </div>
+      </Card>
+
+      {/* Section 6: interview */}
+      <Card title="Sezione 6 · Intervista Post-Test & Codifica Qualitativa">
+        <InterviewSection participantId={profile.participantId} />
       </Card>
     </>
   );
