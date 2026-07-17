@@ -253,6 +253,9 @@ function ProfileAnalysis({
 }) {
   const [hoverId, setHoverId] = useState<string | null>(null);
   const [activeScenario, setActiveScenario] = useState<ScenarioId | null>(null);
+  const interview = useResearchStore(
+    (s) => s.interviews[profile.participantId],
+  ) as InterviewData | undefined;
   const hovered = profile.positions.find((p) => p.id === hoverId);
   const hoveredValue =
     hoverId != null ? profile.continuum[hoverId]?.value ?? 50 : null;
@@ -298,14 +301,14 @@ function ProfileAnalysis({
           <Button
             size="sm"
             variant="outline"
-            onClick={() => exportProfileJSON(profile)}
+            onClick={() => exportProfileJSON(profile, interview)}
           >
             Esporta JSON
           </Button>
           <Button
             size="sm"
             variant="outline"
-            onClick={() => exportProfilePDF(profile, diagnostics)}
+            onClick={() => exportProfilePDF(profile, diagnostics, interview)}
           >
             Esporta PDF
           </Button>
