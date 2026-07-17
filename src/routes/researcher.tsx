@@ -136,7 +136,7 @@ function Dashboard() {
               Dashboard Ricercatore
             </p>
             <h1 className="font-serif text-xl font-medium">
-              Analisi Fenomenologica del Sé Dialogico
+              Analisi dialogica dei processi decisionali akratici
             </h1>
           </div>
           <div className="flex items-center gap-6">
