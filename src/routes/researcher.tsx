@@ -241,31 +241,76 @@ function Dashboard() {
   );
 }
 
-function ProfileAnalysis({ profile }: { profile: Profile }) {
+function ProfileAnalysis({
+  profile,
+  showNumbers,
+}: {
+  profile: Profile;
+  showNumbers: boolean;
+}) {
   const [hoverId, setHoverId] = useState<string | null>(null);
+  const [activeScenario, setActiveScenario] = useState<ScenarioId | null>(null);
   const hovered = profile.positions.find((p) => p.id === hoverId);
   const hoveredValue =
     hoverId != null ? profile.continuum[hoverId]?.value ?? 50 : null;
+
+  const diagnostics = useMemo(
+    () =>
+      Object.fromEntries(
+        SCENARIOS.map((s) => [s.id, classifyScenario(profile, s.id)] as const),
+      ) as Record<ScenarioId, DiagnosticColor>,
+    [profile],
+  );
+
+  const highlights: Record<string, DiagnosticColor> | undefined = useMemo(() => {
+    if (!activeScenario) return undefined;
+    const e = profile.scenarios[activeScenario];
+    const color = diagnostics[activeScenario];
+    const map: Record<string, DiagnosticColor> = {};
+    e.winningVoiceIds.forEach((id) => (map[id] = color));
+    e.losingVoiceIds.forEach((id) => (map[id] = color));
+    return map;
+  }, [activeScenario, diagnostics, profile]);
 
   return (
     <>
       {/* Section 1: session info */}
       <Card title="Sezione 1 · Informazioni Sessione">
-        <div className="grid gap-4 sm:grid-cols-3 text-sm">
+        <div className="grid gap-4 sm:grid-cols-4 text-sm">
           <Field label="ID Partecipante" value={profile.participantId} />
           <Field
             label="Contesto Ecologico"
             value={contextLabel(profile.context, profile.contextCustom)}
           />
           <Field
-            label="Data & Ora"
+            label="Apertura sessione"
             value={formatDateTime(profile.startedAt)}
           />
+          <Field
+            label="Durata sessione"
+            value={formatDuration(profile.startedAt, profile.endedAt)}
+          />
+        </div>
+        <div className="mt-5 flex flex-wrap gap-2">
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => exportProfileJSON(profile)}
+          >
+            Esporta JSON
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => exportProfilePDF(profile, diagnostics)}
+          >
+            Esporta PDF
+          </Button>
         </div>
       </Card>
 
       {/* Section 2: graph */}
-      <Card title="Sezione 2 · Grafico del Sé">
+      <Card title="Sezione 2 · Grafico del Sé & Diagnostica Cromatica">
         <div className="grid gap-4 md:grid-cols-[1fr_260px] items-start">
           <div
             className="flex justify-center"
@@ -282,10 +327,49 @@ function ProfileAnalysis({ profile }: { profile: Profile }) {
               <SelfGraph
                 positions={profile.positions}
                 continuum={profile.continuum}
+                highlights={highlights}
               />
             </div>
           </div>
-          <div className="rounded-md border border-border bg-background p-4 text-xs">
+          <div className="space-y-3">
+            <div className="rounded-md border border-border bg-background p-4 text-xs">
+              <div className="mb-2 text-[10px] uppercase tracking-widest text-muted-foreground">
+                Sovrapponi diagnostica scenario
+              </div>
+              <div className="flex flex-wrap gap-1">
+                <button
+                  onClick={() => setActiveScenario(null)}
+                  className={cn(
+                    "rounded border px-2 py-0.5 text-[11px]",
+                    !activeScenario
+                      ? "border-foreground bg-foreground text-background"
+                      : "border-border text-muted-foreground hover:text-foreground",
+                  )}
+                >
+                  Nessuno
+                </button>
+                {SCENARIOS.map((s, i) => (
+                  <button
+                    key={s.id}
+                    onClick={() => setActiveScenario(s.id)}
+                    className={cn(
+                      "rounded border px-2 py-0.5 text-[11px]",
+                      activeScenario === s.id
+                        ? "border-foreground bg-muted"
+                        : "border-border text-muted-foreground hover:text-foreground",
+                    )}
+                  >
+                    <span
+                      className="mr-1 inline-block h-2 w-2 rounded-full align-middle"
+                      style={{ background: diagnosticHex(diagnostics[s.id]) }}
+                    />
+                    Scenario {i + 1}
+                  </button>
+                ))}
+              </div>
+              <DiagnosticLegend />
+            </div>
+            <div className="rounded-md border border-border bg-background p-4 text-xs">
             {hovered ? (
               <>
                 <div className="text-[10px] uppercase tracking-widest text-muted-foreground">
@@ -298,9 +382,15 @@ function ProfileAnalysis({ profile }: { profile: Profile }) {
                   Importanza: <span className="text-foreground">{hovered.dimension}</span>
                 </div>
                 <div className="text-muted-foreground">
-                  Continuum:{" "}
-                  <span className="text-foreground">{hoveredValue}/100</span>{" "}
-                  ({orientation(hoveredValue ?? 50)})
+                  Orientamento:{" "}
+                  <span className="text-foreground">
+                    {orientation(hoveredValue ?? 50)}
+                  </span>
+                  {showNumbers && (
+                    <span className="ml-1 text-muted-foreground">
+                      ({hoveredValue}/100)
+                    </span>
+                  )}
                 </div>
               </>
             ) : (
@@ -308,6 +398,7 @@ function ProfileAnalysis({ profile }: { profile: Profile }) {
                 Passa il mouse su un cerchio per visualizzare i dettagli.
               </p>
             )}
+            </div>
           </div>
         </div>
       </Card>
@@ -321,7 +412,7 @@ function ProfileAnalysis({ profile }: { profile: Profile }) {
                 <th className="py-2 pr-4">I-Position</th>
                 <th className="py-2 pr-4">Appartenenza</th>
                 <th className="py-2 pr-4">Importanza</th>
-                <th className="py-2 pr-4">Continuum (0–100)</th>
+                <th className="py-2 pr-4">Continuum</th>
                 <th className="py-2">Orientamento</th>
               </tr>
             </thead>
@@ -345,7 +436,9 @@ function ProfileAnalysis({ profile }: { profile: Profile }) {
                             style={{ width: `${v}%` }}
                           />
                         </div>
-                        <span className="tabular-nums">{v}</span>
+                        {showNumbers && (
+                          <span className="tabular-nums text-xs">{v}</span>
+                        )}
                       </div>
                     </td>
                     <td className="py-2 text-xs">{orientation(v)}</td>
@@ -375,18 +468,33 @@ function ProfileAnalysis({ profile }: { profile: Profile }) {
         </div>
       </Card>
 
+      {/* Section 4b: continuum × colonization matrix */}
+      <Card title="Sezione 4b · Matrice Continuum × Colonizzazione">
+        <ContinuumMatrix profile={profile} showNumbers={showNumbers} />
+      </Card>
+
       {/* Section 5: scenarios */}
       <Card title="Sezione 5 · Analisi Scenari di Akrasia">
         <div className="space-y-6">
           {SCENARIOS.map((s) => {
             const e = profile.scenarios[s.id];
+            const diag = diagnostics[s.id];
             return (
               <article
                 key={s.id}
-                className="rounded-md border border-border bg-background p-5"
+                className="rounded-md border-l-4 border border-border bg-background p-5"
+                style={{ borderLeftColor: diagnosticHex(diag) }}
               >
-                <div className="text-[10px] uppercase tracking-widest text-muted-foreground">
-                  {s.theme}
+                <div className="flex items-center justify-between">
+                  <div className="text-[10px] uppercase tracking-widest text-muted-foreground">
+                    {s.theme}
+                  </div>
+                  <div
+                    className="rounded-full px-2 py-0.5 text-[10px] uppercase tracking-widest text-background"
+                    style={{ background: diagnosticHex(diag) }}
+                  >
+                    {DIAGNOSTIC_LABEL[diag]}
+                  </div>
                 </div>
                 <h3 className="mt-1 font-serif text-lg">{s.title}</h3>
 
@@ -419,6 +527,9 @@ function ProfileAnalysis({ profile }: { profile: Profile }) {
                     tone="lose"
                   />
                 </div>
+                <p className="mt-4 rounded border border-border bg-muted/40 p-3 text-xs italic leading-relaxed text-muted-foreground">
+                  {DIAGNOSTIC_DESCRIPTION[diag]}
+                </p>
               </article>
             );
           })}
