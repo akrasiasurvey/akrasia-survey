@@ -275,6 +275,7 @@ export const useResearchStore = create<ResearchState>((set) => ({
     s2: emptyScenario(),
     s3: emptyScenario(),
   },
+  interviews: {},
   setConsent: (v) => set({ consent: v }),
   setParticipantId: (v) => set({ participantId: v }),
   setContext: (v) => set({ context: v }),
@@ -367,6 +368,60 @@ export const useResearchStore = create<ResearchState>((set) => ({
             [key]: has
               ? list.filter((x) => x !== positionId)
               : [...list, positionId],
+          },
+        },
+      };
+    }),
+  setInterviewTranscript: (pid, transcript) =>
+    set((s) => {
+      const prev = s.interviews[pid] ?? { transcript: "", annotations: [] };
+      return {
+        interviews: {
+          ...s.interviews,
+          [pid]: { ...prev, transcript },
+        },
+      };
+    }),
+  addAnnotation: (pid, ann) =>
+    set((s) => {
+      const prev = s.interviews[pid] ?? { transcript: "", annotations: [] };
+      const id = `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+      return {
+        interviews: {
+          ...s.interviews,
+          [pid]: {
+            ...prev,
+            annotations: [...prev.annotations, { ...ann, id }],
+          },
+        },
+      };
+    }),
+  updateAnnotation: (pid, annId, note) =>
+    set((s) => {
+      const prev = s.interviews[pid];
+      if (!prev) return {};
+      return {
+        interviews: {
+          ...s.interviews,
+          [pid]: {
+            ...prev,
+            annotations: prev.annotations.map((a) =>
+              a.id === annId ? { ...a, note } : a,
+            ),
+          },
+        },
+      };
+    }),
+  removeAnnotation: (pid, annId) =>
+    set((s) => {
+      const prev = s.interviews[pid];
+      if (!prev) return {};
+      return {
+        interviews: {
+          ...s.interviews,
+          [pid]: {
+            ...prev,
+            annotations: prev.annotations.filter((a) => a.id !== annId),
           },
         },
       };
