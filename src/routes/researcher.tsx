@@ -102,7 +102,9 @@ function Dashboard() {
     return {
       participantId: store.participantId,
       context: store.context,
+      contextCustom: store.contextCustom,
       startedAt: store.startedAt ?? Date.now(),
+      endedAt: store.endedAt ?? Date.now(),
       positions: store.positions,
       continuum: store.continuum,
       narrativeColonization: store.narrativeColonization,
@@ -119,6 +121,8 @@ function Dashboard() {
   );
   const selected =
     profiles.find((p) => p.participantId === selectedId) ?? profiles[0];
+  const [view, setView] = useState<"individual" | "aggregate">("individual");
+  const [showNumbers, setShowNumbers] = useState(false);
 
   return (
     <main className="min-h-screen bg-background text-foreground">
@@ -132,12 +136,45 @@ function Dashboard() {
               Analisi Fenomenologica del Sé Dialogico
             </h1>
           </div>
-          <Link
-            to="/"
-            className="text-xs uppercase tracking-widest text-muted-foreground hover:text-foreground"
-          >
-            ← Home
-          </Link>
+          <div className="flex items-center gap-6">
+            <div className="inline-flex rounded-md border border-border bg-background p-1 text-[10px]">
+              <button
+                onClick={() => setView("individual")}
+                className={cn(
+                  "rounded px-3 py-1 uppercase tracking-widest",
+                  view === "individual"
+                    ? "bg-foreground text-background"
+                    : "text-muted-foreground hover:text-foreground",
+                )}
+              >
+                Individuale
+              </button>
+              <button
+                onClick={() => setView("aggregate")}
+                className={cn(
+                  "rounded px-3 py-1 uppercase tracking-widest",
+                  view === "aggregate"
+                    ? "bg-foreground text-background"
+                    : "text-muted-foreground hover:text-foreground",
+                )}
+              >
+                Aggregata
+              </button>
+            </div>
+            <label className="flex items-center gap-2 text-[11px] text-muted-foreground">
+              <Switch
+                checked={showNumbers}
+                onCheckedChange={setShowNumbers}
+              />
+              Mostra valori numerici
+            </label>
+            <Link
+              to="/"
+              className="text-xs uppercase tracking-widest text-muted-foreground hover:text-foreground"
+            >
+              ← Home
+            </Link>
+          </div>
         </div>
       </header>
 
@@ -189,8 +226,10 @@ function Dashboard() {
 
         {/* RIGHT: analysis */}
         <section className="space-y-6">
-          {selected ? (
-            <ProfileAnalysis profile={selected} />
+          {view === "aggregate" ? (
+            <AggregateAnalysis profiles={profiles} showNumbers={showNumbers} />
+          ) : selected ? (
+            <ProfileAnalysis profile={selected} showNumbers={showNumbers} />
           ) : (
             <div className="rounded-lg border border-dashed border-border bg-card p-16 text-center text-sm text-muted-foreground">
               Nessun profilo selezionato.
