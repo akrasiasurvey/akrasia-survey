@@ -44,7 +44,69 @@ function computeLayout(positions: IPosition[]): LaidOut[] {
     });
   };
 
-  return [...place(internal, true), ...place(external, false)];
+  const nodes = [...place(internal, true), ...place(external, false)];
+
+  // ---- Collision resolution ----
+  // Iterative pairwise separation: se due cerchi si sovrappongono, li
+  // allontaniamo lungo la loro linea di congiunzione. Vincolo di zona:
+  // i nodi interni restano dentro INNER_RADIUS; gli esterni restano
+  // nella corona INNER..OUTER.
+  const PAD = 4;
+  const ITER = 80;
+  for (let iter = 0; iter < ITER; iter++) {
+    let moved = false;
+    for (let i = 0; i < nodes.length; i++) {
+      for (let j = i + 1; j < nodes.length; j++) {
+        const a = nodes[i];
+        const b = nodes[j];
+        const dx = b.x - a.x;
+        const dy = b.y - a.y;
+        const dist = Math.hypot(dx, dy) || 0.0001;
+        const minDist = a.radius + b.radius + PAD;
+        if (dist < minDist) {
+          const overlap = (minDist - dist) / 2;
+          const nx = dx / dist;
+          const ny = dy / dist;
+          a.x -= nx * overlap;
+          a.y -= ny * overlap;
+          b.x += nx * overlap;
+          b.y += ny * overlap;
+          moved = true;
+        }
+      }
+    }
+    // constrain each node into its belonging zone
+    for (const p of nodes) {
+      const dx = p.x - CENTER;
+      const dy = p.y - CENTER;
+      const d = Math.hypot(dx, dy) || 0.0001;
+      const ux = dx / d;
+      const uy = dy / d;
+      if (p.belonging === "internal") {
+        const maxD = Math.max(INNER_RADIUS - p.radius - 4, 0);
+        if (d > maxD) {
+          p.x = CENTER + ux * maxD;
+          p.y = CENTER + uy * maxD;
+          moved = true;
+        }
+      } else {
+        const minD = INNER_RADIUS + p.radius + 6;
+        const maxD = OUTER_RADIUS - p.radius - 6;
+        if (d < minD) {
+          p.x = CENTER + ux * minD;
+          p.y = CENTER + uy * minD;
+          moved = true;
+        } else if (d > maxD) {
+          p.x = CENTER + ux * maxD;
+          p.y = CENTER + uy * maxD;
+          moved = true;
+        }
+      }
+    }
+    if (!moved) break;
+  }
+
+  return nodes;
 }
 
 function dasharrayFor(value: number): string | undefined {
@@ -66,7 +128,25 @@ export interface SelfGraphProps {
   selectedIds?: string[];
   onSelect?: (id: string) => void;
   emptyMessage?: string;
+  /** Overrides visivi per singolo cerchio (usato per la diagnostica). */
+  highlights?: Record<string, DiagnosticColor>;
 }
+
+export type DiagnosticColor = "green" | "yellow" | "orange" | "red";
+
+const DIAGNOSTIC_STROKE: Record<DiagnosticColor, string> = {
+  green: "oklch(0.62 0.16 155)",
+  yellow: "oklch(0.80 0.17 90)",
+  orange: "oklch(0.68 0.18 55)",
+  red: "oklch(0.58 0.22 25)",
+};
+
+const DIAGNOSTIC_FILL: Record<DiagnosticColor, string> = {
+  green: "oklch(0.85 0.13 155)",
+  yellow: "oklch(0.90 0.15 90)",
+  orange: "oklch(0.85 0.14 55)",
+  red: "oklch(0.80 0.15 25)",
+};
 
 export function SelfGraph({
   positions,
@@ -75,6 +155,7 @@ export function SelfGraph({
   selectedIds,
   onSelect,
   emptyMessage = "Aggiungi una I-Position per iniziare",
+  highlights,
 }: SelfGraphProps) {
   const laidOut = useMemo(() => computeLayout(positions), [positions]);
   const selected = new Set(selectedIds ?? []);
@@ -132,16 +213,21 @@ export function SelfGraph({
         const isActive = activeId === p.id;
         const isSelected = selected.has(p.id);
         const showInside = p.radius >= 22;
+        const diagnostic = highlights?.[p.id];
 
-        const baseStroke = isActive
+        const baseStroke = diagnostic
+          ? DIAGNOSTIC_STROKE[diagnostic]
+          : isActive
           ? "oklch(0.55 0.18 25)"
           : isSelected
             ? "oklch(0.55 0.18 145)"
             : "oklch(0.35 0.05 240)";
-        const baseFill = isSelected
+        const baseFill = diagnostic
+          ? DIAGNOSTIC_FILL[diagnostic]
+          : isSelected
           ? "oklch(0.75 0.15 145)"
           : "oklch(0.55 0.05 240)";
-        const fillOpacity = continuum ? 0.15 : 0.55;
+        const fillOpacity = diagnostic ? 0.55 : continuum ? 0.15 : 0.55;
 
         return (
           <g

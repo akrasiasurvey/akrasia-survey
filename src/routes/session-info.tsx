@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { ProgressSteps } from "@/components/ProgressSteps";
 import { useResearchStore, type Context } from "@/store/research";
@@ -17,6 +18,7 @@ const CONTEXTS: { value: Context; label: string }[] = [
     value: "workplace_common",
     label: "In uno spazio comune / pausa all'interno del luogo di lavoro",
   },
+  { value: "other", label: "Altro / Personalizzato (specifica qui sotto)" },
 ];
 
 function SessionInfo() {
@@ -26,10 +28,15 @@ function SessionInfo() {
     setParticipantId,
     context,
     setContext,
+    contextCustom,
+    setContextCustom,
     startSession,
   } = useResearchStore();
 
-  const canProceed = participantId.trim().length > 0 && context !== "";
+  const canProceed =
+    participantId.trim().length > 0 &&
+    context !== "" &&
+    (context !== "other" || contextCustom.trim().length > 0);
 
   function submit() {
     startSession();
@@ -88,6 +95,21 @@ function SessionInfo() {
                 </label>
               ))}
             </RadioGroup>
+            {context === "other" && (
+              <div className="mt-3 space-y-2">
+                <Label htmlFor="ctx-custom" className="text-xs">
+                  Descrivi il contesto ecologico{" "}
+                  <span className="text-destructive">*</span>
+                </Label>
+                <Textarea
+                  id="ctx-custom"
+                  value={contextCustom}
+                  onChange={(e) => setContextCustom(e.target.value)}
+                  placeholder="es. in treno durante il tragitto casa-lavoro, in una sala d'attesa..."
+                  rows={2}
+                />
+              </div>
+            )}
           </div>
         </div>
 

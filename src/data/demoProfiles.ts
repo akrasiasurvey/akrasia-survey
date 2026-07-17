@@ -12,7 +12,9 @@ import {
 export interface Profile {
   participantId: string;
   context: Context;
+  contextCustom?: string;
   startedAt: number;
+  endedAt?: number;
   positions: IPosition[];
   continuum: Record<string, ContinuumEntry>;
   narrativeColonization: Record<string, string[]>;
@@ -84,6 +86,7 @@ export const DEMO_PROFILES: Profile[] = [
     participantId: "User_9921",
     context: "workplace",
     startedAt: new Date("2026-05-14T09:12:00").getTime(),
+    endedAt: new Date("2026-05-14T09:31:00").getTime(),
     positions: p1_positions,
     continuum: cont({
       p1a: 88,
@@ -136,6 +139,7 @@ export const DEMO_PROFILES: Profile[] = [
     participantId: "User_4482",
     context: "home",
     startedAt: new Date("2026-06-02T18:45:00").getTime(),
+    endedAt: new Date("2026-06-02T19:08:00").getTime(),
     positions: p2_positions,
     continuum: cont({
       p2a: 62,
@@ -189,6 +193,7 @@ export const DEMO_PROFILES: Profile[] = [
     participantId: "User_1094",
     context: "workplace_common",
     startedAt: new Date("2026-06-28T14:30:00").getTime(),
+    endedAt: new Date("2026-06-28T14:47:00").getTime(),
     positions: p3_positions,
     continuum: cont({
       p3a: 95,

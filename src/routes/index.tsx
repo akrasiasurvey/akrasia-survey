@@ -10,10 +10,10 @@ function Welcome() {
     <main className="min-h-screen bg-background text-foreground">
       <div className="mx-auto flex min-h-screen max-w-3xl flex-col justify-center px-6 py-16">
         <p className="text-xs uppercase tracking-[0.25em] text-muted-foreground">
-          Studio di ricerca — Sé Dialogico
+          Studio di ricerca — Akrasia e Sé Dialogico
         </p>
         <h1 className="mt-4 text-4xl font-serif font-medium leading-tight tracking-tight sm:text-5xl">
-          Mappatura fenomenologica del Sé e dei processi decisionali
+          Mappatura dei processi decisionali akratici attraverso il Sé Dialogico
         </h1>
         <p className="mt-6 max-w-2xl text-sm leading-relaxed text-muted-foreground">
           Strumento di ricerca qualitativa. Seleziona la modalità di accesso.
