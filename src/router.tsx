@@ -10,10 +10,9 @@ export const getRouter = () => {
     context: { queryClient },
     scrollRestoration: true,
     defaultPreloadStaleTime: 0,
-    // With Vite `base: './'` the app uses relative asset URLs, so the router
-    // basepath is a plain root — this keeps deep links working on GitHub
-    // Pages regardless of the repository name.
-    basepath: "/",
+    // Must match Vite `base` so client-side routes resolve correctly on
+    // GitHub Pages (served under /akrasia-survey/).
+    basepath: import.meta.env.BASE_URL,
   });
 
   return router;
