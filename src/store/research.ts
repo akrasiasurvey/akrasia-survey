@@ -22,13 +22,28 @@ export interface IPosition {
   radius: number;
 }
 
-export type Context = "home" | "workplace" | "workplace_common";
+export type Context =
+  | "home"
+  | "workplace"
+  | "workplace_common"
+  | "other";
 
 export const CONTEXT_LABEL: Record<Context, string> = {
   home: "Casa",
   workplace: "Ufficio",
   workplace_common: "Spazio comune",
+  other: "Altro / Personalizzato",
 };
+
+/**
+ * Restituisce l'etichetta del contesto ecologico da mostrare nella dashboard.
+ * Per il tipo "other" utilizza il testo libero digitato dal partecipante.
+ */
+export function contextLabel(c: Context | "", custom?: string): string {
+  if (!c) return "—";
+  if (c === "other") return (custom && custom.trim()) || CONTEXT_LABEL.other;
+  return CONTEXT_LABEL[c];
+}
 
 export const PERFORMATIVE_NARRATIVES = [
   "Devi essere sempre reperibile e pronto a rispondere",
@@ -144,7 +159,9 @@ interface ResearchState {
   consent: boolean;
   participantId: string;
   context: Context | "";
+  contextCustom: string;
   startedAt: number | null;
+  endedAt: number | null;
   positions: IPosition[];
   continuum: Record<string, ContinuumEntry>;
   narrativeColonization: Record<string, string[]>;
@@ -152,7 +169,9 @@ interface ResearchState {
   setConsent: (v: boolean) => void;
   setParticipantId: (v: string) => void;
   setContext: (v: Context) => void;
+  setContextCustom: (v: string) => void;
   startSession: () => void;
+  endSession: () => void;
   addPosition: (p: Omit<IPosition, "id">) => void;
   removePosition: (id: string) => void;
   setContinuumValue: (id: string, value: number) => void;
@@ -179,7 +198,9 @@ export const useResearchStore = create<ResearchState>((set) => ({
   consent: false,
   participantId: "",
   context: "",
+  contextCustom: "",
   startedAt: null,
+  endedAt: null,
   positions: [],
   continuum: {},
   narrativeColonization: {},
@@ -191,7 +212,9 @@ export const useResearchStore = create<ResearchState>((set) => ({
   setConsent: (v) => set({ consent: v }),
   setParticipantId: (v) => set({ participantId: v }),
   setContext: (v) => set({ context: v }),
+  setContextCustom: (v) => set({ contextCustom: v }),
   startSession: () => set((s) => ({ startedAt: s.startedAt ?? Date.now() })),
+  endSession: () => set((s) => ({ endedAt: s.endedAt ?? Date.now() })),
   addPosition: (p) =>
     set((s) => {
       const id = `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
