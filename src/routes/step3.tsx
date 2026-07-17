@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -25,6 +25,7 @@ function Step3() {
   const lockResp = useResearchStore((s) => s.lockScenarioResponse);
   const setChoice = useResearchStore((s) => s.setScenarioChoice);
   const toggleVoice = useResearchStore((s) => s.toggleScenarioVoice);
+  const endSession = useResearchStore((s) => s.endSession);
 
   const [idx, setIdx] = useState(0);
 
@@ -61,6 +62,11 @@ function Step3() {
     );
   };
   const allComplete = SCENARIOS.every((s) => complete(s.id));
+
+  // Fissa l'istante di completamento sessione quando tutti gli scenari sono chiusi.
+  useEffect(() => {
+    if (allComplete) endSession();
+  }, [allComplete, endSession]);
 
   const OPTIONS: {
     k: ScenarioChoice;
