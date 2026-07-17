@@ -114,6 +114,13 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  // Registra l'apertura sessione al primo mount (dinamica caricato dal
+  // partecipante); l'endedAt viene fissato al completamento dello Step 3.
+  useEffect(() => {
+    void import("../store/research").then(({ useResearchStore }) => {
+      useResearchStore.getState().startSession();
+    });
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
