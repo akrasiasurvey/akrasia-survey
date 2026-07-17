@@ -6,11 +6,10 @@
 // You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
-// GitHub Pages builds set `GITHUB_PAGES=1` and `BASE_PATH` (e.g. `/repo/`).
-// In that mode we produce a pure client-side SPA (no server) into
-// `dist/client/`, which the workflow uploads to Pages.
+// GitHub Pages builds set `GITHUB_PAGES=1`. In that mode we produce a pure
+// client-side SPA (no server) into `dist/client/`, which the workflow
+// uploads to Pages.
 const isPagesBuild = process.env.GITHUB_PAGES === "1";
-const basePath = process.env.BASE_PATH ?? "/";
 
 export default defineConfig({
   tanstackStart: {
@@ -23,6 +22,8 @@ export default defineConfig({
   // the build produces only the client bundle under `dist/client/`.
   nitro: isPagesBuild ? false : undefined,
   vite: {
-    base: basePath,
+    // Relative base so the built app works from any sub-path
+    // (e.g. GitHub Pages project repos) without a white screen.
+    base: "./",
   },
 });
