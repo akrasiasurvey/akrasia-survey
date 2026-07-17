@@ -1113,10 +1113,10 @@ function download(filename: string, content: string, mime: string) {
   URL.revokeObjectURL(url);
 }
 
-function exportProfileJSON(profile: Profile) {
+function exportProfileJSON(profile: Profile, interview?: InterviewData) {
   download(
     `${profile.participantId}.json`,
-    JSON.stringify(profile, null, 2),
+    JSON.stringify({ ...profile, interview: interview ?? null }, null, 2),
     "application/json",
   );
 }
@@ -1132,6 +1132,7 @@ function exportAllJSON(profiles: Profile[]) {
 function exportProfilePDF(
   profile: Profile,
   diagnostics: Record<ScenarioId, DiagnosticColor>,
+  interview?: InterviewData,
 ) {
   const doc = new jsPDF({ unit: "pt", format: "a4" });
   const M = 40;
@@ -1190,6 +1191,52 @@ function exportProfilePDF(
     line(DIAGNOSTIC_DESCRIPTION[d]);
     y += 6;
   }
+
+  if (interview && (interview.transcript || interview.annotations.length)) {
+    doc.addPage();
+    y = M;
+    line("Intervista post-test", 14, true);
+    y += 4;
+
+    line("Trascrizione integrale", 12, true);
+    if (interview.transcript.trim()) {
+      line(interview.transcript);
+    } else {
+      line("(Nessuna trascrizione inserita.)");
+    }
+    y += 6;
+
+    line("Testo con lessico critico evidenziato", 12, true);
+    if (interview.transcript.trim()) {
+      const segs = buildSegments(interview.transcript, interview.annotations);
+      for (const s of segs) {
+        if (s.matrix) {
+          line(`⟦${MATRIX_LABEL[s.matrix].split(" ").slice(-1)[0]}: ${s.text}⟧`);
+        } else {
+          line(s.text);
+        }
+      }
+    } else {
+      line("(Nessuna trascrizione inserita.)");
+    }
+    y += 6;
+
+    line("Annotazioni e note analitiche", 12, true);
+    if (interview.annotations.length === 0) {
+      line("(Nessuna annotazione inserita.)");
+    } else {
+      const sorted = [...interview.annotations].sort(
+        (a, b) => a.start - b.start,
+      );
+      sorted.forEach((a, i) => {
+        line(`Nota #${i + 1}`, 11, true);
+        line(`Estratto: «${a.quote}»`);
+        line(`Analisi: ${a.note || "(senza nota)"}`);
+        y += 4;
+      });
+    }
+  }
+
   doc.save(`${profile.participantId}.pdf`);
 }
 
