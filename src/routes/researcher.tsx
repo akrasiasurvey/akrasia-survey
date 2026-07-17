@@ -946,6 +946,7 @@ function AggregateAnalysis({
   profiles: Profile[];
   showNumbers: boolean;
 }) {
+  const interviews = useResearchStore((s) => s.interviews);
   const n = profiles.length;
 
   // distribuzione diagnostica per scenario
@@ -1009,7 +1010,7 @@ function AggregateAnalysis({
           <Button
             size="sm"
             variant="outline"
-            onClick={() => exportAllJSON(profiles)}
+            onClick={() => exportAllJSON(profiles, interviews)}
           >
             Esporta database (JSON)
           </Button>
@@ -1121,10 +1122,23 @@ function exportProfileJSON(profile: Profile, interview?: InterviewData) {
   );
 }
 
-function exportAllJSON(profiles: Profile[]) {
+function exportAllJSON(
+  profiles: Profile[],
+  interviews: Record<string, InterviewData>,
+) {
   download(
     `dataset-akrasia.json`,
-    JSON.stringify({ exportedAt: Date.now(), profiles }, null, 2),
+    JSON.stringify(
+      {
+        exportedAt: Date.now(),
+        profiles: profiles.map((p) => ({
+          ...p,
+          interview: interviews[p.participantId] ?? null,
+        })),
+      },
+      null,
+      2,
+    ),
     "application/json",
   );
 }
