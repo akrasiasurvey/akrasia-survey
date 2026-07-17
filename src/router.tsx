@@ -10,9 +10,10 @@ export const getRouter = () => {
     context: { queryClient },
     scrollRestoration: true,
     defaultPreloadStaleTime: 0,
-    // Use the Vite base URL as the router basepath so the app works when
-    // deployed under a sub-path on GitHub Pages (e.g. `/repo-name/`).
-    basepath: import.meta.env.BASE_URL,
+    // With Vite `base: './'` the app uses relative asset URLs, so the router
+    // basepath is a plain root — this keeps deep links working on GitHub
+    // Pages regardless of the repository name.
+    basepath: "/",
   });
 
   return router;
