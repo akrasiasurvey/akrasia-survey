@@ -166,6 +166,7 @@ interface ResearchState {
   continuum: Record<string, ContinuumEntry>;
   narrativeColonization: Record<string, string[]>;
   scenarios: Record<ScenarioId, ScenarioEntry>;
+  interviews: Record<string, InterviewData>;
   setConsent: (v: boolean) => void;
   setParticipantId: (v: string) => void;
   setContext: (v: Context) => void;
@@ -184,7 +185,72 @@ interface ResearchState {
     kind: "winning" | "losing",
     positionId: string,
   ) => void;
+  setInterviewTranscript: (pid: string, transcript: string) => void;
+  addAnnotation: (pid: string, ann: Omit<Annotation, "id">) => void;
+  updateAnnotation: (pid: string, annId: string, note: string) => void;
+  removeAnnotation: (pid: string, annId: string) => void;
 }
+
+export interface Annotation {
+  id: string;
+  start: number;
+  end: number;
+  quote: string;
+  note: string;
+}
+
+export interface InterviewData {
+  transcript: string;
+  annotations: Annotation[];
+}
+
+export const NEOLIB_LEXICON: readonly string[] = [
+  "performance",
+  "performante",
+  "performativo",
+  "ottimizzazione",
+  "ottimizzare",
+  "ottimizzato",
+  "rendimento",
+  "efficienza",
+  "efficiente",
+  "investimento",
+  "investire",
+  "tempo perso",
+  "produttività",
+  "produttivo",
+  "capitale",
+  "kpi",
+  "risultati",
+  "target",
+  "obiettivi",
+  "profitto",
+  "competitività",
+  "competitivo",
+  "mercato",
+];
+
+export const RATIONALIST_LEXICON: readonly string[] = [
+  "logico",
+  "logica",
+  "coerente",
+  "coerenza",
+  "oggettivo",
+  "oggettività",
+  "pianificato",
+  "pianificazione",
+  "calcolato",
+  "calcolare",
+  "giustificato",
+  "giustificazione",
+  "razionale",
+  "razionalità",
+  "metodo",
+  "metodico",
+  "sistematico",
+  "analisi",
+  "analitico",
+];
 
 const emptyScenario = (): ScenarioEntry => ({
   openResponse: "",
