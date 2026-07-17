@@ -177,7 +177,7 @@ function Dashboard() {
                   )}
                 </div>
                 <div className="mt-1 text-[11px] text-muted-foreground">
-                  {CONTEXT_LABEL[p.context]}
+                  {contextLabel(p.context, p.contextCustom)}
                 </div>
                 <div className="text-[11px] text-muted-foreground">
                   {formatDateTime(p.startedAt)}
@@ -216,7 +216,7 @@ function ProfileAnalysis({ profile }: { profile: Profile }) {
           <Field label="ID Partecipante" value={profile.participantId} />
           <Field
             label="Contesto Ecologico"
-            value={CONTEXT_LABEL[profile.context]}
+            value={contextLabel(profile.context, profile.contextCustom)}
           />
           <Field
             label="Data & Ora"
