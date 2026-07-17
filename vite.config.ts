@@ -22,8 +22,9 @@ export default defineConfig({
   // the build produces only the client bundle under `dist/client/`.
   nitro: isPagesBuild ? false : undefined,
   vite: {
-    // Relative base so the built app works from any sub-path
-    // (e.g. GitHub Pages project repos) without a white screen.
-    base: "./",
+    // GitHub Pages project site is served at /akrasia-survey/.
+    // Use an absolute base in production so JS/CSS chunks resolve correctly;
+    // relative base breaks nested routes on Pages.
+    base: process.env.NODE_ENV === "production" ? "/akrasia-survey/" : "/",
   },
 });
