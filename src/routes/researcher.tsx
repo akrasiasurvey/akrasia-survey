@@ -3,17 +3,21 @@ import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { SelfGraph } from "@/components/SelfGraph";
+import { Switch } from "@/components/ui/switch";
+import { SelfGraph, type DiagnosticColor } from "@/components/SelfGraph";
 import {
-  CONTEXT_LABEL,
   CHOICE_POLARITY,
   PERFORMATIVE_NARRATIVES,
   PROTECTIVE_NARRATIVES,
   SCENARIOS,
+  contextLabel,
+  narrativeDomain,
   useResearchStore,
+  type ScenarioId,
 } from "@/store/research";
 import { DEMO_PROFILES, type Profile } from "@/data/demoProfiles";
 import { cn } from "@/lib/utils";
+import jsPDF from "jspdf";
 
 export const Route = createFileRoute("/researcher")({
   component: Researcher,
