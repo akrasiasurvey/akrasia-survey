@@ -13,7 +13,7 @@ function Welcome() {
           Studio di ricerca — Akrasia e Sé Dialogico
         </p>
         <h1 className="mt-4 text-4xl font-serif font-medium leading-tight tracking-tight sm:text-5xl">
-          Mappatura dei processi decisionali akratici attraverso il Sé Dialogico
+          Analisi dialogica dei processi decisionali akratici
         </h1>
         <p className="mt-6 max-w-2xl text-sm leading-relaxed text-muted-foreground">
           Strumento di ricerca qualitativa. Seleziona la modalità di accesso.
