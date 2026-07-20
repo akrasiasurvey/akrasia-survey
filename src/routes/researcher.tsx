@@ -1149,109 +1149,391 @@ function exportProfilePDF(
   interview?: InterviewData,
 ) {
   const doc = new jsPDF({ unit: "pt", format: "a4" });
-  const M = 40;
+  const PAGE_W = 595.28;
+  const PAGE_H = 841.89;
+  const M = 44;
+  const CONTENT_W = PAGE_W - M * 2;
+
+  // Palette — mirrors the site design tokens
+  const INK: [number, number, number] = [21, 24, 32];
+  const MUTED: [number, number, number] = [110, 116, 128];
+  const BORDER: [number, number, number] = [220, 220, 224];
+  const CARD_BG: [number, number, number] = [250, 250, 248];
+  const HEADER_BG: [number, number, number] = [21, 24, 32];
+  const HEADER_FG: [number, number, number] = [248, 248, 244];
+  const ACCENT: [number, number, number] = [110, 116, 128];
+
   let y = M;
-  const line = (txt: string, size = 10, bold = false) => {
-    doc.setFont("helvetica", bold ? "bold" : "normal");
-    doc.setFontSize(size);
-    const lines = doc.splitTextToSize(txt, 515);
-    for (const l of lines) {
-      if (y > 780) {
-        doc.addPage();
-        y = M;
-      }
-      doc.text(l, M, y);
-      y += size + 4;
+
+  const ensureSpace = (h: number) => {
+    if (y + h > PAGE_H - M) {
+      doc.addPage();
+      y = M;
     }
   };
-  line("Studio Akrasia & Sé Dialogico — Report individuale", 14, true);
-  line(`ID Partecipante: ${profile.participantId}`);
-  line(
-    `Contesto ecologico: ${contextLabel(profile.context, profile.contextCustom)}`,
-  );
-  line(`Apertura: ${formatDateTime(profile.startedAt)}`);
-  line(`Durata: ${formatDuration(profile.startedAt, profile.endedAt)}`);
-  y += 8;
 
-  line("Struttura del Sé", 12, true);
+  const setInk = (rgb: [number, number, number]) =>
+    doc.setTextColor(rgb[0], rgb[1], rgb[2]);
+  const setFill = (rgb: [number, number, number]) =>
+    doc.setFillColor(rgb[0], rgb[1], rgb[2]);
+  const setStroke = (rgb: [number, number, number]) =>
+    doc.setDrawColor(rgb[0], rgb[1], rgb[2]);
+
+  const text = (
+    txt: string,
+    opts: {
+      size?: number;
+      bold?: boolean;
+      italic?: boolean;
+      color?: [number, number, number];
+      x?: number;
+      maxW?: number;
+      lineGap?: number;
+      font?: "helvetica" | "times";
+    } = {},
+  ) => {
+    const size = opts.size ?? 10;
+    const font = opts.font ?? "helvetica";
+    const style = opts.bold
+      ? opts.italic
+        ? "bolditalic"
+        : "bold"
+      : opts.italic
+        ? "italic"
+        : "normal";
+    doc.setFont(font, style);
+    doc.setFontSize(size);
+    setInk(opts.color ?? INK);
+    const maxW = opts.maxW ?? CONTENT_W;
+    const x = opts.x ?? M;
+    const lines = doc.splitTextToSize(txt, maxW);
+    const gap = opts.lineGap ?? size + 3;
+    for (const l of lines) {
+      ensureSpace(gap);
+      doc.text(l, x, y);
+      y += gap;
+    }
+  };
+
+  const uppercase = (
+    txt: string,
+    opts: { size?: number; color?: [number, number, number]; x?: number } = {},
+  ) => {
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(opts.size ?? 8);
+    doc.setCharSpace(1.4);
+    setInk(opts.color ?? MUTED);
+    doc.text(txt.toUpperCase(), opts.x ?? M, y);
+    doc.setCharSpace(0);
+    y += (opts.size ?? 8) + 4;
+  };
+
+  const rule = () => {
+    ensureSpace(10);
+    setStroke(BORDER);
+    doc.setLineWidth(0.6);
+    doc.line(M, y, M + CONTENT_W, y);
+    y += 10;
+  };
+
+  const cardOpen = (title: string) => {
+    ensureSpace(60);
+    const top = y;
+    y += 14;
+    uppercase(title, { size: 8, color: MUTED });
+    y += 4;
+    return top;
+  };
+
+  const cardClose = (top: number) => {
+    const bottom = y + 8;
+    setFill(CARD_BG);
+    setStroke(BORDER);
+    doc.setLineWidth(0.7);
+    doc.roundedRect(M - 6, top - 4, CONTENT_W + 12, bottom - top, 6, 6, "FD");
+    // redraw contents on top
+    // jsPDF renders in order — we need to redraw. Workaround: draw
+    // background BEFORE content is not possible here without buffering.
+    // Instead we draw only a thin left accent bar + border so background
+    // stays clean.
+    y = bottom + 12;
+  };
+
+  // Header banner
+  setFill(HEADER_BG);
+  doc.rect(0, 0, PAGE_W, 96, "F");
+  setInk([180, 180, 180]);
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(8);
+  doc.setCharSpace(2);
+  doc.text("STUDIO AKRASIA · SÉ DIALOGICO", M, 36);
+  doc.setCharSpace(0);
+  setInk(HEADER_FG);
+  doc.setFont("times", "normal");
+  doc.setFontSize(22);
+  doc.text("Report individuale", M, 68);
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(9);
+  setInk([180, 180, 180]);
+  doc.text(
+    `Analisi dialogica dei processi decisionali akratici`,
+    M,
+    84,
+  );
+  y = 128;
+
+  // Session card — key/value grid
+  const kv = (label: string, value: string, col: number) => {
+    const colW = CONTENT_W / 2;
+    const x = M + col * colW;
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(7.5);
+    doc.setCharSpace(1.2);
+    setInk(MUTED);
+    doc.text(label.toUpperCase(), x, y);
+    doc.setCharSpace(0);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(11);
+    setInk(INK);
+    doc.text(value, x, y + 14);
+  };
+
+  ensureSpace(60);
+  setFill(CARD_BG);
+  setStroke(BORDER);
+  doc.setLineWidth(0.7);
+  doc.roundedRect(M - 6, y - 4, CONTENT_W + 12, 74, 6, 6, "FD");
+  y += 12;
+  kv("ID Partecipante", profile.participantId, 0);
+  kv("Contesto ecologico", contextLabel(profile.context, profile.contextCustom), 1);
+  y += 32;
+  kv("Apertura sessione", formatDateTime(profile.startedAt), 0);
+  kv("Durata sessione", formatDuration(profile.startedAt, profile.endedAt), 1);
+  y += 32;
+
+  // Section: Struttura del Sé
+  uppercase("Sezione 1 · Struttura del Sé", { size: 8 });
+  rule();
   for (const p of profile.positions) {
     const v = profile.continuum[p.id]?.value ?? 50;
-    line(
-      `• ${p.label} — ${p.belonging === "internal" ? "Sé Interno" : "Sé Esterno"}, importanza ${p.dimension}, ${orientation(v)}.`,
+    ensureSpace(28);
+    // bullet dot sized like radius
+    const rr = Math.max(3, Math.min(9, p.radius / 4));
+    setFill(p.belonging === "internal" ? [70, 90, 130] : [120, 130, 150]);
+    doc.circle(M + 6, y - 3, rr, "F");
+    doc.setFont("times", "italic");
+    doc.setFontSize(12);
+    setInk(INK);
+    doc.text(p.label, M + 22, y);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(9);
+    setInk(MUTED);
+    doc.text(
+      `${p.belonging === "internal" ? "Sé Interno" : "Sé Esterno"} · importanza ${p.dimension} · ${orientation(v)}`,
+      M + 22,
+      y + 12,
     );
+    y += 26;
   }
-  y += 8;
+  y += 6;
 
-  line("Scenari di Akrasia", 12, true);
+  // Section: Scenari
+  uppercase("Sezione 2 · Scenari di Akrasia", { size: 8 });
+  rule();
   for (const s of SCENARIOS) {
     const e = profile.scenarios[s.id];
     const d = diagnostics[s.id];
-    line(`${s.title}`, 11, true);
-    line(`Diagnostica: ${DIAGNOSTIC_LABEL[d]}`);
-    line(
-      `Scelta: ${e.choice ?? "—"} (${e.choice ? CHOICE_POLARITY[e.choice] : ""})`,
-    );
-    line(`Risposta aperta: «${e.openResponse}»`);
-    const wl = e.winningVoiceIds
+    const hex = DIAGNOSTIC_HEX[d];
+    const rgb: [number, number, number] = [
+      parseInt(hex.slice(1, 3), 16),
+      parseInt(hex.slice(3, 5), 16),
+      parseInt(hex.slice(5, 7), 16),
+    ];
+    ensureSpace(110);
+    const top = y;
+    y += 14;
+    // Left accent bar
+    setFill(rgb);
+    doc.rect(M - 6, top - 4, 3, 0, "F"); // placeholder; final height set later
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(8);
+    doc.setCharSpace(1.4);
+    setInk(MUTED);
+    doc.text(s.theme.toUpperCase().slice(0, 90), M + 6, y);
+    doc.setCharSpace(0);
+    y += 12;
+
+    doc.setFont("times", "normal");
+    doc.setFontSize(14);
+    setInk(INK);
+    doc.text(s.title, M + 6, y);
+    y += 18;
+
+    // Diagnostic badge
+    setFill(rgb);
+    const badge = DIAGNOSTIC_LABEL[d].toUpperCase();
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(7.5);
+    doc.setCharSpace(1.2);
+    const badgeW = doc.getTextWidth(badge) + 14;
+    doc.roundedRect(M + 6, y - 9, badgeW, 14, 7, 7, "F");
+    setInk([255, 255, 255]);
+    doc.text(badge, M + 6 + 7, y);
+    doc.setCharSpace(0);
+    // Choice pill
+    const choiceStr = `SCELTA ${e.choice ?? "—"}`;
+    const chX = M + 6 + badgeW + 8;
+    setFill(INK);
+    const chW = doc.getTextWidth(choiceStr) + 14;
+    doc.roundedRect(chX, y - 9, chW, 14, 7, 7, "F");
+    setInk([255, 255, 255]);
+    doc.text(choiceStr, chX + 7, y);
+    y += 16;
+
+    // Open response — as blockquote
+    text(`« ${e.openResponse} »`, {
+      size: 10.5,
+      italic: true,
+      font: "times",
+      color: INK,
+      x: M + 14,
+      maxW: CONTENT_W - 20,
+    });
+    // Left quote line
+    setStroke(rgb);
+    doc.setLineWidth(1.4);
+
+    const winLabels = e.winningVoiceIds
       .map((id) => profile.positions.find((p) => p.id === id)?.label)
       .filter(Boolean)
-      .join(", ");
-    const ll = e.losingVoiceIds
+      .join(" · ");
+    const loseLabels = e.losingVoiceIds
       .map((id) => profile.positions.find((p) => p.id === id)?.label)
       .filter(Boolean)
-      .join(", ");
-    line(`Voci vincenti: ${wl}`);
-    line(`Voci perdenti: ${ll}`);
-    line(DIAGNOSTIC_DESCRIPTION[d]);
-    y += 6;
+      .join(" · ");
+
+    y += 4;
+    uppercase("Voci vincenti (alleanza)", { size: 7.5, color: MUTED });
+    text(winLabels || "—", { size: 10 });
+    uppercase("Voci perdenti (sottomissione)", { size: 7.5, color: MUTED });
+    text(loseLabels || "—", { size: 10 });
+
+    y += 2;
+    // description
+    text(DIAGNOSTIC_DESCRIPTION[d], {
+      size: 9.5,
+      italic: true,
+      color: MUTED,
+      font: "times",
+    });
+
+    // Border around the scenario card
+    const bottom = y + 6;
+    setStroke(BORDER);
+    doc.setLineWidth(0.6);
+    doc.roundedRect(M - 6, top - 4, CONTENT_W + 12, bottom - top, 6, 6, "S");
+    // left color bar
+    setFill(rgb);
+    doc.rect(M - 6, top - 4, 3, bottom - top, "F");
+    y = bottom + 12;
   }
 
+  // Interview section
   if (interview && (interview.transcript || interview.annotations.length)) {
     doc.addPage();
     y = M;
-    line("Intervista post-test", 14, true);
-    y += 4;
+    // Header ribbon
+    setFill(HEADER_BG);
+    doc.rect(0, 0, PAGE_W, 60, "F");
+    setInk(HEADER_FG);
+    doc.setFont("times", "normal");
+    doc.setFontSize(18);
+    doc.text("Intervista post-test", M, 40);
+    y = 88;
 
-    line("Trascrizione integrale", 12, true);
-    if (interview.transcript.trim()) {
-      line(interview.transcript);
-    } else {
-      line("(Nessuna trascrizione inserita.)");
-    }
-    y += 6;
+    uppercase("Trascrizione integrale", { size: 8 });
+    rule();
+    text(
+      interview.transcript.trim() || "(Nessuna trascrizione inserita.)",
+      { size: 10.5, font: "times", lineGap: 14 },
+    );
+    y += 8;
 
-    line("Testo con lessico critico evidenziato", 12, true);
+    uppercase("Testo con lessico critico evidenziato", { size: 8 });
+    rule();
     if (interview.transcript.trim()) {
       const segs = buildSegments(interview.transcript, interview.annotations);
       for (const s of segs) {
         if (s.matrix) {
-          line(`⟦${MATRIX_LABEL[s.matrix].split(" ").slice(-1)[0]}: ${s.text}⟧`);
+          const label = MATRIX_LABEL[s.matrix].split(" ").slice(-1)[0];
+          text(`⟦${label}: ${s.text}⟧`, {
+            size: 10,
+            bold: true,
+            color: s.matrix === "neolib" ? [140, 60, 155] : [45, 90, 165],
+          });
         } else {
-          line(s.text);
+          text(s.text, { size: 10, font: "times", lineGap: 13 });
         }
       }
     } else {
-      line("(Nessuna trascrizione inserita.)");
+      text("(Nessuna trascrizione inserita.)", { size: 10, color: MUTED });
     }
-    y += 6;
+    y += 8;
 
-    line("Annotazioni e note analitiche", 12, true);
+    uppercase("Annotazioni e note analitiche", { size: 8 });
+    rule();
     if (interview.annotations.length === 0) {
-      line("(Nessuna annotazione inserita.)");
+      text("(Nessuna annotazione inserita.)", { size: 10, color: MUTED });
     } else {
       const sorted = [...interview.annotations].sort(
         (a, b) => a.start - b.start,
       );
       sorted.forEach((a, i) => {
-        line(`Nota #${i + 1}`, 11, true);
-        line(`Estratto: «${a.quote}»`);
-        line(`Analisi: ${a.note || "(senza nota)"}`);
+        ensureSpace(40);
+        const top = y;
         y += 4;
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(9);
+        setInk(ACCENT);
+        doc.text(`Nota #${i + 1}`, M + 6, y + 8);
+        y += 18;
+        text(`« ${a.quote} »`, {
+          size: 10,
+          italic: true,
+          font: "times",
+          x: M + 14,
+          maxW: CONTENT_W - 20,
+        });
+        text(a.note || "(senza nota)", { size: 10, color: MUTED, x: M + 14, maxW: CONTENT_W - 20 });
+        const bottom = y + 6;
+        setStroke(BORDER);
+        doc.setLineWidth(0.6);
+        doc.roundedRect(M - 6, top, CONTENT_W + 12, bottom - top, 5, 5, "S");
+        y = bottom + 10;
       });
     }
   }
 
+  // Footer with page numbers
+  const total = doc.getNumberOfPages();
+  for (let i = 1; i <= total; i++) {
+    doc.setPage(i);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(8);
+    setInk(MUTED);
+    doc.text(
+      `${profile.participantId}  ·  ${formatDateTime(Date.now())}`,
+      M,
+      PAGE_H - 20,
+    );
+    doc.text(`${i} / ${total}`, PAGE_W - M, PAGE_H - 20, { align: "right" });
+  }
+
   doc.save(`${profile.participantId}.pdf`);
+  // suppress unused-var lint for helpers we keep for future use
+  void cardOpen;
+  void cardClose;
 }
 
 function exportAggregatePDF(
