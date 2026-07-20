@@ -749,25 +749,21 @@ function formatDuration(startedAt: number, endedAt?: number): string {
 // ---------- Diagnostic classification ----------
 
 const DIAGNOSTIC_LABEL: Record<DiagnosticColor, string> = {
-  green: "Continente",
-  yellow: "Negoziazione neoliberista",
-  orange: "Razionalizzazione neoliberista",
-  red: "Sottomissione razionalista",
+  yellow: "Continente razionalizzato",
+  orange: "Akrasia razionalizzata",
+  red: "Akrasia neoliberista",
 };
 
 const DIAGNOSTIC_DESCRIPTION: Record<DiagnosticColor, string> = {
-  green:
-    "Il partecipante mantiene la coerenza con le voci più centrali e orientate al benessere; l'akrasia è contenuta e la decisione è assunta come atto di autodeterminazione.",
   yellow:
-    "Il conflitto viene disinnescato attraverso un compromesso pragmatico: voci performative e voci di cura vengono negoziate senza risoluzione, dando priorità al mantenimento del quadro produttivo.",
+    "Il partecipante mantiene la coerenza con le voci più orientate al benessere: l'akrasia è contenuta e la decisione è razionalizzata come atto di autodeterminazione.",
   orange:
-    "La scelta è razionalizzata a favore della logica produttiva: le voci più grandi e orientate al benessere vengono argomentativamente ridimensionate per legittimare la sottomissione al KPI.",
+    "La scelta è razionalizzata a favore della logica produttiva: le voci morali vengono argomentativamente ridimensionate per legittimare la sottomissione al KPI.",
   red:
-    "Le voci morali e centrali vengono messe a tacere in favore di voci quantitative anche periferiche: la razionalità performativa colonizza il Sé e l'akrasia diventa dissonanza aperta.",
+    "Le voci morali e centrali vengono messe a tacere in favore di voci quantitative anche periferiche: la razionalità neoliberista colonizza il Sé e l'akrasia diventa dissonanza aperta.",
 };
 
 const DIAGNOSTIC_HEX: Record<DiagnosticColor, string> = {
-  green: "#4c9b6b",
   yellow: "#d4b23a",
   orange: "#d78544",
   red: "#c14b45",
@@ -814,7 +810,7 @@ function classifyScenario(profile: Profile, sid: ScenarioId): DiagnosticColor {
 
   if (wins.length === 0 || loses.length === 0) {
     // fallback su polarità della scelta
-    if (e.choice === "A") return "green";
+    if (e.choice === "A") return "yellow";
     if (e.choice === "C") return "yellow";
     if (e.choice === "B") return "orange";
     return "yellow";
@@ -839,10 +835,11 @@ function classifyScenario(profile: Profile, sid: ScenarioId): DiagnosticColor {
     loses.length;
 
   // Regole:
-  //  - GREEN: le vincenti sono più morali (continuum più basso) e almeno
-  //    tanto grandi quanto le perdenti → coerenza con il Sé centrale morale.
+  //  - YELLOW (Continente razionalizzato): le vincenti sono più morali
+  //    (continuum più basso) e almeno tanto grandi quanto le perdenti →
+  //    coerenza con il Sé centrale morale.
   if (avgContWin < avgContLose - 5 && avgRadWin >= avgRadLose - 2) {
-    return "green";
+    return "yellow";
   }
   //  - RED: le perdenti sono più morali e più grandi delle vincenti che
   //    invece sono razionali → sottomissione aperta.
@@ -988,9 +985,9 @@ function AggregateAnalysis({
   // distribuzione diagnostica per scenario
   const dist = useMemo(() => {
     const out: Record<ScenarioId, Record<DiagnosticColor, number>> = {
-      s1: { green: 0, yellow: 0, orange: 0, red: 0 },
-      s2: { green: 0, yellow: 0, orange: 0, red: 0 },
-      s3: { green: 0, yellow: 0, orange: 0, red: 0 },
+      s1: { yellow: 0, orange: 0, red: 0 },
+      s2: { yellow: 0, orange: 0, red: 0 },
+      s3: { yellow: 0, orange: 0, red: 0 },
     };
     for (const p of profiles) {
       for (const s of SCENARIOS) {
