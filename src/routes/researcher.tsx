@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
 import { SelfGraph, type DiagnosticColor } from "@/components/SelfGraph";
 import { InterviewSection } from "@/components/InterviewSection";
 import { buildSegments, MATRIX_LABEL } from "@/lib/lexicon";
@@ -278,6 +279,11 @@ function ProfileAnalysis({
     return map;
   }, [activeScenario, diagnostics, profile]);
 
+  const emphasizedIds: string[] | undefined = useMemo(() => {
+    if (!activeScenario) return undefined;
+    return profile.scenarios[activeScenario].winningVoiceIds;
+  }, [activeScenario, profile]);
+
   return (
     <>
       {/* Section 1: session info */}
@@ -316,7 +322,7 @@ function ProfileAnalysis({
       </Card>
 
       {/* Section 2: graph */}
-      <Card title="Sezione 2 · Grafico del Sé & Diagnostica Cromatica">
+      <Card title="Sezione 2 · Grafico del Sé & Esiti Scenari Akratici">
         <div className="grid gap-4 md:grid-cols-[1fr_260px] items-start">
           <div
             className="flex justify-center"
@@ -334,13 +340,14 @@ function ProfileAnalysis({
                 positions={profile.positions}
                 continuum={profile.continuum}
                 highlights={highlights}
+                emphasizedIds={emphasizedIds}
               />
             </div>
           </div>
           <div className="space-y-3">
             <div className="rounded-md border border-border bg-background p-4 text-xs">
               <div className="mb-2 text-[10px] uppercase tracking-widest text-muted-foreground">
-                Sovrapponi diagnostica scenario
+                Esito Vignetta Narrativa
               </div>
               <div className="flex flex-wrap gap-1">
                 <button
@@ -480,7 +487,7 @@ function ProfileAnalysis({
       </Card>
 
       {/* Section 5: scenarios */}
-      <Card title="Sezione 5 · Analisi Scenari di Akrasia">
+      <Card title="Sezione 5 · Analisi Scenari Akratici">
         <div className="space-y-6">
           {SCENARIOS.map((s) => {
             const e = profile.scenarios[s.id];
@@ -533,9 +540,10 @@ function ProfileAnalysis({
                     tone="lose"
                   />
                 </div>
-                <p className="mt-4 rounded border border-border bg-muted/40 p-3 text-xs italic leading-relaxed text-muted-foreground">
-                  {DIAGNOSTIC_DESCRIPTION[diag]}
-                </p>
+                <ClinicalNoteField
+                  participantId={profile.participantId}
+                  scenarioId={s.id}
+                />
               </article>
             );
           })}
@@ -543,10 +551,38 @@ function ProfileAnalysis({
       </Card>
 
       {/* Section 6: interview */}
-      <Card title="Sezione 6 · Intervista Post-Test & Codifica Qualitativa">
+      <Card title="Sezione 6 · Intervista Post-Test & Analisi Qualitativa">
         <InterviewSection participantId={profile.participantId} />
       </Card>
     </>
+  );
+}
+
+function ClinicalNoteField({
+  participantId,
+  scenarioId,
+}: {
+  participantId: string;
+  scenarioId: ScenarioId;
+}) {
+  const value = useResearchStore(
+    (s) => s.clinicalNotes[participantId]?.[scenarioId] ?? "",
+  );
+  const setClinicalNote = useResearchStore((s) => s.setClinicalNote);
+  return (
+    <div className="mt-4">
+      <div className="mb-2 text-[10px] uppercase tracking-widest text-muted-foreground">
+        Note cliniche del ricercatore
+      </div>
+      <Textarea
+        value={value}
+        onChange={(e) =>
+          setClinicalNote(participantId, scenarioId, e.target.value)
+        }
+        placeholder="Digita qui le tue note, riflessioni e ipotesi cliniche relative a questo scenario…"
+        className="min-h-[120px] text-sm leading-relaxed"
+      />
+    </div>
   );
 }
 
@@ -713,25 +749,21 @@ function formatDuration(startedAt: number, endedAt?: number): string {
 // ---------- Diagnostic classification ----------
 
 const DIAGNOSTIC_LABEL: Record<DiagnosticColor, string> = {
-  green: "Continente",
-  yellow: "Negoziazione neoliberista",
-  orange: "Razionalizzazione neoliberista",
-  red: "Sottomissione razionalista",
+  yellow: "Continente razionalizzato",
+  orange: "Akrasia razionalizzata",
+  red: "Akrasia neoliberista",
 };
 
 const DIAGNOSTIC_DESCRIPTION: Record<DiagnosticColor, string> = {
-  green:
-    "Il partecipante mantiene la coerenza con le voci più centrali e orientate al benessere; l'akrasia è contenuta e la decisione è assunta come atto di autodeterminazione.",
   yellow:
-    "Il conflitto viene disinnescato attraverso un compromesso pragmatico: voci performative e voci di cura vengono negoziate senza risoluzione, dando priorità al mantenimento del quadro produttivo.",
+    "Il partecipante mantiene la coerenza con le voci più orientate al benessere: l'akrasia è contenuta e la decisione è razionalizzata come atto di autodeterminazione.",
   orange:
-    "La scelta è razionalizzata a favore della logica produttiva: le voci più grandi e orientate al benessere vengono argomentativamente ridimensionate per legittimare la sottomissione al KPI.",
+    "La scelta è razionalizzata a favore della logica produttiva: le voci morali vengono argomentativamente ridimensionate per legittimare la sottomissione al KPI.",
   red:
-    "Le voci morali e centrali vengono messe a tacere in favore di voci quantitative anche periferiche: la razionalità performativa colonizza il Sé e l'akrasia diventa dissonanza aperta.",
+    "Le voci morali e centrali vengono messe a tacere in favore di voci quantitative anche periferiche: la razionalità neoliberista colonizza il Sé e l'akrasia diventa dissonanza aperta.",
 };
 
 const DIAGNOSTIC_HEX: Record<DiagnosticColor, string> = {
-  green: "#4c9b6b",
   yellow: "#d4b23a",
   orange: "#d78544",
   red: "#c14b45",
@@ -778,7 +810,7 @@ function classifyScenario(profile: Profile, sid: ScenarioId): DiagnosticColor {
 
   if (wins.length === 0 || loses.length === 0) {
     // fallback su polarità della scelta
-    if (e.choice === "A") return "green";
+    if (e.choice === "A") return "yellow";
     if (e.choice === "C") return "yellow";
     if (e.choice === "B") return "orange";
     return "yellow";
@@ -803,10 +835,11 @@ function classifyScenario(profile: Profile, sid: ScenarioId): DiagnosticColor {
     loses.length;
 
   // Regole:
-  //  - GREEN: le vincenti sono più morali (continuum più basso) e almeno
-  //    tanto grandi quanto le perdenti → coerenza con il Sé centrale morale.
+  //  - YELLOW (Continente razionalizzato): le vincenti sono più morali
+  //    (continuum più basso) e almeno tanto grandi quanto le perdenti →
+  //    coerenza con il Sé centrale morale.
   if (avgContWin < avgContLose - 5 && avgRadWin >= avgRadLose - 2) {
-    return "green";
+    return "yellow";
   }
   //  - RED: le perdenti sono più morali e più grandi delle vincenti che
   //    invece sono razionali → sottomissione aperta.
@@ -952,9 +985,9 @@ function AggregateAnalysis({
   // distribuzione diagnostica per scenario
   const dist = useMemo(() => {
     const out: Record<ScenarioId, Record<DiagnosticColor, number>> = {
-      s1: { green: 0, yellow: 0, orange: 0, red: 0 },
-      s2: { green: 0, yellow: 0, orange: 0, red: 0 },
-      s3: { green: 0, yellow: 0, orange: 0, red: 0 },
+      s1: { yellow: 0, orange: 0, red: 0 },
+      s2: { yellow: 0, orange: 0, red: 0 },
+      s3: { yellow: 0, orange: 0, red: 0 },
     };
     for (const p of profiles) {
       for (const s of SCENARIOS) {

@@ -167,6 +167,7 @@ interface ResearchState {
   narrativeColonization: Record<string, string[]>;
   scenarios: Record<ScenarioId, ScenarioEntry>;
   interviews: Record<string, InterviewData>;
+  clinicalNotes: Record<string, Partial<Record<ScenarioId, string>>>;
   setConsent: (v: boolean) => void;
   setParticipantId: (v: string) => void;
   setContext: (v: Context) => void;
@@ -189,6 +190,7 @@ interface ResearchState {
   addAnnotation: (pid: string, ann: Omit<Annotation, "id">) => void;
   updateAnnotation: (pid: string, annId: string, note: string) => void;
   removeAnnotation: (pid: string, annId: string) => void;
+  setClinicalNote: (pid: string, sid: ScenarioId, note: string) => void;
 }
 
 export interface Annotation {
@@ -276,6 +278,7 @@ export const useResearchStore = create<ResearchState>((set) => ({
     s3: emptyScenario(),
   },
   interviews: {},
+  clinicalNotes: {},
   setConsent: (v) => set({ consent: v }),
   setParticipantId: (v) => set({ participantId: v }),
   setContext: (v) => set({ context: v }),
@@ -423,6 +426,16 @@ export const useResearchStore = create<ResearchState>((set) => ({
             ...prev,
             annotations: prev.annotations.filter((a) => a.id !== annId),
           },
+        },
+      };
+    }),
+  setClinicalNote: (pid, sid, note) =>
+    set((s) => {
+      const prev = s.clinicalNotes[pid] ?? {};
+      return {
+        clinicalNotes: {
+          ...s.clinicalNotes,
+          [pid]: { ...prev, [sid]: note },
         },
       };
     }),
