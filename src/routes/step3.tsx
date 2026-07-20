@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -28,6 +28,24 @@ function Step3() {
   const endSession = useResearchStore((s) => s.endSession);
 
   const [idx, setIdx] = useState(0);
+
+  // Ordine di presentazione delle opzioni A/B/C mescolato per sessione
+  // (evita bias di posizione). Stabilizzato in useState per non rimescolare
+  // ad ogni render.
+  const displayOrder = useMemo<Record<ScenarioId, ScenarioChoice[]>>(() => {
+    const shuffle = <T,>(a: T[]) =>
+      a
+        .map((v) => ({ v, k: Math.random() }))
+        .sort((x, y) => x.k - y.k)
+        .map(({ v }) => v);
+    const base: ScenarioChoice[] = ["A", "B", "C"];
+    return {
+      s1: shuffle(base),
+      s2: shuffle(base),
+      s3: shuffle(base),
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (positions.length === 0) {
     return (
@@ -71,23 +89,17 @@ function Step3() {
   const OPTIONS: {
     k: ScenarioChoice;
     tag: string;
-    polarity: string;
     label: string;
-  }[] = [
-    { k: "A", tag: "Opzione A", polarity: "Autotutela", label: scenario.optionA },
-    {
-      k: "B",
-      tag: "Opzione B",
-      polarity: "Iper-performance",
-      label: scenario.optionB,
-    },
-    {
-      k: "C",
-      tag: "Opzione C",
-      polarity: "Via di mezzo",
-      label: scenario.optionC,
-    },
-  ];
+  }[] = displayOrder[scenario.id].map((k, i) => ({
+    k,
+    tag: `Opzione ${String.fromCharCode(65 + i)}`,
+    label:
+      k === "A"
+        ? scenario.optionA
+        : k === "B"
+          ? scenario.optionB
+          : scenario.optionC,
+  }));
 
   return (
     <main className="min-h-screen bg-background text-foreground">
@@ -202,9 +214,8 @@ function Step3() {
                           : "border-border bg-background hover:border-foreground/40",
                       )}
                     >
-                      <div className="mb-1 flex items-center justify-between text-[10px] uppercase tracking-widest text-muted-foreground">
-                        <span>{o.tag}</span>
-                        <span>{o.polarity}</span>
+                      <div className="mb-1 text-[10px] uppercase tracking-widest text-muted-foreground">
+                        {o.tag}
                       </div>
                       {o.label}
                     </button>

@@ -29,6 +29,19 @@ function Step2() {
   const [phase, setPhase] = useState<Phase>("A");
   const [posIdx, setPosIdx] = useState(0);
   const [narrIdx, setNarrIdx] = useState(0);
+  const [touched, setTouched] = useState<Set<string>>(new Set());
+  const allPositioned =
+    positions.length > 0 && positions.every((p) => touched.has(p.id));
+
+  const handleContinuumChange = (id: string, v: number) => {
+    setContinuumValue(id, v);
+    setTouched((prev) => {
+      if (prev.has(id)) return prev;
+      const next = new Set(prev);
+      next.add(id);
+      return next;
+    });
+  };
 
   if (positions.length === 0) {
     return (
@@ -80,12 +93,18 @@ function Step2() {
             Fase A · Continuum
           </button>
           <button
-            onClick={() => setPhase("B")}
+            onClick={() => allPositioned && setPhase("B")}
+            disabled={!allPositioned}
+            title={
+              allPositioned
+                ? undefined
+                : "Posiziona prima tutte le voci sul continuum"
+            }
             className={`rounded px-3 py-1.5 uppercase tracking-widest transition-colors ${
               phase === "B"
                 ? "bg-foreground text-background"
                 : "text-muted-foreground hover:text-foreground"
-            }`}
+            } ${!allPositioned ? "cursor-not-allowed opacity-40" : ""}`}
           >
             Fase B · Colonizzazione
           </button>
@@ -139,7 +158,7 @@ function Step2() {
                     max={100}
                     step={1}
                     onValueChange={(v) =>
-                      setContinuumValue(activePos.id, v[0] ?? 50)
+                      handleContinuumChange(activePos.id, v[0] ?? 50)
                     }
                     aria-label={`Continuum per ${activePos.label}`}
                   />
@@ -161,6 +180,13 @@ function Step2() {
                   </div>
                 </div>
 
+                {!allPositioned && (
+                  <p className="mt-6 rounded-md border border-dashed border-border bg-background p-3 text-[11px] leading-relaxed text-muted-foreground">
+                    Sposta manualmente il cursore per ogni voce ({touched.size}/
+                    {positions.length} completate) prima di procedere alla Fase
+                    B.
+                  </p>
+                )}
                 <div className="mt-8 flex items-center justify-between border-t border-border pt-4">
                   <Button
                     variant="outline"
@@ -180,7 +206,11 @@ function Step2() {
                       Successiva →
                     </Button>
                   ) : (
-                    <Button size="sm" onClick={() => setPhase("B")}>
+                    <Button
+                      size="sm"
+                      disabled={!allPositioned}
+                      onClick={() => setPhase("B")}
+                    >
                       Vai a Fase B →
                     </Button>
                   )}
@@ -289,9 +319,15 @@ function Step2() {
           <Button variant="ghost" asChild>
             <Link to="/step1">← Indietro</Link>
           </Button>
-          <Button asChild>
-            <Link to="/step3">Avanti →</Link>
-          </Button>
+          {allPositioned ? (
+            <Button asChild>
+              <Link to="/step3">Avanti →</Link>
+            </Button>
+          ) : (
+            <Button disabled title="Posiziona prima tutte le voci sul continuum">
+              Avanti →
+            </Button>
+          )}
         </div>
       </div>
     </main>
