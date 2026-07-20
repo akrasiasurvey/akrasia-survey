@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
 import { SelfGraph, type DiagnosticColor } from "@/components/SelfGraph";
 import { InterviewSection } from "@/components/InterviewSection";
 import { buildSegments, MATRIX_LABEL } from "@/lib/lexicon";
@@ -278,6 +279,11 @@ function ProfileAnalysis({
     return map;
   }, [activeScenario, diagnostics, profile]);
 
+  const emphasizedIds: string[] | undefined = useMemo(() => {
+    if (!activeScenario) return undefined;
+    return profile.scenarios[activeScenario].winningVoiceIds;
+  }, [activeScenario, profile]);
+
   return (
     <>
       {/* Section 1: session info */}
@@ -316,7 +322,7 @@ function ProfileAnalysis({
       </Card>
 
       {/* Section 2: graph */}
-      <Card title="Sezione 2 · Grafico del Sé & Diagnostica Cromatica">
+      <Card title="Sezione 2 · Grafico del Sé & Esiti Scenari Akratici">
         <div className="grid gap-4 md:grid-cols-[1fr_260px] items-start">
           <div
             className="flex justify-center"
@@ -334,13 +340,14 @@ function ProfileAnalysis({
                 positions={profile.positions}
                 continuum={profile.continuum}
                 highlights={highlights}
+                emphasizedIds={emphasizedIds}
               />
             </div>
           </div>
           <div className="space-y-3">
             <div className="rounded-md border border-border bg-background p-4 text-xs">
               <div className="mb-2 text-[10px] uppercase tracking-widest text-muted-foreground">
-                Sovrapponi diagnostica scenario
+                Esito Vignetta Narrativa
               </div>
               <div className="flex flex-wrap gap-1">
                 <button
@@ -480,7 +487,7 @@ function ProfileAnalysis({
       </Card>
 
       {/* Section 5: scenarios */}
-      <Card title="Sezione 5 · Analisi Scenari di Akrasia">
+      <Card title="Sezione 5 · Analisi Scenari Akratici">
         <div className="space-y-6">
           {SCENARIOS.map((s) => {
             const e = profile.scenarios[s.id];
@@ -533,9 +540,10 @@ function ProfileAnalysis({
                     tone="lose"
                   />
                 </div>
-                <p className="mt-4 rounded border border-border bg-muted/40 p-3 text-xs italic leading-relaxed text-muted-foreground">
-                  {DIAGNOSTIC_DESCRIPTION[diag]}
-                </p>
+                <ClinicalNoteField
+                  participantId={profile.participantId}
+                  scenarioId={s.id}
+                />
               </article>
             );
           })}
@@ -543,10 +551,38 @@ function ProfileAnalysis({
       </Card>
 
       {/* Section 6: interview */}
-      <Card title="Sezione 6 · Intervista Post-Test & Codifica Qualitativa">
+      <Card title="Sezione 6 · Intervista Post-Test & Analisi Qualitativa">
         <InterviewSection participantId={profile.participantId} />
       </Card>
     </>
+  );
+}
+
+function ClinicalNoteField({
+  participantId,
+  scenarioId,
+}: {
+  participantId: string;
+  scenarioId: ScenarioId;
+}) {
+  const value = useResearchStore(
+    (s) => s.clinicalNotes[participantId]?.[scenarioId] ?? "",
+  );
+  const setClinicalNote = useResearchStore((s) => s.setClinicalNote);
+  return (
+    <div className="mt-4">
+      <div className="mb-2 text-[10px] uppercase tracking-widest text-muted-foreground">
+        Note cliniche del ricercatore
+      </div>
+      <Textarea
+        value={value}
+        onChange={(e) =>
+          setClinicalNote(participantId, scenarioId, e.target.value)
+        }
+        placeholder="Digita qui le tue note, riflessioni e ipotesi cliniche relative a questo scenario…"
+        className="min-h-[120px] text-sm leading-relaxed"
+      />
+    </div>
   );
 }
 
