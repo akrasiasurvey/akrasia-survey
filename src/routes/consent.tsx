@@ -31,7 +31,15 @@ function Consent() {
             </h2>
             <p className="mt-2">
               Ricerca universitaria sulla dinamica del Sé e sui processi
-              decisionali in contesti professionali ad alta performance.
+              decisionali in contesti professionali ad alta performance. Lo
+              studio intende indagare la possibilità che l'akrasia —
+              intesa come fenomeno del fallimento dell'agire secondo il
+              proprio miglior giudizio, ovvero l'incontinenza decisionale in
+              cui la persona compie consapevolmente un'azione che va contro
+              la propria valutazione morale o priorità profonda — sia
+              negoziata dialogicamente in contesti altamente performativi,
+              sotto la spinta delle narrazioni neoliberiste dell'efficienza
+              e dell'ottimizzazione.
             </p>
           </section>
           <section>
@@ -40,7 +48,12 @@ function Consent() {
             </h2>
             <p className="mt-2">
               Mappatura grafica del Sé e risposta a scenari di dilemma
-              quotidiano. Durata stimata: 15 minuti.
+              quotidiano. La procedura include: il posizionamento delle voci
+              del Sé sul continuum di commisurazione, la valutazione delle
+              narrazioni sociali che le colonizzano, la risposta a tre
+              vignette di scelta akratica e la successiva intervista
+              dialogica di approfondimento. Durata stimata: 15-20 minuti
+              per la prima parte e 10-15 minuti per l'intervista.
             </p>
           </section>
           <section>

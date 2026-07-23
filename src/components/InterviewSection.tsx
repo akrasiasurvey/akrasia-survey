@@ -307,7 +307,7 @@ function LexiconLegend() {
   return (
     <div className="rounded-md border border-border bg-background p-4">
       <div className="mb-2 text-[10px] uppercase tracking-widest text-muted-foreground">
-        Legenda - Analisi Dialogica del Discorso
+        Legenda - Marcatura lessicale automatica
       </div>
       <div className="flex flex-wrap gap-x-6 gap-y-2 text-xs">
         {(["neolib", "rationalist"] as LexiconMatrix[]).map((m) => (
