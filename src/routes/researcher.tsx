@@ -182,6 +182,25 @@ function Dashboard() {
         </div>
       </header>
 
+      <div className="mx-auto max-w-7xl px-6 pt-6">
+        <div
+          role="note"
+          className="rounded-md border-l-4 border border-border bg-muted/40 p-4 text-sm leading-relaxed"
+          style={{ borderLeftColor: "#4a9d6c" }}
+        >
+          <div className="mb-1 text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
+            Avvertenza metodologica
+          </div>
+          <p>
+            I dati e gli esiti visualizzati in questa dashboard hanno un valore
+            puramente euristico e di orientamento per il ricercatore. Servono
+            da guida per la conduzione dell'intervista semistrutturata e per
+            la successiva Analisi Dialogica del Discorso (DDA), a cui è
+            subordinata ogni interpretazione finale del fenomeno.
+          </p>
+        </div>
+      </div>
+
       <div className="mx-auto grid max-w-7xl gap-6 px-6 py-8 lg:grid-cols-[280px_1fr]">
         {/* LEFT: participants list */}
         <aside className="space-y-2">
