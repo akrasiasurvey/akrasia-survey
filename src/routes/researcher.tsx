@@ -749,12 +749,15 @@ function formatDuration(startedAt: number, endedAt?: number): string {
 // ---------- Diagnostic classification ----------
 
 const DIAGNOSTIC_LABEL: Record<DiagnosticColor, string> = {
+  green: "Continente",
   yellow: "Continente razionalizzato",
   orange: "Akrasia razionalizzata",
   red: "Akrasia neoliberista",
 };
 
 const DIAGNOSTIC_DESCRIPTION: Record<DiagnosticColor, string> = {
+  green:
+    "Le voci più centrali e orientate al benessere prevalgono senza essere ricodificate in termini performativi: la decisione è coerente con il Sé morale e l'akrasia non emerge.",
   yellow:
     "Il partecipante mantiene la coerenza con le voci più orientate al benessere: l'akrasia è contenuta e la decisione è razionalizzata come atto di autodeterminazione.",
   orange:
@@ -764,6 +767,7 @@ const DIAGNOSTIC_DESCRIPTION: Record<DiagnosticColor, string> = {
 };
 
 const DIAGNOSTIC_HEX: Record<DiagnosticColor, string> = {
+  green: "#4a9d6c",
   yellow: "#d4b23a",
   orange: "#d78544",
   red: "#c14b45",
@@ -985,9 +989,9 @@ function AggregateAnalysis({
   // distribuzione diagnostica per scenario
   const dist = useMemo(() => {
     const out: Record<ScenarioId, Record<DiagnosticColor, number>> = {
-      s1: { yellow: 0, orange: 0, red: 0 },
-      s2: { yellow: 0, orange: 0, red: 0 },
-      s3: { yellow: 0, orange: 0, red: 0 },
+      s1: { green: 0, yellow: 0, orange: 0, red: 0 },
+      s2: { green: 0, yellow: 0, orange: 0, red: 0 },
+      s3: { green: 0, yellow: 0, orange: 0, red: 0 },
     };
     for (const p of profiles) {
       for (const s of SCENARIOS) {
