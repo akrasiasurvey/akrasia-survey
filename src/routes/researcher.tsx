@@ -272,13 +272,15 @@ function ProfileAnalysis({
   showNumbers: boolean;
 }) {
   const [hoverId, setHoverId] = useState<string | null>(null);
+  const [pinnedId, setPinnedId] = useState<string | null>(null);
   const [activeScenario, setActiveScenario] = useState<ScenarioId | null>(null);
   const interview = useResearchStore(
     (s) => s.interviews[profile.participantId],
   ) as InterviewData | undefined;
-  const hovered = profile.positions.find((p) => p.id === hoverId);
+  const displayId = pinnedId ?? hoverId;
+  const hovered = profile.positions.find((p) => p.id === displayId);
   const hoveredValue =
-    hoverId != null ? profile.continuum[hoverId]?.value ?? 50 : null;
+    displayId != null ? profile.continuum[displayId]?.value ?? 50 : null;
 
   const diagnostics = useMemo(
     () =>
@@ -360,6 +362,10 @@ function ProfileAnalysis({
                 continuum={profile.continuum}
                 highlights={highlights}
                 emphasizedIds={emphasizedIds}
+                selectedIds={pinnedId ? [pinnedId] : undefined}
+                onSelect={(id) =>
+                  setPinnedId((prev) => (prev === id ? null : id))
+                }
               />
             </div>
           </div>
@@ -424,10 +430,19 @@ function ProfileAnalysis({
                     </span>
                   )}
                 </div>
+                {pinnedId === hovered.id && (
+                  <button
+                    onClick={() => setPinnedId(null)}
+                    className="mt-3 text-[10px] uppercase tracking-widest text-muted-foreground underline hover:text-foreground"
+                  >
+                    Sblocca dettagli
+                  </button>
+                )}
               </>
             ) : (
               <p className="text-muted-foreground">
-                Passa il mouse su un cerchio per visualizzare i dettagli.
+                Passa il mouse su un cerchio per visualizzare i dettagli, o
+                clicca per fissarli a schermo.
               </p>
             )}
             </div>
