@@ -1220,7 +1220,73 @@ function exportAllJSON(
   );
 }
 
-function exportProfilePDF(
+async function svgElementToPngDataUrl(
+  svgMarkup: string,
+  targetWidth: number,
+): Promise<{ dataUrl: string; width: number; height: number }> {
+  const withXmlns = svgMarkup.includes("xmlns=")
+    ? svgMarkup
+    : svgMarkup.replace("<svg", '<svg xmlns="http://www.w3.org/2000/svg"');
+  const svg64 = btoa(unescape(encodeURIComponent(withXmlns)));
+  const src = `data:image/svg+xml;base64,${svg64}`;
+  return await new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => {
+      const w = img.width || 620;
+      const h = img.height || 620;
+      const scale = targetWidth / w;
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.round(w * scale * 2);
+      canvas.height = Math.round(h * scale * 2);
+      const ctx = canvas.getContext("2d");
+      if (!ctx) {
+        reject(new Error("canvas ctx"));
+        return;
+      }
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      resolve({
+        dataUrl: canvas.toDataURL("image/png"),
+        width: targetWidth,
+        height: targetWidth * (h / w),
+      });
+    };
+    img.onerror = () => reject(new Error("svg image load failed"));
+    img.src = src;
+  });
+}
+
+async function renderSelfGraphImage(
+  profile: Profile,
+  targetWidth: number,
+): Promise<{ dataUrl: string; width: number; height: number } | null> {
+  try {
+    const markup = renderToStaticMarkup(
+      <SelfGraph
+        positions={profile.positions}
+        continuum={profile.continuum}
+      />,
+    );
+    // Inline SVG colors (SelfGraph uses CSS custom properties). Replace
+    // the few var(--...) references with concrete values so the raster
+    // rendering does not depend on the current document stylesheet.
+    const inlined = markup
+      .replace(/var\(--color-border\)/g, "#dcdce0")
+      .replace(/var\(--color-muted\)/g, "#f4f4f2")
+      .replace(/currentColor/g, "#6e7480");
+    // Force explicit width so the browser can measure the SVG.
+    const sized = inlined.replace(
+      /<svg([^>]*)>/,
+      '<svg$1 width="620" height="620">',
+    );
+    return await svgElementToPngDataUrl(sized, targetWidth);
+  } catch {
+    return null;
+  }
+}
+
+async function exportProfilePDF(
   profile: Profile,
   diagnostics: Record<ScenarioId, DiagnosticColor>,
   interview?: InterviewData,
@@ -1387,6 +1453,17 @@ function exportProfilePDF(
   kv("Apertura sessione", formatDateTime(profile.startedAt), 0);
   kv("Durata sessione", formatDuration(profile.startedAt, profile.endedAt), 1);
   y += 32;
+
+  // Section: Grafico del Sé (raster snapshot of the on-screen SVG)
+  uppercase("Grafico del Sé — Società del Sé", { size: 8 });
+  rule();
+  const graph = await renderSelfGraphImage(profile, CONTENT_W * 0.72);
+  if (graph) {
+    ensureSpace(graph.height + 12);
+    const gx = M + (CONTENT_W - graph.width) / 2;
+    doc.addImage(graph.dataUrl, "PNG", gx, y, graph.width, graph.height);
+    y += graph.height + 14;
+  }
 
   // Section: Struttura del Sé
   uppercase("Sezione 1 · Struttura del Sé", { size: 8 });
