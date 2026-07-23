@@ -31,7 +31,8 @@ function Welcome() {
                   Accedi come Partecipante
                 </h2>
                 <p className="mt-2 text-sm text-muted-foreground">
-                  Avvia il flusso della ricerca. Durata stimata: 15 minuti.
+                  Avvia il flusso della ricerca. Durata stimata: 15-20 minuti
+                  per la prima parte e 10-15 minuti per l'intervista.
                 </p>
               </div>
               <span className="mt-8 text-xs uppercase tracking-widest text-foreground">
