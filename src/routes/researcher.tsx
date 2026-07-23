@@ -22,6 +22,7 @@ import {
 import { DEMO_PROFILES, type Profile } from "@/data/demoProfiles";
 import { cn } from "@/lib/utils";
 import jsPDF from "jspdf";
+import { renderToStaticMarkup } from "react-dom/server";
 
 export const Route = createFileRoute("/researcher")({
   component: Researcher,
