@@ -138,15 +138,17 @@ export interface SelfGraphProps {
   emphasizedIds?: string[];
 }
 
-export type DiagnosticColor = "yellow" | "orange" | "red";
+export type DiagnosticColor = "green" | "yellow" | "orange" | "red";
 
 const DIAGNOSTIC_STROKE: Record<DiagnosticColor, string> = {
+  green: "oklch(0.60 0.16 150)",
   yellow: "oklch(0.80 0.17 90)",
   orange: "oklch(0.68 0.18 55)",
   red: "oklch(0.58 0.22 25)",
 };
 
 const DIAGNOSTIC_FILL: Record<DiagnosticColor, string> = {
+  green: "oklch(0.85 0.14 150)",
   yellow: "oklch(0.90 0.15 90)",
   orange: "oklch(0.85 0.14 55)",
   red: "oklch(0.80 0.15 25)",

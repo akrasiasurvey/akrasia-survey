@@ -182,6 +182,25 @@ function Dashboard() {
         </div>
       </header>
 
+      <div className="mx-auto max-w-7xl px-6 pt-6">
+        <div
+          role="note"
+          className="rounded-md border-l-4 border border-border bg-muted/40 p-4 text-sm leading-relaxed"
+          style={{ borderLeftColor: "#4a9d6c" }}
+        >
+          <div className="mb-1 text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
+            Avvertenza metodologica
+          </div>
+          <p>
+            I dati e gli esiti visualizzati in questa dashboard hanno un valore
+            puramente euristico e di orientamento per il ricercatore. Servono
+            da guida per la conduzione dell'intervista semistrutturata e per
+            la successiva Analisi Dialogica del Discorso (DDA), a cui è
+            subordinata ogni interpretazione finale del fenomeno.
+          </p>
+        </div>
+      </div>
+
       <div className="mx-auto grid max-w-7xl gap-6 px-6 py-8 lg:grid-cols-[280px_1fr]">
         {/* LEFT: participants list */}
         <aside className="space-y-2">
@@ -253,13 +272,15 @@ function ProfileAnalysis({
   showNumbers: boolean;
 }) {
   const [hoverId, setHoverId] = useState<string | null>(null);
+  const [pinnedId, setPinnedId] = useState<string | null>(null);
   const [activeScenario, setActiveScenario] = useState<ScenarioId | null>(null);
   const interview = useResearchStore(
     (s) => s.interviews[profile.participantId],
   ) as InterviewData | undefined;
-  const hovered = profile.positions.find((p) => p.id === hoverId);
+  const displayId = pinnedId ?? hoverId;
+  const hovered = profile.positions.find((p) => p.id === displayId);
   const hoveredValue =
-    hoverId != null ? profile.continuum[hoverId]?.value ?? 50 : null;
+    displayId != null ? profile.continuum[displayId]?.value ?? 50 : null;
 
   const diagnostics = useMemo(
     () =>
@@ -341,6 +362,10 @@ function ProfileAnalysis({
                 continuum={profile.continuum}
                 highlights={highlights}
                 emphasizedIds={emphasizedIds}
+                selectedIds={pinnedId ? [pinnedId] : undefined}
+                onSelect={(id) =>
+                  setPinnedId((prev) => (prev === id ? null : id))
+                }
               />
             </div>
           </div>
@@ -405,10 +430,19 @@ function ProfileAnalysis({
                     </span>
                   )}
                 </div>
+                {pinnedId === hovered.id && (
+                  <button
+                    onClick={() => setPinnedId(null)}
+                    className="mt-3 text-[10px] uppercase tracking-widest text-muted-foreground underline hover:text-foreground"
+                  >
+                    Sblocca dettagli
+                  </button>
+                )}
               </>
             ) : (
               <p className="text-muted-foreground">
-                Passa il mouse su un cerchio per visualizzare i dettagli.
+                Passa il mouse su un cerchio per visualizzare i dettagli, o
+                clicca per fissarli a schermo.
               </p>
             )}
             </div>
@@ -551,7 +585,7 @@ function ProfileAnalysis({
       </Card>
 
       {/* Section 6: interview */}
-      <Card title="Sezione 6 · Intervista Post-Test & Analisi Qualitativa">
+      <Card title="Sezione 6 · Intervista Post-Test & Analisi Dialogica del Discorso">
         <InterviewSection participantId={profile.participantId} />
       </Card>
     </>
@@ -749,12 +783,15 @@ function formatDuration(startedAt: number, endedAt?: number): string {
 // ---------- Diagnostic classification ----------
 
 const DIAGNOSTIC_LABEL: Record<DiagnosticColor, string> = {
+  green: "Continente",
   yellow: "Continente razionalizzato",
   orange: "Akrasia razionalizzata",
   red: "Akrasia neoliberista",
 };
 
 const DIAGNOSTIC_DESCRIPTION: Record<DiagnosticColor, string> = {
+  green:
+    "Le voci più centrali e orientate al benessere prevalgono senza essere ricodificate in termini performativi: la decisione è coerente con il Sé morale e l'akrasia non emerge.",
   yellow:
     "Il partecipante mantiene la coerenza con le voci più orientate al benessere: l'akrasia è contenuta e la decisione è razionalizzata come atto di autodeterminazione.",
   orange:
@@ -764,6 +801,7 @@ const DIAGNOSTIC_DESCRIPTION: Record<DiagnosticColor, string> = {
 };
 
 const DIAGNOSTIC_HEX: Record<DiagnosticColor, string> = {
+  green: "#4a9d6c",
   yellow: "#d4b23a",
   orange: "#d78544",
   red: "#c14b45",
@@ -810,10 +848,10 @@ function classifyScenario(profile: Profile, sid: ScenarioId): DiagnosticColor {
 
   if (wins.length === 0 || loses.length === 0) {
     // fallback su polarità della scelta
-    if (e.choice === "A") return "yellow";
+    if (e.choice === "A") return "green";
     if (e.choice === "C") return "yellow";
     if (e.choice === "B") return "orange";
-    return "yellow";
+    return "green";
   }
 
   const avgRadWin = avg(wins.map((p) => p.radius));
@@ -839,6 +877,9 @@ function classifyScenario(profile: Profile, sid: ScenarioId): DiagnosticColor {
   //    (continuum più basso) e almeno tanto grandi quanto le perdenti →
   //    coerenza con il Sé centrale morale.
   if (avgContWin < avgContLose - 5 && avgRadWin >= avgRadLose - 2) {
+    // Continente puro: nessuna colonizzazione performativa sulle vincenti
+    // e nessuna razionalizzazione manifesta sulle perdenti.
+    if (winPerfShare === 0 && losePerfShare < 0.34) return "green";
     return "yellow";
   }
   //  - RED: le perdenti sono più morali e più grandi delle vincenti che
@@ -985,9 +1026,9 @@ function AggregateAnalysis({
   // distribuzione diagnostica per scenario
   const dist = useMemo(() => {
     const out: Record<ScenarioId, Record<DiagnosticColor, number>> = {
-      s1: { yellow: 0, orange: 0, red: 0 },
-      s2: { yellow: 0, orange: 0, red: 0 },
-      s3: { yellow: 0, orange: 0, red: 0 },
+      s1: { green: 0, yellow: 0, orange: 0, red: 0 },
+      s2: { green: 0, yellow: 0, orange: 0, red: 0 },
+      s3: { green: 0, yellow: 0, orange: 0, red: 0 },
     };
     for (const p of profiles) {
       for (const s of SCENARIOS) {

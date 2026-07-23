@@ -329,7 +329,8 @@ function LexiconLegend() {
       </div>
       <p className="mt-2 text-[11px] italic text-muted-foreground">
         La scansione è una guida visiva qualitativa: segnala la presenza dei
-        lemmi appartenenti alle due matrici senza produrre metriche numeriche.
+        lemmi appartenenti alle due matrici ma non assume valore
+        indipendentemente dall'analisi del ricercatore.
       </p>
     </div>
   );
