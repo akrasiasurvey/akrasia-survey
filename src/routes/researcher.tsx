@@ -551,7 +551,7 @@ function ProfileAnalysis({
       </Card>
 
       {/* Section 6: interview */}
-      <Card title="Sezione 6 · Intervista Post-Test & Analisi Qualitativa">
+      <Card title="Sezione 6 · Intervista Post-Test & Analisi Dialogica del Discorso">
         <InterviewSection participantId={profile.participantId} />
       </Card>
     </>
