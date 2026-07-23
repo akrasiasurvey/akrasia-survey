@@ -336,7 +336,9 @@ function ProfileAnalysis({
           <Button
             size="sm"
             variant="outline"
-            onClick={() => exportProfilePDF(profile, diagnostics, interview)}
+            onClick={() => {
+              void exportProfilePDF(profile, diagnostics, interview);
+            }}
           >
             Esporta PDF
           </Button>
