@@ -814,10 +814,10 @@ function classifyScenario(profile: Profile, sid: ScenarioId): DiagnosticColor {
 
   if (wins.length === 0 || loses.length === 0) {
     // fallback su polarità della scelta
-    if (e.choice === "A") return "yellow";
+    if (e.choice === "A") return "green";
     if (e.choice === "C") return "yellow";
     if (e.choice === "B") return "orange";
-    return "yellow";
+    return "green";
   }
 
   const avgRadWin = avg(wins.map((p) => p.radius));
@@ -843,6 +843,9 @@ function classifyScenario(profile: Profile, sid: ScenarioId): DiagnosticColor {
   //    (continuum più basso) e almeno tanto grandi quanto le perdenti →
   //    coerenza con il Sé centrale morale.
   if (avgContWin < avgContLose - 5 && avgRadWin >= avgRadLose - 2) {
+    // Continente puro: nessuna colonizzazione performativa sulle vincenti
+    // e nessuna razionalizzazione manifesta sulle perdenti.
+    if (winPerfShare === 0 && losePerfShare < 0.34) return "green";
     return "yellow";
   }
   //  - RED: le perdenti sono più morali e più grandi delle vincenti che
