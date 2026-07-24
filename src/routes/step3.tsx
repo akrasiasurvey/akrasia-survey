@@ -57,10 +57,10 @@ function Step3() {
 
         <div className="mt-6">
           <Instruction>
-            Leggi la spinta culturale presentata a sinistra. Seleziona
-            direttamente sul grafico a destra quali delle tue posizioni senti
-            influenzate, pressate o colonizzate da questa specifica
-            affermazione.
+            Leggi l'affermazione che rappresenta una narrazione culturalmente
+            diffusa presentata a sinistra. Seleziona direttamente sul grafico a
+            destra quali delle tue posizioni senti influenzate, pressate o
+            abitate da questa dichiarazione.
           </Instruction>
         </div>
 
