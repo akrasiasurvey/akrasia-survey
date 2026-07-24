@@ -67,8 +67,8 @@ function Step2() {
         <div className="mt-6">
           <Instruction>
             Per ciascuna delle tue posizioni, sposta il cursore lungo la linea
-            per indicare se è orientata a dimensioni interiori e morali
-            (sinistra) o a compiti quantificabili e scadenze (destra). Osserva
+            per indicare se è orientata a dimensioni morali e affettive
+            (sinistra) o a compiti quantificabili e razionali (destra). Osserva
             come cambia il perimetro del cerchio nel grafico.
           </Instruction>
         </div>
@@ -91,7 +91,8 @@ function Step2() {
                 {activePos.label}
               </h2>
               <p className="mt-3 text-sm text-muted-foreground">
-                Come solitamente valuti questa voce?
+                Come ti rapporti e valuti te stesso, gli altri e il mondo
+                attraverso questa voce?
               </p>
 
               <div className="mt-10">
@@ -110,7 +111,7 @@ function Step2() {
                     <span className="mb-1 block text-[9px] uppercase tracking-widest text-foreground/60">
                       Sinistra
                     </span>
-                    Dimensione valutativa interiore e morale (principi
+                    Dimensione valutativa morale e affettiva (principi
                     relazionali, benessere psicofisico).
                   </div>
                   <div className="text-right">
@@ -118,7 +119,7 @@ function Step2() {
                       Destra
                     </span>
                     Dimensione valutativa misurabile e razionale (compiti
-                    tangibili, performance, scadenze).
+                    tangibili, performance).
                   </div>
                 </div>
               </div>
@@ -167,11 +168,10 @@ function Step2() {
               </div>
               <p className="mt-4 border-t border-border pt-3 text-[11px] leading-relaxed text-muted-foreground">
                 <span className="font-medium text-foreground">—</span> Linea
-                continua: voce orientata a compiti e scadenze
+                continua: voce orientata a compiti e razionali
                 {"  |  "}
                 <span className="font-medium text-foreground">- -</span> Linea
-                tratteggiata: voce orientata a dimensioni interiori e
-                relazionali
+                tratteggiata: voce orientata a dimensioni morali e affettive
               </p>
             </div>
           </section>

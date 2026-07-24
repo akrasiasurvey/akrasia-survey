@@ -22,9 +22,9 @@ export default defineConfig({
   // the build produces only the client bundle under `dist/client/`.
   nitro: isPagesBuild ? false : undefined,
   vite: {
-    // GitHub Pages project site is served at /akrasia-survey/.
-    // Use an absolute base in production so JS/CSS chunks resolve correctly;
-    // relative base breaks nested routes on Pages.
-    base: process.env.NODE_ENV === "production" ? "/akrasia-survey/" : "/",
+    // GitHub Pages project site is served under the repository path. A
+    // relative base makes the SPA portable between the Lovable preview and
+    // the public repository, avoiding blank-screen or missing-asset issues.
+    base: process.env.NODE_ENV === "production" ? "./" : "/",
   },
 });

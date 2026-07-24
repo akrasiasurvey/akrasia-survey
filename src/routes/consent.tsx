@@ -60,8 +60,11 @@ function Consent() {
               Modalità di restituzione
             </h2>
             <p className="mt-2">
-              I risultati aggregati saranno analizzati esclusivamente
-              all'interno della tesi di ricerca dell'autore.
+              I risultati aggregati e le successive analisi saranno riportati
+              esclusivamente all'interno della tesi di ricerca per la quale si
+              stanno raccogliendo i dati. Per qualsiasi dubbio o interesse
+              specifico saranno fornite tutte le informazioni aggiuntive
+              necessarie a chiarirli.
             </p>
           </section>
           <section>
