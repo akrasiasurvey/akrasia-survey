@@ -49,23 +49,18 @@ export function StepGate({
         <p className="text-xs uppercase tracking-[0.25em] text-muted-foreground">
           Sezione bloccata
         </p>
-        <h1 className="mt-4 font-serif text-3xl font-medium">
-          Attenzione
-        </h1>
-        <p className="mt-4 text-sm leading-relaxed text-foreground/90">
-          Per accedere a questa sezione è necessario prima completare le
-          informazioni e le risposte dello step precedente.
+        <h1 className="mt-4 font-serif text-3xl font-medium">Attenzione</h1>
+        <p className="mt-6 text-base leading-relaxed text-foreground/90">
+          Non è possibile accedere a questa sezione prima di aver completato
+          le informazioni e le risposte dello step precedente.
         </p>
         <p className="mt-3 text-sm text-muted-foreground">
           Passaggio da completare:{" "}
           <span className="font-medium text-foreground">{target.label}</span>.
         </p>
-        <div className="mt-8 flex flex-wrap gap-3">
-          <Button asChild>
+        <div className="mt-10 flex justify-center">
+          <Button asChild size="lg">
             <Link to={target.to}>Torna allo step da compilare →</Link>
-          </Button>
-          <Button variant="ghost" asChild>
-            <Link to="/">Home</Link>
           </Button>
         </div>
       </div>
