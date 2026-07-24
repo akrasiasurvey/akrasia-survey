@@ -14,6 +14,7 @@ import {
 import { ProgressSteps } from "@/components/ProgressSteps";
 import { Instruction } from "@/components/Instruction";
 import { SelfGraph } from "@/components/SelfGraph";
+import { StepGate } from "@/lib/stepGating";
 import {
   DIMENSIONS,
   useResearchStore,
@@ -23,7 +24,11 @@ import {
 import { X } from "lucide-react";
 
 export const Route = createFileRoute("/step1")({
-  component: Step1,
+  component: () => (
+    <StepGate level={2}>
+      <Step1 />
+    </StepGate>
+  ),
 });
 
 function Step1() {
