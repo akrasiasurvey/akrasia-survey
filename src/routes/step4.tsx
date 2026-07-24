@@ -13,9 +13,14 @@ import {
   type ScenarioId,
 } from "@/store/research";
 import { cn } from "@/lib/utils";
+import { StepGate } from "@/lib/stepGating";
 
 export const Route = createFileRoute("/step4")({
-  component: Step3,
+  component: () => (
+    <StepGate level={5}>
+      <Step3 />
+    </StepGate>
+  ),
 });
 
 function Step3() {
@@ -51,7 +56,7 @@ function Step3() {
   if (positions.length === 0) {
     return (
       <main className="min-h-screen bg-background text-foreground">
-        <ProgressSteps current={4} />
+        <ProgressSteps current={5} />
         <div className="mx-auto max-w-2xl px-6 py-16 text-center">
           <h1 className="font-serif text-2xl font-medium">
             Nessuna I-Position dichiarata
@@ -107,10 +112,10 @@ function Step3() {
 
   return (
     <main className="min-h-screen bg-background text-foreground">
-      <ProgressSteps current={4} />
+      <ProgressSteps current={5} />
       <div className="mx-auto max-w-4xl px-6 py-10">
         <p className="text-xs uppercase tracking-[0.25em] text-muted-foreground">
-          Step 3 di 3
+          Step 4 di 4
         </p>
         <h1 className="mt-3 font-serif text-3xl font-medium">
           La Dinamica Dialogica — Vignette Cliniche
@@ -275,7 +280,7 @@ function Step3() {
 
         <div className="mt-10 flex items-center justify-between border-t border-border pt-6">
           <Button variant="ghost" asChild>
-            <Link to="/step2">← Indietro</Link>
+            <Link to="/step3">← Indietro</Link>
           </Button>
           <Button asChild disabled={!allComplete}>
             <Link to="/researcher">Concludi →</Link>
