@@ -30,16 +30,15 @@ function Consent() {
               Ambito e scopo
             </h2>
             <p className="mt-2">
-              Ricerca universitaria sulla dinamica del Sé e sui processi
-              decisionali in contesti professionali ad alta performance. Lo
-              studio intende indagare la possibilità che l'akrasia —
-              intesa come fenomeno del fallimento dell'agire secondo il
-              proprio miglior giudizio, ovvero l'incontinenza decisionale in
-              cui la persona compie consapevolmente un'azione che va contro
-              la propria valutazione morale o priorità profonda — sia
-              negoziata dialogicamente in contesti altamente performativi,
-              sotto la spinta delle narrazioni neoliberiste dell'efficienza
-              e dell'ottimizzazione.
+              Ricerca universitaria in ambito psicologico sulla dinamica del
+              Sé e sui processi decisionali in contesti professionali ad alta
+              performance. Lo studio si concentra nello specifico sul
+              fenomeno dell'akrasia, ovvero il comportamento irrazionale per
+              cui una persona agisce contro il proprio miglior giudizio.
+              Attraverso il modello del Sé dialogico (Hermans) si intende
+              indagare la possibilità che l'akrasia sia negoziata in
+              contesti altamente performativi, sotto la spinta di narrazioni
+              neoliberiste dell'efficienza e della razionalizzazione.
             </p>
           </section>
           <section>
@@ -47,13 +46,13 @@ function Consent() {
               Metodologia
             </h2>
             <p className="mt-2">
-              Mappatura grafica del Sé e risposta a scenari di dilemma
-              quotidiano. La procedura include: il posizionamento delle voci
-              del Sé sul continuum di commisurazione, la valutazione delle
-              narrazioni sociali che le colonizzano, la risposta a tre
+              La procedura include: la mappatura grafica delle voci che
+              costituiscono il Sé, il posizionamento delle voci del Sé
+              all'interno di un continuum di commisurazione, la valutazione
+              delle narrazioni che le colonizzano, la risposta a tre
               vignette di scelta akratica e la successiva intervista
-              dialogica di approfondimento. Durata stimata: 15-20 minuti
-              per la prima parte e 10-15 minuti per l'intervista.
+              dialogica di approfondimento. Durata stimata: 15-20 minuti per
+              la prima parte e 10-15 minuti per l'intervista.
             </p>
           </section>
           <section>
