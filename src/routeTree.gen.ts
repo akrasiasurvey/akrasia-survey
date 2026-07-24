@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as Step4RouteImport } from './routes/step4'
+import { Route as Step3RouteImport } from './routes/step3'
 import { Route as Step2RouteImport } from './routes/step2'
 import { Route as Step1RouteImport } from './routes/step1'
 import { Route as SessionInfoRouteImport } from './routes/session-info'
@@ -20,6 +21,11 @@ import { Route as IndexRouteImport } from './routes/index'
 const Step4Route = Step4RouteImport.update({
   id: '/step4',
   path: '/step4',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const Step3Route = Step3RouteImport.update({
+  id: '/step3',
+  path: '/step3',
   getParentRoute: () => rootRouteImport,
 } as any)
 const Step2Route = Step2RouteImport.update({
@@ -60,6 +66,7 @@ export interface FileRoutesByFullPath {
   '/session-info': typeof SessionInfoRoute
   '/step1': typeof Step1Route
   '/step2': typeof Step2Route
+  '/step3': typeof Step3Route
   '/step4': typeof Step4Route
 }
 export interface FileRoutesByTo {
@@ -69,6 +76,7 @@ export interface FileRoutesByTo {
   '/session-info': typeof SessionInfoRoute
   '/step1': typeof Step1Route
   '/step2': typeof Step2Route
+  '/step3': typeof Step3Route
   '/step4': typeof Step4Route
 }
 export interface FileRoutesById {
@@ -79,6 +87,7 @@ export interface FileRoutesById {
   '/session-info': typeof SessionInfoRoute
   '/step1': typeof Step1Route
   '/step2': typeof Step2Route
+  '/step3': typeof Step3Route
   '/step4': typeof Step4Route
 }
 export interface FileRouteTypes {
@@ -90,6 +99,7 @@ export interface FileRouteTypes {
     | '/session-info'
     | '/step1'
     | '/step2'
+    | '/step3'
     | '/step4'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -99,6 +109,7 @@ export interface FileRouteTypes {
     | '/session-info'
     | '/step1'
     | '/step2'
+    | '/step3'
     | '/step4'
   id:
     | '__root__'
@@ -108,6 +119,7 @@ export interface FileRouteTypes {
     | '/session-info'
     | '/step1'
     | '/step2'
+    | '/step3'
     | '/step4'
   fileRoutesById: FileRoutesById
 }
@@ -118,6 +130,7 @@ export interface RootRouteChildren {
   SessionInfoRoute: typeof SessionInfoRoute
   Step1Route: typeof Step1Route
   Step2Route: typeof Step2Route
+  Step3Route: typeof Step3Route
   Step4Route: typeof Step4Route
 }
 
@@ -128,6 +141,13 @@ declare module '@tanstack/react-router' {
       path: '/step4'
       fullPath: '/step4'
       preLoaderRoute: typeof Step4RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/step3': {
+      id: '/step3'
+      path: '/step3'
+      fullPath: '/step3'
+      preLoaderRoute: typeof Step3RouteImport
       parentRoute: typeof rootRouteImport
     }
     '/step2': {
@@ -182,6 +202,7 @@ const rootRouteChildren: RootRouteChildren = {
   SessionInfoRoute: SessionInfoRoute,
   Step1Route: Step1Route,
   Step2Route: Step2Route,
+  Step3Route: Step3Route,
   Step4Route: Step4Route,
 }
 export const routeTree = rootRouteImport
