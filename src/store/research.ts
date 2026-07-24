@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
 
 export type Belonging = "internal" | "external";
 
@@ -168,12 +169,17 @@ interface ResearchState {
   scenarios: Record<ScenarioId, ScenarioEntry>;
   interviews: Record<string, InterviewData>;
   clinicalNotes: Record<string, Partial<Record<ScenarioId, string>>>;
+  archivedProfiles: Profile[];
+  sessionCompleted: boolean;
   setConsent: (v: boolean) => void;
   setParticipantId: (v: string) => void;
   setContext: (v: Context) => void;
   setContextCustom: (v: string) => void;
   startSession: () => void;
   endSession: () => void;
+  archiveAndComplete: () => void;
+  resetSession: () => void;
+  isUsernameTaken: (name: string) => boolean;
   addPosition: (p: Omit<IPosition, "id">) => void;
   removePosition: (id: string) => void;
   setContinuumValue: (id: string, value: number) => void;
@@ -204,6 +210,19 @@ export interface Annotation {
 export interface InterviewData {
   transcript: string;
   annotations: Annotation[];
+}
+
+export interface Profile {
+  participantId: string;
+  context: Context;
+  contextCustom?: string;
+  startedAt: number;
+  endedAt?: number;
+  positions: IPosition[];
+  continuum: Record<string, ContinuumEntry>;
+  narrativeColonization: Record<string, string[]>;
+  scenarios: Record<ScenarioId, ScenarioEntry>;
+  demo?: boolean;
 }
 
 export const NEOLIB_LEXICON: readonly string[] = [
@@ -262,7 +281,15 @@ const emptyScenario = (): ScenarioEntry => ({
   losingVoiceIds: [],
 });
 
-export const useResearchStore = create<ResearchState>((set) => ({
+const noopStorage = {
+  getItem: () => null,
+  setItem: () => {},
+  removeItem: () => {},
+};
+
+export const useResearchStore = create<ResearchState>()(
+  persist(
+    (set, get) => ({
   consent: false,
   participantId: "",
   context: "",
@@ -279,12 +306,74 @@ export const useResearchStore = create<ResearchState>((set) => ({
   },
   interviews: {},
   clinicalNotes: {},
+  archivedProfiles: [],
+  sessionCompleted: false,
   setConsent: (v) => set({ consent: v }),
   setParticipantId: (v) => set({ participantId: v }),
   setContext: (v) => set({ context: v }),
   setContextCustom: (v) => set({ contextCustom: v }),
   startSession: () => set((s) => ({ startedAt: s.startedAt ?? Date.now() })),
   endSession: () => set((s) => ({ endedAt: s.endedAt ?? Date.now() })),
+  archiveAndComplete: () =>
+    set((s) => {
+      if (s.sessionCompleted) return {};
+      if (
+        !s.participantId ||
+        !s.context ||
+        s.positions.length === 0
+      ) {
+        return {};
+      }
+      const endedAt = s.endedAt ?? Date.now();
+      const profile: Profile = {
+        participantId: s.participantId,
+        context: s.context as Context,
+        contextCustom: s.contextCustom,
+        startedAt: s.startedAt ?? endedAt,
+        endedAt,
+        positions: s.positions,
+        continuum: s.continuum,
+        narrativeColonization: s.narrativeColonization,
+        scenarios: s.scenarios,
+        demo: false,
+      };
+      const existingIdx = s.archivedProfiles.findIndex(
+        (p) => p.participantId === profile.participantId,
+      );
+      const nextArchive = [...s.archivedProfiles];
+      if (existingIdx >= 0) nextArchive[existingIdx] = profile;
+      else nextArchive.unshift(profile);
+      return {
+        archivedProfiles: nextArchive,
+        sessionCompleted: true,
+        endedAt,
+      };
+    }),
+  resetSession: () =>
+    set(() => ({
+      consent: false,
+      participantId: "",
+      context: "",
+      contextCustom: "",
+      startedAt: null,
+      endedAt: null,
+      positions: [],
+      continuum: {},
+      narrativeColonization: {},
+      scenarios: {
+        s1: emptyScenario(),
+        s2: emptyScenario(),
+        s3: emptyScenario(),
+      },
+      sessionCompleted: false,
+    })),
+  isUsernameTaken: (name) => {
+    const n = name.trim().toLowerCase();
+    if (!n) return false;
+    return get().archivedProfiles.some(
+      (p) => p.participantId.trim().toLowerCase() === n,
+    );
+  },
   addPosition: (p) =>
     set((s) => {
       const id = `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
@@ -439,4 +528,13 @@ export const useResearchStore = create<ResearchState>((set) => ({
         },
       };
     }),
-}));
+}),
+    {
+      name: "akrasia-survey-v1",
+      storage: createJSONStorage(() =>
+        typeof window !== "undefined" ? window.localStorage : noopStorage,
+      ),
+      version: 1,
+    },
+  ),
+);
