@@ -57,9 +57,19 @@ function Step1() {
         <div className="mt-6">
           <Instruction>
             Digita le posizioni che descrivono chi sei (es. "Io-Professionista",
-            "Io-Padre") e definisci per ognuna se appartiene al tuo Sé Interno o
-            Esterno e la sua importanza. Compariranno automaticamente nel
-            grafico a fianco.
+            "Io-Padre") e definisci per ognuna se appartiene al tuo Sé Interno
+            o Esterno e la sua importanza. Compariranno automaticamente nel
+            grafico a fianco. Puoi inserire quante posizioni desideri: non
+            esiste un numero giusto o sbagliato.
+            {"\n\n"}
+            Nel modello del Sé Dialogico (Hermans), le posizioni interne del
+            Sé sono le voci, i ruoli, gli ideali o i tratti che senti come
+            appartenenti al tuo mondo interiore (es. "Io-Ambizioso",
+            "Io-Critico", "Io-Che-Ha-Paura"). Le posizioni esterne del Sé
+            sono le persone significative, i ruoli sociali, i contesti o le
+            istituzioni che percepisci come parte integrante della tua
+            identità e del tuo dialogo interiore (es. "Mia madre", "Il mio
+            capo", "L'Azienda", "La società").
           </Instruction>
         </div>
 
