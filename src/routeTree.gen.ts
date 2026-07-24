@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as Step4RouteImport } from './routes/step4'
 import { Route as Step3RouteImport } from './routes/step3'
 import { Route as Step2RouteImport } from './routes/step2'
 import { Route as Step1RouteImport } from './routes/step1'
@@ -17,6 +18,11 @@ import { Route as ResearcherRouteImport } from './routes/researcher'
 import { Route as ConsentRouteImport } from './routes/consent'
 import { Route as IndexRouteImport } from './routes/index'
 
+const Step4Route = Step4RouteImport.update({
+  id: '/step4',
+  path: '/step4',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const Step3Route = Step3RouteImport.update({
   id: '/step3',
   path: '/step3',
@@ -61,6 +67,7 @@ export interface FileRoutesByFullPath {
   '/step1': typeof Step1Route
   '/step2': typeof Step2Route
   '/step3': typeof Step3Route
+  '/step4': typeof Step4Route
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -70,6 +77,7 @@ export interface FileRoutesByTo {
   '/step1': typeof Step1Route
   '/step2': typeof Step2Route
   '/step3': typeof Step3Route
+  '/step4': typeof Step4Route
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -80,6 +88,7 @@ export interface FileRoutesById {
   '/step1': typeof Step1Route
   '/step2': typeof Step2Route
   '/step3': typeof Step3Route
+  '/step4': typeof Step4Route
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -91,6 +100,7 @@ export interface FileRouteTypes {
     | '/step1'
     | '/step2'
     | '/step3'
+    | '/step4'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -100,6 +110,7 @@ export interface FileRouteTypes {
     | '/step1'
     | '/step2'
     | '/step3'
+    | '/step4'
   id:
     | '__root__'
     | '/'
@@ -109,6 +120,7 @@ export interface FileRouteTypes {
     | '/step1'
     | '/step2'
     | '/step3'
+    | '/step4'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -119,10 +131,18 @@ export interface RootRouteChildren {
   Step1Route: typeof Step1Route
   Step2Route: typeof Step2Route
   Step3Route: typeof Step3Route
+  Step4Route: typeof Step4Route
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/step4': {
+      id: '/step4'
+      path: '/step4'
+      fullPath: '/step4'
+      preLoaderRoute: typeof Step4RouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/step3': {
       id: '/step3'
       path: '/step3'
@@ -183,6 +203,7 @@ const rootRouteChildren: RootRouteChildren = {
   Step1Route: Step1Route,
   Step2Route: Step2Route,
   Step3Route: Step3Route,
+  Step4Route: Step4Route,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
