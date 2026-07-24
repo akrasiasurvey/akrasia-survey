@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { useResearchStore } from "@/store/research";
+import { STEP_META, useMaxUnlockedLevel } from "@/lib/stepGating";
 
 export const Route = createFileRoute("/")({
   component: Welcome,
@@ -11,9 +12,11 @@ function Welcome() {
   const positions = useResearchStore((s) => s.positions);
   const sessionCompleted = useResearchStore((s) => s.sessionCompleted);
   const resetSession = useResearchStore((s) => s.resetSession);
+  const maxUnlocked = useMaxUnlockedLevel();
   const hasPending =
     !sessionCompleted &&
     (participantId.trim().length > 0 || positions.length > 0);
+  const resumeTarget = STEP_META[Math.min(maxUnlocked, STEP_META.length - 1)].to;
 
   return (
     <main className="min-h-screen bg-background text-foreground">
@@ -40,17 +43,7 @@ function Welcome() {
             </div>
             <div className="flex flex-wrap gap-2">
               <Button asChild size="sm">
-                <Link
-                  to={
-                    positions.length > 0
-                      ? "/step1"
-                      : participantId
-                        ? "/session-info"
-                        : "/consent"
-                  }
-                >
-                  Riprendi sessione →
-                </Link>
+                <Link to={resumeTarget}>Riprendi sessione →</Link>
               </Button>
               <Button
                 size="sm"
