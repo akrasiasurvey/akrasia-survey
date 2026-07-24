@@ -309,6 +309,7 @@ export const useResearchStore = create<ResearchState>()(
   clinicalNotes: {},
   archivedProfiles: [],
   sessionCompleted: false,
+  continuumTouched: [],
   setConsent: (v) => set({ consent: v }),
   setParticipantId: (v) => set({ participantId: v }),
   setContext: (v) => set({ context: v }),
@@ -367,6 +368,7 @@ export const useResearchStore = create<ResearchState>()(
         s3: emptyScenario(),
       },
       sessionCompleted: false,
+      continuumTouched: [],
     })),
   isUsernameTaken: (name) => {
     const n = name.trim().toLowerCase();
@@ -407,6 +409,7 @@ export const useResearchStore = create<ResearchState>()(
         continuum: rest,
         narrativeColonization: nc,
         scenarios,
+        continuumTouched: s.continuumTouched.filter((x) => x !== id),
       };
     }),
   setContinuumValue: (id, value) =>
@@ -415,6 +418,9 @@ export const useResearchStore = create<ResearchState>()(
         ...s.continuum,
         [id]: { value, narratives: s.continuum[id]?.narratives ?? [] },
       },
+      continuumTouched: s.continuumTouched.includes(id)
+        ? s.continuumTouched
+        : [...s.continuumTouched, id],
     })),
   toggleColonization: (narrative, positionId) =>
     set((s) => {
