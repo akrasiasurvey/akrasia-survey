@@ -3,24 +3,11 @@ import {
   PERFORMATIVE_NARRATIVES,
   PROTECTIVE_NARRATIVES,
   type ContinuumEntry,
-  type Context,
   type IPosition,
-  type ScenarioEntry,
-  type ScenarioId,
+  type Profile,
 } from "@/store/research";
 
-export interface Profile {
-  participantId: string;
-  context: Context;
-  contextCustom?: string;
-  startedAt: number;
-  endedAt?: number;
-  positions: IPosition[];
-  continuum: Record<string, ContinuumEntry>;
-  narrativeColonization: Record<string, string[]>;
-  scenarios: Record<ScenarioId, ScenarioEntry>;
-  demo?: boolean;
-}
+export type { Profile } from "@/store/research";
 
 const r = (key: string) => DIMENSIONS.find((d) => d.key === key)!.radius;
 

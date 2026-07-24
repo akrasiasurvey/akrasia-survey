@@ -118,8 +118,18 @@ function Dashboard() {
   }, [store]);
 
   const profiles: Profile[] = useMemo(() => {
-    return liveProfile ? [liveProfile, ...DEMO_PROFILES] : DEMO_PROFILES;
-  }, [liveProfile]);
+    const seen = new Set<string>();
+    const out: Profile[] = [];
+    const push = (p: Profile) => {
+      if (seen.has(p.participantId)) return;
+      seen.add(p.participantId);
+      out.push(p);
+    };
+    if (liveProfile) push(liveProfile);
+    store.archivedProfiles.forEach(push);
+    DEMO_PROFILES.forEach(push);
+    return out;
+  }, [liveProfile, store.archivedProfiles]);
 
   const [selectedId, setSelectedId] = useState<string>(
     profiles[0]?.participantId ?? "",

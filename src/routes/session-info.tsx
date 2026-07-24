@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { ProgressSteps } from "@/components/ProgressSteps";
 import { useResearchStore, type Context } from "@/store/research";
+import { DEMO_PROFILES } from "@/data/demoProfiles";
 
 export const Route = createFileRoute("/session-info")({
   component: SessionInfo,
@@ -32,9 +33,19 @@ function SessionInfo() {
     setContextCustom,
     startSession,
   } = useResearchStore();
+  const archivedProfiles = useResearchStore((s) => s.archivedProfiles);
+
+  const trimmedId = participantId.trim();
+  const usernameTaken =
+    trimmedId.length > 0 &&
+    [
+      ...archivedProfiles.map((p) => p.participantId),
+      ...DEMO_PROFILES.map((p) => p.participantId),
+    ].some((n) => n.trim().toLowerCase() === trimmedId.toLowerCase());
 
   const canProceed =
-    participantId.trim().length > 0 &&
+    trimmedId.length > 0 &&
+    !usernameTaken &&
     context !== "" &&
     (context !== "other" || contextCustom.trim().length > 0);
 
@@ -68,8 +79,22 @@ function SessionInfo() {
               value={participantId}
               onChange={(e) => setParticipantId(e.target.value)}
               placeholder="es. P-A472"
-              className="max-w-xs"
+              className={
+                usernameTaken
+                  ? "max-w-xs border-destructive focus-visible:ring-destructive"
+                  : "max-w-xs"
+              }
+              aria-invalid={usernameTaken || undefined}
             />
+            {usernameTaken && (
+              <p
+                role="alert"
+                className="rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-xs font-medium text-destructive"
+              >
+                Username già in uso. Scegline uno diverso per garantire
+                l'identificazione univoca del profilo.
+              </p>
+            )}
             <p className="text-xs text-muted-foreground">
               Codice alfanumerico pseudonimo assegnato per questa sessione.
             </p>
