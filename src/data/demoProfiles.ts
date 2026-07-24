@@ -2,6 +2,7 @@ import {
   DIMENSIONS,
   PERFORMATIVE_NARRATIVES,
   PROTECTIVE_NARRATIVES,
+  type ContinuumEntry,
   type IPosition,
   type Profile,
 } from "@/store/research";
