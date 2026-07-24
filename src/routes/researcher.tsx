@@ -86,7 +86,14 @@ function Researcher() {
 function Dashboard() {
   const store = useResearchStore();
 
-  const liveProfile: Profile | null = useMemo(() => {
+  const liveProfile: { profile: Profile; inProgress: boolean } | null = useMemo(() => {
+    if (
+      !store.participantId ||
+      !store.context ||
+      store.positions.length === 0
+    ) {
+      return null;
+    }
     const allScenariosComplete = SCENARIOS.every((s) => {
       const e = store.scenarios[s.id];
       return (
@@ -96,15 +103,7 @@ function Dashboard() {
         e.losingVoiceIds.length > 0
       );
     });
-    if (
-      !allScenariosComplete ||
-      !store.participantId ||
-      !store.context ||
-      store.positions.length === 0
-    ) {
-      return null;
-    }
-    return {
+    const profile: Profile = {
       participantId: store.participantId,
       context: store.context,
       contextCustom: store.contextCustom,
@@ -115,7 +114,16 @@ function Dashboard() {
       narrativeColonization: store.narrativeColonization,
       scenarios: store.scenarios,
     };
+    return { profile, inProgress: !allScenariosComplete };
   }, [store]);
+
+  const profileMeta: Record<string, { inProgress: boolean }> = useMemo(() => {
+    const m: Record<string, { inProgress: boolean }> = {};
+    if (liveProfile) {
+      m[liveProfile.profile.participantId] = { inProgress: liveProfile.inProgress };
+    }
+    return m;
+  }, [liveProfile]);
 
   const profiles: Profile[] = useMemo(() => {
     const seen = new Set<string>();
@@ -125,17 +133,45 @@ function Dashboard() {
       seen.add(p.participantId);
       out.push(p);
     };
-    if (liveProfile) push(liveProfile);
+    if (liveProfile) push(liveProfile.profile);
     store.archivedProfiles.forEach(push);
     DEMO_PROFILES.forEach(push);
     return out;
   }, [liveProfile, store.archivedProfiles]);
 
+  const [query, setQuery] = useState("");
+  const [sortDir, setSortDir] = useState<"desc" | "asc">("desc");
+  const [statusFilter, setStatusFilter] = useState<
+    "all" | "completed" | "in_progress"
+  >("all");
+
+  const isInProgress = (p: Profile) =>
+    profileMeta[p.participantId]?.inProgress ?? false;
+
+  const visibleProfiles = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    let list = profiles.filter((p) =>
+      q ? p.participantId.toLowerCase().includes(q) : true,
+    );
+    if (statusFilter !== "all") {
+      const want = statusFilter === "in_progress";
+      list = list.filter((p) => isInProgress(p) === want);
+    }
+    list = [...list].sort((a, b) =>
+      sortDir === "desc"
+        ? b.startedAt - a.startedAt
+        : a.startedAt - b.startedAt,
+    );
+    return list;
+  }, [profiles, query, sortDir, statusFilter, profileMeta]);
+
   const [selectedId, setSelectedId] = useState<string>(
     profiles[0]?.participantId ?? "",
   );
   const selected =
-    profiles.find((p) => p.participantId === selectedId) ?? profiles[0];
+    visibleProfiles.find((p) => p.participantId === selectedId) ??
+    visibleProfiles[0] ??
+    profiles[0];
   const [view, setView] = useState<"individual" | "aggregate">("individual");
   const [showNumbers, setShowNumbers] = useState(false);
 
@@ -217,11 +253,58 @@ function Dashboard() {
         <aside className="space-y-2">
           <div className="mb-2 flex items-center justify-between text-[10px] uppercase tracking-widest text-muted-foreground">
             <span>Partecipanti</span>
-            <span>{profiles.length}</span>
+            <span>
+              {visibleProfiles.length}/{profiles.length}
+            </span>
           </div>
-          {profiles.map((p) => {
+          <div className="space-y-2 rounded-md border border-border bg-card p-3">
+            <Input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Cerca username…"
+              className="h-8 text-xs"
+            />
+            <div className="grid grid-cols-2 gap-2">
+              <label className="text-[10px] uppercase tracking-widest text-muted-foreground">
+                Ordina
+                <select
+                  value={sortDir}
+                  onChange={(e) =>
+                    setSortDir(e.target.value as "desc" | "asc")
+                  }
+                  className="mt-1 w-full rounded-md border border-border bg-background px-2 py-1 text-xs text-foreground"
+                >
+                  <option value="desc">Più recenti</option>
+                  <option value="asc">Meno recenti</option>
+                </select>
+              </label>
+              <label className="text-[10px] uppercase tracking-widest text-muted-foreground">
+                Stato
+                <select
+                  value={statusFilter}
+                  onChange={(e) =>
+                    setStatusFilter(
+                      e.target.value as "all" | "completed" | "in_progress",
+                    )
+                  }
+                  className="mt-1 w-full rounded-md border border-border bg-background px-2 py-1 text-xs text-foreground"
+                >
+                  <option value="all">Tutti</option>
+                  <option value="completed">Completata</option>
+                  <option value="in_progress">In corso</option>
+                </select>
+              </label>
+            </div>
+          </div>
+          {visibleProfiles.length === 0 && (
+            <p className="rounded-md border border-dashed border-border bg-card px-3 py-4 text-center text-[11px] text-muted-foreground">
+              Nessun profilo corrisponde ai filtri.
+            </p>
+          )}
+          {visibleProfiles.map((p) => {
             const isSel = p.participantId === selected?.participantId;
             const isLive = !p.demo;
+            const inProg = isInProgress(p);
             return (
               <button
                 key={p.participantId}
@@ -237,15 +320,22 @@ function Dashboard() {
                   <span className="font-medium text-sm">
                     {p.participantId}
                   </span>
-                  {isLive ? (
-                    <span className="rounded border border-foreground/40 px-1.5 py-0.5 text-[9px] uppercase tracking-widest">
-                      Live
-                    </span>
-                  ) : (
-                    <span className="rounded border border-border px-1.5 py-0.5 text-[9px] uppercase tracking-widest text-muted-foreground">
-                      Demo
-                    </span>
-                  )}
+                  <div className="flex items-center gap-1">
+                    {inProg ? (
+                      <span className="rounded border border-amber-500/60 bg-amber-500/10 px-1.5 py-0.5 text-[9px] uppercase tracking-widest text-amber-700 dark:text-amber-300">
+                        In corso
+                      </span>
+                    ) : (
+                      <span className="rounded border border-emerald-600/60 bg-emerald-600/10 px-1.5 py-0.5 text-[9px] uppercase tracking-widest text-emerald-700 dark:text-emerald-300">
+                        Completata
+                      </span>
+                    )}
+                    {!isLive && (
+                      <span className="rounded border border-border px-1.5 py-0.5 text-[9px] uppercase tracking-widest text-muted-foreground">
+                        Demo
+                      </span>
+                    )}
+                  </div>
                 </div>
                 <div className="mt-1 text-[11px] text-muted-foreground">
                   {contextLabel(p.context, p.contextCustom)}
