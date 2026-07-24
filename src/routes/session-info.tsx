@@ -7,9 +7,14 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { ProgressSteps } from "@/components/ProgressSteps";
 import { useResearchStore, type Context } from "@/store/research";
 import { DEMO_PROFILES } from "@/data/demoProfiles";
+import { StepGate } from "@/lib/stepGating";
 
 export const Route = createFileRoute("/session-info")({
-  component: SessionInfo,
+  component: () => (
+    <StepGate level={1}>
+      <SessionInfo />
+    </StepGate>
+  ),
 });
 
 const CONTEXTS: { value: Context; label: string }[] = [
