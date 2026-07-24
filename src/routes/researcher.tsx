@@ -1350,7 +1350,7 @@ async function exportProfilePDF(
     const maxW = opts.maxW ?? CONTENT_W;
     const x = opts.x ?? M;
     const lines = doc.splitTextToSize(txt, maxW);
-    const gap = opts.lineGap ?? size + 3;
+    const gap = opts.lineGap ?? Math.round(size * 1.5);
     for (const l of lines) {
       ensureSpace(gap);
       doc.text(l, x, y);
@@ -1362,21 +1362,23 @@ async function exportProfilePDF(
     txt: string,
     opts: { size?: number; color?: [number, number, number]; x?: number } = {},
   ) => {
+    const size = opts.size ?? 8;
+    ensureSpace(size + 8);
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(opts.size ?? 8);
+    doc.setFontSize(size);
     doc.setCharSpace(1.4);
     setInk(opts.color ?? MUTED);
     doc.text(txt.toUpperCase(), opts.x ?? M, y);
     doc.setCharSpace(0);
-    y += (opts.size ?? 8) + 4;
+    y += size + 6;
   };
 
   const rule = () => {
-    ensureSpace(10);
+    ensureSpace(12);
     setStroke(BORDER);
     doc.setLineWidth(0.6);
     doc.line(M, y, M + CONTENT_W, y);
-    y += 10;
+    y += 14;
   };
 
   const cardOpen = (title: string) => {
@@ -1445,24 +1447,24 @@ async function exportProfilePDF(
   setFill(CARD_BG);
   setStroke(BORDER);
   doc.setLineWidth(0.7);
-  doc.roundedRect(M - 6, y - 4, CONTENT_W + 12, 74, 6, 6, "FD");
-  y += 12;
+  doc.roundedRect(M - 6, y - 4, CONTENT_W + 12, 96, 6, 6, "FD");
+  y += 16;
   kv("ID Partecipante", profile.participantId, 0);
   kv("Contesto ecologico", contextLabel(profile.context, profile.contextCustom), 1);
-  y += 32;
+  y += 40;
   kv("Apertura sessione", formatDateTime(profile.startedAt), 0);
   kv("Durata sessione", formatDuration(profile.startedAt, profile.endedAt), 1);
-  y += 32;
+  y += 44;
 
   // Section: Grafico del Sé (raster snapshot of the on-screen SVG)
   uppercase("Grafico del Sé — Società del Sé", { size: 8 });
   rule();
   const graph = await renderSelfGraphImage(profile, CONTENT_W * 0.72);
   if (graph) {
-    ensureSpace(graph.height + 12);
+    ensureSpace(graph.height + 20);
     const gx = M + (CONTENT_W - graph.width) / 2;
     doc.addImage(graph.dataUrl, "PNG", gx, y, graph.width, graph.height);
-    y += graph.height + 14;
+    y += graph.height + 22;
   }
 
   // Section: Struttura del Sé
@@ -1470,7 +1472,7 @@ async function exportProfilePDF(
   rule();
   for (const p of profile.positions) {
     const v = profile.continuum[p.id]?.value ?? 50;
-    ensureSpace(28);
+    ensureSpace(34);
     // bullet dot sized like radius
     const rr = Math.max(3, Math.min(9, p.radius / 4));
     setFill(p.belonging === "internal" ? [70, 90, 130] : [120, 130, 150]);
@@ -1487,9 +1489,9 @@ async function exportProfilePDF(
       M + 22,
       y + 12,
     );
-    y += 26;
+    y += 32;
   }
-  y += 6;
+  y += 10;
 
   // Section: Scenari
   uppercase("Sezione 2 · Scenari di Akrasia", { size: 8 });
@@ -1503,9 +1505,9 @@ async function exportProfilePDF(
       parseInt(hex.slice(3, 5), 16),
       parseInt(hex.slice(5, 7), 16),
     ];
-    ensureSpace(110);
+    ensureSpace(160);
     const top = y;
-    y += 14;
+    y += 18;
     // Left accent bar
     setFill(rgb);
     doc.rect(M - 6, top - 4, 3, 0, "F"); // placeholder; final height set later
@@ -1514,15 +1516,15 @@ async function exportProfilePDF(
     doc.setFontSize(8);
     doc.setCharSpace(1.4);
     setInk(MUTED);
-    doc.text(s.theme.toUpperCase().slice(0, 90), M + 6, y);
+    doc.text(s.theme.toUpperCase().slice(0, 90), M + 10, y);
     doc.setCharSpace(0);
-    y += 12;
+    y += 16;
 
     doc.setFont("times", "normal");
     doc.setFontSize(14);
     setInk(INK);
-    doc.text(s.title, M + 6, y);
-    y += 18;
+    doc.text(s.title, M + 10, y);
+    y += 22;
 
     // Diagnostic badge
     setFill(rgb);
@@ -1531,19 +1533,19 @@ async function exportProfilePDF(
     doc.setFontSize(7.5);
     doc.setCharSpace(1.2);
     const badgeW = doc.getTextWidth(badge) + 14;
-    doc.roundedRect(M + 6, y - 9, badgeW, 14, 7, 7, "F");
+    doc.roundedRect(M + 10, y - 10, badgeW, 15, 7, 7, "F");
     setInk([255, 255, 255]);
-    doc.text(badge, M + 6 + 7, y);
+    doc.text(badge, M + 10 + 7, y);
     doc.setCharSpace(0);
     // Choice pill
     const choiceStr = `SCELTA ${e.choice ?? "—"}`;
-    const chX = M + 6 + badgeW + 8;
+    const chX = M + 10 + badgeW + 8;
     setFill(INK);
     const chW = doc.getTextWidth(choiceStr) + 14;
-    doc.roundedRect(chX, y - 9, chW, 14, 7, 7, "F");
+    doc.roundedRect(chX, y - 10, chW, 15, 7, 7, "F");
     setInk([255, 255, 255]);
     doc.text(choiceStr, chX + 7, y);
-    y += 16;
+    y += 22;
 
     // Open response — as blockquote
     text(`« ${e.openResponse} »`, {
@@ -1551,8 +1553,9 @@ async function exportProfilePDF(
       italic: true,
       font: "times",
       color: INK,
-      x: M + 14,
-      maxW: CONTENT_W - 20,
+      x: M + 18,
+      maxW: CONTENT_W - 28,
+      lineGap: 15,
     });
     // Left quote line
     setStroke(rgb);
@@ -1567,30 +1570,32 @@ async function exportProfilePDF(
       .filter(Boolean)
       .join(" · ");
 
-    y += 4;
+    y += 8;
     uppercase("Voci vincenti (alleanza)", { size: 7.5, color: MUTED });
-    text(winLabels || "—", { size: 10 });
+    text(winLabels || "—", { size: 10, lineGap: 14 });
+    y += 4;
     uppercase("Voci perdenti (sottomissione)", { size: 7.5, color: MUTED });
-    text(loseLabels || "—", { size: 10 });
+    text(loseLabels || "—", { size: 10, lineGap: 14 });
 
-    y += 2;
+    y += 6;
     // description
     text(DIAGNOSTIC_DESCRIPTION[d], {
       size: 9.5,
       italic: true,
       color: MUTED,
       font: "times",
+      lineGap: 14,
     });
 
     // Border around the scenario card
-    const bottom = y + 6;
+    const bottom = y + 10;
     setStroke(BORDER);
     doc.setLineWidth(0.6);
     doc.roundedRect(M - 6, top - 4, CONTENT_W + 12, bottom - top, 6, 6, "S");
     // left color bar
     setFill(rgb);
     doc.rect(M - 6, top - 4, 3, bottom - top, "F");
-    y = bottom + 12;
+    y = bottom + 18;
   }
 
   // Interview section
@@ -1610,9 +1615,9 @@ async function exportProfilePDF(
     rule();
     text(
       interview.transcript.trim() || "(Nessuna trascrizione inserita.)",
-      { size: 10.5, font: "times", lineGap: 14 },
+      { size: 10.5, font: "times", lineGap: 16 },
     );
-    y += 8;
+    y += 14;
 
     uppercase("Testo con lessico critico evidenziato", { size: 8 });
     rule();
@@ -1625,15 +1630,16 @@ async function exportProfilePDF(
             size: 10,
             bold: true,
             color: s.matrix === "neolib" ? [140, 60, 155] : [45, 90, 165],
+            lineGap: 15,
           });
         } else {
-          text(s.text, { size: 10, font: "times", lineGap: 13 });
+          text(s.text, { size: 10, font: "times", lineGap: 15 });
         }
       }
     } else {
       text("(Nessuna trascrizione inserita.)", { size: 10, color: MUTED });
     }
-    y += 8;
+    y += 14;
 
     uppercase("Annotazioni e note analitiche", { size: 8 });
     rule();
@@ -1644,27 +1650,35 @@ async function exportProfilePDF(
         (a, b) => a.start - b.start,
       );
       sorted.forEach((a, i) => {
-        ensureSpace(40);
+        ensureSpace(60);
         const top = y;
-        y += 4;
+        y += 8;
         doc.setFont("helvetica", "bold");
         doc.setFontSize(9);
         setInk(ACCENT);
-        doc.text(`Nota #${i + 1}`, M + 6, y + 8);
-        y += 18;
+        doc.text(`Nota #${i + 1}`, M + 10, y + 8);
+        y += 22;
         text(`« ${a.quote} »`, {
           size: 10,
           italic: true,
           font: "times",
-          x: M + 14,
-          maxW: CONTENT_W - 20,
+          x: M + 18,
+          maxW: CONTENT_W - 28,
+          lineGap: 15,
         });
-        text(a.note || "(senza nota)", { size: 10, color: MUTED, x: M + 14, maxW: CONTENT_W - 20 });
-        const bottom = y + 6;
+        y += 2;
+        text(a.note || "(senza nota)", {
+          size: 10,
+          color: MUTED,
+          x: M + 18,
+          maxW: CONTENT_W - 28,
+          lineGap: 14,
+        });
+        const bottom = y + 10;
         setStroke(BORDER);
         doc.setLineWidth(0.6);
         doc.roundedRect(M - 6, top, CONTENT_W + 12, bottom - top, 5, 5, "S");
-        y = bottom + 10;
+        y = bottom + 14;
       });
     }
   }
