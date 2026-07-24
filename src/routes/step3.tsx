@@ -26,6 +26,7 @@ function Step3() {
   const setChoice = useResearchStore((s) => s.setScenarioChoice);
   const toggleVoice = useResearchStore((s) => s.toggleScenarioVoice);
   const endSession = useResearchStore((s) => s.endSession);
+  const archiveAndComplete = useResearchStore((s) => s.archiveAndComplete);
 
   const [idx, setIdx] = useState(0);
 
@@ -83,8 +84,11 @@ function Step3() {
 
   // Fissa l'istante di completamento sessione quando tutti gli scenari sono chiusi.
   useEffect(() => {
-    if (allComplete) endSession();
-  }, [allComplete, endSession]);
+    if (allComplete) {
+      endSession();
+      archiveAndComplete();
+    }
+  }, [allComplete, endSession, archiveAndComplete]);
 
   const OPTIONS: {
     k: ScenarioChoice;
