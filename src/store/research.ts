@@ -171,6 +171,7 @@ interface ResearchState {
   clinicalNotes: Record<string, Partial<Record<ScenarioId, string>>>;
   archivedProfiles: Profile[];
   sessionCompleted: boolean;
+  continuumTouched: string[];
   setConsent: (v: boolean) => void;
   setParticipantId: (v: string) => void;
   setContext: (v: Context) => void;
