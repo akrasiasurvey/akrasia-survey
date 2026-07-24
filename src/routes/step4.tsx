@@ -14,7 +14,7 @@ import {
 } from "@/store/research";
 import { cn } from "@/lib/utils";
 
-export const Route = createFileRoute("/step3")({
+export const Route = createFileRoute("/step4")({
   component: Step3,
 });
 
