@@ -22,9 +22,10 @@ export default defineConfig({
   // the build produces only the client bundle under `dist/client/`.
   nitro: isPagesBuild ? false : undefined,
   vite: {
-    // GitHub Pages project site is served under the repository path. A
-    // relative base makes the SPA portable between the Lovable preview and
-    // the public repository, avoiding blank-screen or missing-asset issues.
-    base: process.env.NODE_ENV === "production" ? "./" : "/",
+    // GitHub Pages project sites are served under `/<repo>/`. The deploy
+    // workflow injects the correct value via `BASE_PATH` (from
+    // actions/configure-pages). We must use an absolute base — a relative
+    // `./` breaks TanStack Router's `basepath` and produces a blank page.
+    base: isPagesBuild ? (process.env.BASE_PATH ?? "/") : "/",
   },
 });
