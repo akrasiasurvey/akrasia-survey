@@ -124,7 +124,7 @@ function Step3() {
         <div className="mt-6">
           <Instruction>
             Leggi attentamente ciascuno dei seguenti scenari. Per rispondere in
-            modo efficace, ti invitiamo a immaginare vivamente la situazione,
+            modo efficace, ti invitiamo a immaginare vividamente la situazione,
             provando a immedesimarti nel protagonista. Se ti aiuta, ripensa a
             eventi del tuo passato che ti hanno fatto sentire in modo simile.
             Rispondi nel modo più sincero e autentico possibile: non esistono
@@ -155,9 +155,6 @@ function Step3() {
         </div>
 
         <article className="rounded-lg border border-border bg-card p-6">
-          <div className="mb-3 text-[10px] uppercase tracking-widest text-muted-foreground">
-            {scenario.theme}
-          </div>
           <h2 className="font-serif text-2xl font-medium">{scenario.title}</h2>
           <p className="mt-4 whitespace-pre-line text-sm leading-relaxed text-foreground">
             {scenario.text}
