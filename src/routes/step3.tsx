@@ -69,17 +69,17 @@ function Step3() {
             <article className="rounded-lg border border-border bg-card p-6">
               <div className="mb-4 flex items-center justify-between text-[10px] uppercase tracking-widest text-muted-foreground">
                 <span>
-                  Spinta {narrIdx + 1} di {NARRATIVES_SHUFFLED.length}
+                  Affermazione {narrIdx + 1} di {NARRATIVES_SHUFFLED.length}
                 </span>
-                <span>Spinta culturale</span>
+                <span>Narrazione culturale</span>
               </div>
               <blockquote className="border-l-2 border-foreground/40 pl-4 font-serif text-xl leading-snug">
                 «{activeNarrative}»
               </blockquote>
               <p className="mt-6 text-sm text-muted-foreground">
                 Clicca sui cerchi nel grafico per indicare quali posizioni
-                senti influenzate da questa spinta. Puoi selezionarne più di
-                una.
+                senti influenzate da questa narrazione. Puoi selezionarne più
+                di una.
               </p>
               {colonizedIds.length > 0 && (
                 <div className="mt-4 rounded-md border border-border bg-background p-3 text-xs">
@@ -110,7 +110,7 @@ function Step3() {
                   disabled={narrIdx === 0}
                   onClick={() => setNarrIdx((i) => Math.max(0, i - 1))}
                 >
-                  ← Spinta Precedente
+                  ← Affermazione Precedente
                 </Button>
                 <Button
                   size="sm"
@@ -121,7 +121,7 @@ function Step3() {
                     )
                   }
                 >
-                  Spinta Successiva →
+                  Affermazione Successiva →
                 </Button>
               </div>
             </article>
