@@ -83,7 +83,7 @@ export function ProgressSteps({ current }: { current: number }) {
         >
           <div className="mx-auto max-w-xl text-center">
             <p className="text-xs uppercase tracking-[0.25em] text-muted-foreground">
-              Sezione bloccata
+              SEZIONE BLOCCATA
             </p>
             <h2 className="mt-4 font-serif text-3xl font-medium">Attenzione</h2>
             <p className="mt-6 text-base leading-relaxed text-foreground/90">

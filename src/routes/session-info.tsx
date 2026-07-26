@@ -64,7 +64,7 @@ function SessionInfo() {
       <ProgressSteps current={1} />
       <div className="mx-auto max-w-2xl px-6 py-12">
         <p className="text-xs uppercase tracking-[0.25em] text-muted-foreground">
-          Registrazione sessione
+          REGISTRAZIONE SESSIONE
         </p>
         <h1 className="mt-3 font-serif text-3xl font-medium">
           Condizione ambientale

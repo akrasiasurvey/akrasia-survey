@@ -77,9 +77,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Sé Dialogico — Strumento di ricerca fenomenologica" },
-      { name: "description", content: "Strumento di ricerca qualitativo-fenomenologico sul Sé Dialogico: mappatura delle I-Positions e scenari decisionali." },
-      { property: "og:title", content: "Sé Dialogico — Strumento di ricerca" },
+      { title: "Akrasia e Sé Dialogico — Strumento di ricerca" },
+      { name: "description", content: "Strumento per la ricerca qualitativa in psicologia su akrasia e Sé Dialogico: mappatura delle posizioni del Sé e scenari decisionali." },
+      { property: "og:title", content: "Akrasia e Sé Dialogico — Strumento di ricerca" },
       { property: "og:description", content: "Mappatura fenomenologica del Sé e dei processi decisionali in contesti professionali." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
