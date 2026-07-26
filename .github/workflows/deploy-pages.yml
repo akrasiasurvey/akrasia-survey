@@ -39,6 +39,11 @@ jobs:
           # `/<repo>` for project sites. Add a trailing slash — Vite needs it.
           BASE_PATH: ${{ steps.pages.outputs.base_path }}/
           VITE_BASE_URL: ${{ steps.pages.outputs.base_path }}/
+          # Chiavi pubbliche (publishable) dell'archivio dati: necessarie
+          # nella build statica per salvare/leggere le sessioni.
+          VITE_SUPABASE_URL: "https://mjpbcnyuhipckxcbcjah.supabase.co"
+          VITE_SUPABASE_PUBLISHABLE_KEY: "sb_publishable_sx4JsjyyFE4owyoqbdv_tA_d7FE1sVH"
+          VITE_SUPABASE_PROJECT_ID: "mjpbcnyuhipckxcbcjah"
         run: bun run build:pages
 
       - name: Upload Pages artifact
