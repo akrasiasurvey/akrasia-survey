@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -14,6 +14,8 @@ import {
 } from "@/store/research";
 import { cn } from "@/lib/utils";
 import { StepGate } from "@/lib/stepGating";
+import { saveProfileRemote } from "@/lib/sessionsRepo";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/step4")({
   component: () => (
@@ -34,6 +36,8 @@ function Step3() {
   const archiveAndComplete = useResearchStore((s) => s.archiveAndComplete);
 
   const [idx, setIdx] = useState(0);
+  const [submitting, setSubmitting] = useState(false);
+  const navigate = useNavigate();
 
   // Ordine di presentazione delle opzioni A/B/C mescolato per sessione
   // (evita bias di posizione). Stabilizzato in useState per non rimescolare
@@ -89,11 +93,32 @@ function Step3() {
 
   // Fissa l'istante di completamento sessione quando tutti gli scenari sono chiusi.
   useEffect(() => {
-    if (allComplete) {
-      endSession();
-      archiveAndComplete();
+    if (allComplete) endSession();
+  }, [allComplete, endSession]);
+
+  // Invio definitivo: archivia la sessione e la salva nell'archivio permanente
+  // dell'applicazione, poi porta alla pagina di ringraziamento.
+  const handleSubmit = async () => {
+    setSubmitting(true);
+    endSession();
+    archiveAndComplete();
+    const state = useResearchStore.getState();
+    const profile =
+      state.archivedProfiles.find(
+        (p) => p.participantId === state.participantId,
+      ) ?? null;
+    try {
+      if (profile) await saveProfileRemote(profile);
+    } catch (err) {
+      console.error("Salvataggio sessione fallito", err);
+      toast.error(
+        "Invio all'archivio non riuscito: la sessione resta salvata su questo dispositivo.",
+      );
+    } finally {
+      setSubmitting(false);
+      navigate({ to: "/grazie", replace: true });
     }
-  }, [allComplete, endSession, archiveAndComplete]);
+  };
 
   const OPTIONS: {
     k: ScenarioChoice;
@@ -279,8 +304,8 @@ function Step3() {
           <Button variant="ghost" asChild>
             <Link to="/step3">← Indietro</Link>
           </Button>
-          <Button asChild disabled={!allComplete}>
-            <Link to="/researcher">Concludi →</Link>
+          <Button disabled={!allComplete || submitting} onClick={handleSubmit}>
+            {submitting ? "Invio in corso…" : "Concludi e invia →"}
           </Button>
         </div>
       </div>

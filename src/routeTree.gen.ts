@@ -15,6 +15,7 @@ import { Route as Step2RouteImport } from './routes/step2'
 import { Route as Step1RouteImport } from './routes/step1'
 import { Route as SessionInfoRouteImport } from './routes/session-info'
 import { Route as ResearcherRouteImport } from './routes/researcher'
+import { Route as GrazieRouteImport } from './routes/grazie'
 import { Route as ConsentRouteImport } from './routes/consent'
 import { Route as IndexRouteImport } from './routes/index'
 
@@ -48,6 +49,11 @@ const ResearcherRoute = ResearcherRouteImport.update({
   path: '/researcher',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GrazieRoute = GrazieRouteImport.update({
+  id: '/grazie',
+  path: '/grazie',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ConsentRoute = ConsentRouteImport.update({
   id: '/consent',
   path: '/consent',
@@ -62,6 +68,7 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/consent': typeof ConsentRoute
+  '/grazie': typeof GrazieRoute
   '/researcher': typeof ResearcherRoute
   '/session-info': typeof SessionInfoRoute
   '/step1': typeof Step1Route
@@ -72,6 +79,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/consent': typeof ConsentRoute
+  '/grazie': typeof GrazieRoute
   '/researcher': typeof ResearcherRoute
   '/session-info': typeof SessionInfoRoute
   '/step1': typeof Step1Route
@@ -83,6 +91,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/consent': typeof ConsentRoute
+  '/grazie': typeof GrazieRoute
   '/researcher': typeof ResearcherRoute
   '/session-info': typeof SessionInfoRoute
   '/step1': typeof Step1Route
@@ -95,6 +104,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/consent'
+    | '/grazie'
     | '/researcher'
     | '/session-info'
     | '/step1'
@@ -105,6 +115,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/consent'
+    | '/grazie'
     | '/researcher'
     | '/session-info'
     | '/step1'
@@ -115,6 +126,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/consent'
+    | '/grazie'
     | '/researcher'
     | '/session-info'
     | '/step1'
@@ -126,6 +138,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ConsentRoute: typeof ConsentRoute
+  GrazieRoute: typeof GrazieRoute
   ResearcherRoute: typeof ResearcherRoute
   SessionInfoRoute: typeof SessionInfoRoute
   Step1Route: typeof Step1Route
@@ -178,6 +191,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ResearcherRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/grazie': {
+      id: '/grazie'
+      path: '/grazie'
+      fullPath: '/grazie'
+      preLoaderRoute: typeof GrazieRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/consent': {
       id: '/consent'
       path: '/consent'
@@ -198,6 +218,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ConsentRoute: ConsentRoute,
+  GrazieRoute: GrazieRoute,
   ResearcherRoute: ResearcherRoute,
   SessionInfoRoute: SessionInfoRoute,
   Step1Route: Step1Route,
