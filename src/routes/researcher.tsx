@@ -1106,10 +1106,10 @@ function Bar({
 function matrixSynthesis(v: number, perf: number, prot: number): string {
   const rational = v > 60;
   const moral = v < 40;
-  if (rational && perf >= 3) return "Voce razionale intensamente colonizzata dalle spinte performative.";
+  if (rational && perf >= 3) return "Voce razionale intensamente colonizzata dalle narrazioni performative.";
   if (moral && prot >= 3) return "Voce morale sostenuta da contro-narrazioni del benessere.";
   if (moral && perf >= 2) return "Voce morale sotto pressione performativa (rischio di sacrificio).";
-  if (rational && prot >= 2) return "Voce razionale attraversata da controspinte del benessere (potenziale attrito).";
+  if (rational && prot >= 2) return "Voce razionale attraversata da contro-narrazioni del benessere (potenziale attrito).";
   if (perf === 0 && prot === 0) return "Voce non colonizzata da alcuna narrazione.";
   return "Configurazione mista.";
 }
@@ -1824,7 +1824,7 @@ function exportAggregatePDF(
       y += size + 4;
     }
   };
-  line("Strumento di ricerca — Akrasia e Sé Dialogico — Report aggregato", 14, true);
+  line("STRUMENTO DI RICERCA — AKRASIA E SÉ DIALOGICO — Report aggregato", 14, true);
   line(`Partecipanti totali: ${profiles.length}`);
   line(`Generato il ${formatDateTime(Date.now())}`);
   y += 8;
