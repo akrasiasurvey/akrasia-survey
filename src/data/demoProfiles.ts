@@ -89,10 +89,12 @@ export const DEMO_PROFILES: Profile[] = [
       [N_PERF[1]]: ["p1a", "p1e", "p1g"],
       [N_PERF[2]]: ["p1a"],
       [N_PERF[3]]: ["p1a", "p1e"],
+      [N_PERF[4]]: ["p1a", "p1e", "p1g"],
       [N_PROT[0]]: ["p1b", "p1d"],
       [N_PROT[1]]: ["p1b", "p1c"],
       [N_PROT[2]]: ["p1b", "p1c", "p1f"],
       [N_PROT[3]]: ["p1d", "p1f"],
+      [N_PROT[4]]: ["p1c", "p1f"],
     },
     scenarios: {
       s1: {
@@ -143,10 +145,12 @@ export const DEMO_PROFILES: Profile[] = [
       [N_PERF[1]]: ["p2a", "p2d", "p2f"],
       [N_PERF[2]]: ["p2a"],
       [N_PERF[3]]: ["p2a", "p2d"],
+      [N_PERF[4]]: ["p2a"],
       [N_PROT[0]]: ["p2b", "p2c", "p2h"],
       [N_PROT[1]]: ["p2b", "p2c", "p2h"],
       [N_PROT[2]]: ["p2b", "p2e"],
       [N_PROT[3]]: ["p2e", "p2f", "p2g"],
+      [N_PROT[4]]: ["p2b", "p2e", "p2h"],
     },
     scenarios: {
       s1: {
@@ -195,10 +199,12 @@ export const DEMO_PROFILES: Profile[] = [
       [N_PERF[1]]: ["p3a", "p3b", "p3c"],
       [N_PERF[2]]: ["p3a", "p3b", "p3c"],
       [N_PERF[3]]: ["p3a", "p3b"],
+      [N_PERF[4]]: ["p3a", "p3b", "p3c"],
       [N_PROT[0]]: ["p3f"],
       [N_PROT[1]]: ["p3d", "p3e"],
       [N_PROT[2]]: [],
       [N_PROT[3]]: ["p3f"],
+      [N_PROT[4]]: ["p3e"],
     },
     scenarios: {
       s1: {
