@@ -24,6 +24,8 @@ import { cn } from "@/lib/utils";
 import jsPDF from "jspdf";
 import { renderToStaticMarkup } from "react-dom/server";
 
+import { fetchProfilesRemote } from "@/lib/sessionsRepo";
+
 export const Route = createFileRoute("/researcher")({
   component: Researcher,
 });
@@ -125,6 +127,21 @@ function Dashboard() {
     return m;
   }, [liveProfile]);
 
+  const [remoteProfiles, setRemoteProfiles] = useState<Profile[]>([]);
+
+  // Archivio permanente condiviso: tutte le sessioni inviate dai partecipanti.
+  useEffect(() => {
+    let alive = true;
+    fetchProfilesRemote()
+      .then((rows) => {
+        if (alive) setRemoteProfiles(rows);
+      })
+      .catch((err) => console.error("Lettura archivio non riuscita", err));
+    return () => {
+      alive = false;
+    };
+  }, []);
+
   const profiles: Profile[] = useMemo(() => {
     const seen = new Set<string>();
     const out: Profile[] = [];
@@ -134,10 +151,11 @@ function Dashboard() {
       out.push(p);
     };
     if (liveProfile) push(liveProfile.profile);
+    remoteProfiles.forEach(push);
     store.archivedProfiles.forEach(push);
     DEMO_PROFILES.forEach(push);
     return out;
-  }, [liveProfile, store.archivedProfiles]);
+  }, [liveProfile, remoteProfiles, store.archivedProfiles]);
 
   const [query, setQuery] = useState("");
   const [sortDir, setSortDir] = useState<"desc" | "asc">("desc");
