@@ -55,11 +55,19 @@ export async function fetchProfilesRemote(): Promise<Profile[]> {
   return (data ?? []).map((r) => rowToProfile(r as Row));
 }
 
-/** Elimina definitivamente una sessione dall'archivio cloud. */
-export async function deleteProfileRemote(participantId: string): Promise<void> {
-  const { error } = await supabase
+/**
+ * Elimina definitivamente una sessione dall'archivio cloud.
+ * Restituisce il numero di righe effettivamente rimosse dal database.
+ */
+export async function deleteProfileRemote(participantId: string): Promise<number> {
+  const { data, error } = await supabase
     .from("research_sessions")
     .delete()
-    .eq("participant_id", participantId);
-  if (error) throw error;
+    .eq("participant_id", participantId)
+    .select("participant_id");
+  if (error) {
+    console.error("[sessionsRepo] delete fallita", error);
+    throw error;
+  }
+  return data?.length ?? 0;
 }
