@@ -1515,6 +1515,86 @@ async function exportProfilePDF(
     y += 14;
   };
 
+  const currentPage = () => doc.getCurrentPageInfo().pageNumber;
+
+  // Draws a card frame (border + left accent) across every page the card
+  // spans, so long content can flow onto new pages without being clipped.
+  const drawCardFrame = (
+    startPage: number,
+    startY: number,
+    endPage: number,
+    endY: number,
+    accent?: [number, number, number],
+  ) => {
+    const last = currentPage();
+    for (let p = startPage; p <= endPage; p++) {
+      doc.setPage(p);
+      const top = p === startPage ? startY - 6 : M - 14;
+      const bottom = p === endPage ? endY : PAGE_H - M + 6;
+      if (bottom - top < 6) continue;
+      setStroke(BORDER);
+      doc.setLineWidth(0.6);
+      doc.roundedRect(M - 6, top, CONTENT_W + 12, bottom - top, 6, 6, "S");
+      if (accent) {
+        setFill(accent);
+        doc.rect(M - 6, top, 3, bottom - top, "F");
+      }
+    }
+    doc.setPage(last);
+  };
+
+  // Simple, page-break-aware table renderer
+  const table = (
+    headers: string[],
+    rows: string[][],
+    widths: number[],
+  ) => {
+    const colX = (i: number) =>
+      M + widths.slice(0, i).reduce((a, b) => a + b, 0);
+    const header = () => {
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(7.5);
+      doc.setCharSpace(0.8);
+      setInk(MUTED);
+      headers.forEach((h, i) =>
+        doc.text(doc.splitTextToSize(h.toUpperCase(), widths[i] - 6)[0], colX(i), y),
+      );
+      doc.setCharSpace(0);
+      y += 8;
+      setStroke(BORDER);
+      doc.setLineWidth(0.6);
+      doc.line(M, y, M + CONTENT_W, y);
+      y += 12;
+    };
+    ensureSpace(46);
+    header();
+    for (const row of rows) {
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(9);
+      const cells = row.map((c, i) =>
+        doc.splitTextToSize(c || "—", widths[i] - 8),
+      );
+      const h = Math.max(...cells.map((c) => c.length)) * 12 + 8;
+      if (y + h > PAGE_H - M) {
+        doc.addPage();
+        y = M;
+        header();
+      }
+      setInk(INK);
+      cells.forEach((lines, i) => {
+        lines.forEach((l: string, li: number) => {
+          setInk(i === 0 ? INK : MUTED);
+          doc.text(l, colX(i), y + li * 12);
+        });
+      });
+      y += h;
+      setStroke(BORDER);
+      doc.setLineWidth(0.4);
+      doc.line(M, y - 6, M + CONTENT_W, y - 6);
+    }
+    y += 8;
+  };
+
   const cardOpen = (title: string) => {
     ensureSpace(60);
     const top = y;
