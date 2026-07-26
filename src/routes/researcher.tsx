@@ -1934,7 +1934,7 @@ async function exportProfilePDF(
     setInk(HEADER_FG);
     doc.setFont("times", "normal");
     doc.setFontSize(18);
-    doc.text("Intervista post-test", M, 40);
+    doc.text("Sezione 6 · Intervista post-test", M, 40);
     y = 88;
 
     uppercase("Trascrizione integrale", { size: 8 });
