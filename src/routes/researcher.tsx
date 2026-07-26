@@ -24,7 +24,19 @@ import { cn } from "@/lib/utils";
 import jsPDF from "jspdf";
 import { renderToStaticMarkup } from "react-dom/server";
 
-import { fetchProfilesRemote } from "@/lib/sessionsRepo";
+import { deleteProfileRemote, fetchProfilesRemote } from "@/lib/sessionsRepo";
+import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Trash2 } from "lucide-react";
 
 export const Route = createFileRoute("/researcher")({
   component: Researcher,
@@ -192,6 +204,33 @@ function Dashboard() {
     profiles[0];
   const [view, setView] = useState<"individual" | "aggregate">("individual");
   const [showNumbers, setShowNumbers] = useState(false);
+
+  const removeArchivedProfile = useResearchStore(
+    (s) => s.removeArchivedProfile,
+  );
+  const [pendingDelete, setPendingDelete] = useState<Profile | null>(null);
+  const [deleting, setDeleting] = useState(false);
+
+  async function confirmDelete() {
+    const target = pendingDelete;
+    if (!target) return;
+    setDeleting(true);
+    try {
+      if (!target.demo) await deleteProfileRemote(target.participantId);
+      setRemoteProfiles((rows) =>
+        rows.filter((r) => r.participantId !== target.participantId),
+      );
+      removeArchivedProfile(target.participantId);
+      if (selectedId === target.participantId) setSelectedId("");
+      toast.success(`Sessione "${target.participantId}" eliminata.`);
+      setPendingDelete(null);
+    } catch (err) {
+      console.error(err);
+      toast.error("Eliminazione non riuscita. Riprova.");
+    } finally {
+      setDeleting(false);
+    }
+  }
 
   return (
     <main className="min-h-screen bg-background text-foreground">
