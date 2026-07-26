@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Link } from "@tanstack/react-router";
+import { Link, Navigate } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { NARRATIVES_SHUFFLED, useResearchStore } from "@/store/research";
 
@@ -43,6 +43,10 @@ export function StepGate({
   children: ReactNode;
 }) {
   const max = useMaxUnlockedLevel();
+  const sessionCompleted = useResearchStore((s) => s.sessionCompleted);
+  // Test già inviato: gli step non sono più accessibili (nemmeno con il tasto
+  // "indietro" del browser).
+  if (sessionCompleted) return <Navigate to="/grazie" replace />;
   if (level <= max) return <>{children}</>;
   const target = STEP_META[Math.min(max, STEP_META.length - 1)];
   const message =
