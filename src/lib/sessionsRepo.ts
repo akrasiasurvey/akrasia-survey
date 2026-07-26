@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import type { Json } from "@/integrations/supabase/types";
 import type { Context, Profile } from "@/store/research";
 
 /**
@@ -38,7 +39,7 @@ export async function saveProfileRemote(profile: Profile): Promise<void> {
     context_custom: profile.contextCustom ?? "",
     started_at: new Date(startedAt).toISOString(),
     ended_at: new Date(Math.max(endedAt, startedAt)).toISOString(),
-    payload: profile as unknown as Record<string, unknown>,
+    payload: profile as unknown as Json,
   });
   // 23505 = sessione già inviata con lo stesso identificativo: non è un errore
   // bloccante per il partecipante.
