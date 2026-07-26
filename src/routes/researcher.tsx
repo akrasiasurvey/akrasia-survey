@@ -140,6 +140,9 @@ function Dashboard() {
   }, [liveProfile]);
 
   const [remoteProfiles, setRemoteProfiles] = useState<Profile[]>([]);
+  // Identificativi rimossi in questa sessione di dashboard: servono a nascondere
+  // anche le copie locali (sessione in corso / archivio su questo dispositivo).
+  const [deletedIds, setDeletedIds] = useState<string[]>([]);
 
   // Archivio permanente condiviso: tutte le sessioni inviate dai partecipanti.
   useEffect(() => {
@@ -166,8 +169,8 @@ function Dashboard() {
     remoteProfiles.forEach(push);
     store.archivedProfiles.forEach(push);
     DEMO_PROFILES.forEach(push);
-    return out;
-  }, [liveProfile, remoteProfiles, store.archivedProfiles]);
+    return out.filter((p) => !deletedIds.includes(p.participantId));
+  }, [liveProfile, remoteProfiles, store.archivedProfiles, deletedIds]);
 
   const [query, setQuery] = useState("");
   const [sortDir, setSortDir] = useState<"desc" | "asc">("desc");
@@ -216,17 +219,32 @@ function Dashboard() {
     if (!target) return;
     setDeleting(true);
     try {
+      // La rimozione dalla UI avviene solo dopo la conferma dal database cloud.
       if (!target.demo) await deleteProfileRemote(target.participantId);
       setRemoteProfiles((rows) =>
         rows.filter((r) => r.participantId !== target.participantId),
       );
       removeArchivedProfile(target.participantId);
+      setDeletedIds((ids) =>
+        ids.includes(target.participantId) ? ids : [...ids, target.participantId],
+      );
+      // Se la sessione eliminata è quella ancora attiva su questo dispositivo,
+      // azzera lo stato locale per non farla riapparire.
+      if (useResearchStore.getState().participantId === target.participantId) {
+        useResearchStore.getState().resetSession();
+      }
       if (selectedId === target.participantId) setSelectedId("");
       toast.success(`Sessione "${target.participantId}" eliminata.`);
       setPendingDelete(null);
     } catch (err) {
-      console.error(err);
-      toast.error("Eliminazione non riuscita. Riprova.");
+      console.error("[Dashboard] Errore durante l'eliminazione dal database", err);
+      const msg =
+        err && typeof err === "object" && "message" in err
+          ? String((err as { message: unknown }).message)
+          : "";
+      toast.error(
+        `Errore durante l'eliminazione dal database${msg ? `: ${msg}` : ""}`,
+      );
     } finally {
       setDeleting(false);
     }
