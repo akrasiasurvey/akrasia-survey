@@ -1423,6 +1423,7 @@ async function exportProfilePDF(
   profile: Profile,
   diagnostics: Record<ScenarioId, DiagnosticColor>,
   interview?: InterviewData,
+  clinicalNotes?: Partial<Record<ScenarioId, string>>,
 ) {
   const doc = new jsPDF({ unit: "pt", format: "a4" });
   const PAGE_W = 595.28;
