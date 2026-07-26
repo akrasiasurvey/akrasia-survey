@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ProgressSteps } from "@/components/ProgressSteps";
 import { Instruction } from "@/components/Instruction";
@@ -22,8 +22,17 @@ function Step3() {
     (s) => s.narrativeColonization,
   );
   const toggleColonization = useResearchStore((s) => s.toggleColonization);
+  const narrativesSeen = useResearchStore((s) => s.narrativesSeen ?? 0);
+  const markNarrativeSeen = useResearchStore((s) => s.markNarrativeSeen);
 
   const [narrIdx, setNarrIdx] = useState(0);
+  const [warn, setWarn] = useState(false);
+
+  useEffect(() => {
+    markNarrativeSeen(narrIdx);
+  }, [narrIdx, markNarrativeSeen]);
+
+  const allSeen = narrativesSeen >= NARRATIVES_SHUFFLED.length - 1;
 
   if (positions.length === 0) {
     return (
@@ -157,9 +166,26 @@ function Step3() {
           <Button variant="ghost" asChild>
             <Link to="/step2">← Indietro</Link>
           </Button>
-          <Button asChild>
-            <Link to="/step4">Avanti →</Link>
-          </Button>
+          <div className="flex flex-col items-end gap-2">
+            {allSeen ? (
+              <Button asChild>
+                <Link to="/step4">Avanti →</Link>
+              </Button>
+            ) : (
+              <Button
+                aria-disabled="true"
+                className="opacity-50"
+                onClick={() => setWarn(true)}
+              >
+                Avanti →
+              </Button>
+            )}
+            {warn && !allSeen && (
+              <p className="text-xs text-muted-foreground">
+                Scorri tutte le affermazioni prima di proseguire.
+              </p>
+            )}
+          </div>
         </div>
       </div>
     </main>
