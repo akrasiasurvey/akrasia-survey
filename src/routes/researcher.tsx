@@ -24,7 +24,19 @@ import { cn } from "@/lib/utils";
 import jsPDF from "jspdf";
 import { renderToStaticMarkup } from "react-dom/server";
 
-import { fetchProfilesRemote } from "@/lib/sessionsRepo";
+import { deleteProfileRemote, fetchProfilesRemote } from "@/lib/sessionsRepo";
+import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Trash2 } from "lucide-react";
 
 export const Route = createFileRoute("/researcher")({
   component: Researcher,
@@ -193,6 +205,33 @@ function Dashboard() {
   const [view, setView] = useState<"individual" | "aggregate">("individual");
   const [showNumbers, setShowNumbers] = useState(false);
 
+  const removeArchivedProfile = useResearchStore(
+    (s) => s.removeArchivedProfile,
+  );
+  const [pendingDelete, setPendingDelete] = useState<Profile | null>(null);
+  const [deleting, setDeleting] = useState(false);
+
+  async function confirmDelete() {
+    const target = pendingDelete;
+    if (!target) return;
+    setDeleting(true);
+    try {
+      if (!target.demo) await deleteProfileRemote(target.participantId);
+      setRemoteProfiles((rows) =>
+        rows.filter((r) => r.participantId !== target.participantId),
+      );
+      removeArchivedProfile(target.participantId);
+      if (selectedId === target.participantId) setSelectedId("");
+      toast.success(`Sessione "${target.participantId}" eliminata.`);
+      setPendingDelete(null);
+    } catch (err) {
+      console.error(err);
+      toast.error("Eliminazione non riuscita. Riprova.");
+    } finally {
+      setDeleting(false);
+    }
+  }
+
   return (
     <main className="min-h-screen bg-background text-foreground">
       <header className="border-b border-border bg-card">
@@ -324,11 +363,11 @@ function Dashboard() {
             const isLive = !p.demo;
             const inProg = isInProgress(p);
             return (
+              <div key={p.participantId} className="relative">
               <button
-                key={p.participantId}
                 onClick={() => setSelectedId(p.participantId)}
                 className={cn(
-                  "w-full rounded-md border px-3 py-3 text-left transition-colors",
+                  "w-full rounded-md border px-3 py-3 pr-10 text-left transition-colors",
                   isSel
                     ? "border-foreground bg-muted"
                     : "border-border bg-card hover:border-foreground/40",
@@ -362,6 +401,21 @@ function Dashboard() {
                   {formatDateTime(p.startedAt)}
                 </div>
               </button>
+              {isLive && (
+                <button
+                  type="button"
+                  aria-label={`Elimina la sessione di ${p.participantId}`}
+                  title="Elimina sessione"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setPendingDelete(p);
+                  }}
+                  className="absolute right-2 top-2 rounded-md p-1.5 text-destructive/70 transition-colors hover:bg-destructive/10 hover:text-destructive"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              )}
+              </div>
             );
           })}
         </aside>
@@ -379,6 +433,38 @@ function Dashboard() {
           )}
         </section>
       </div>
+
+      <AlertDialog
+        open={pendingDelete !== null}
+        onOpenChange={(o) => !o && setPendingDelete(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Eliminare la sessione?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Sei sicuro di voler eliminare la sessione di{" "}
+              <span className="font-medium text-foreground">
+                {pendingDelete?.participantId}
+              </span>
+              ? Questa azione è irreversibile e rimuoverà permanentemente i
+              dati dal database.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deleting}>Annulla</AlertDialogCancel>
+            <AlertDialogAction
+              disabled={deleting}
+              onClick={(e) => {
+                e.preventDefault();
+                void confirmDelete();
+              }}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {deleting ? "Eliminazione…" : "Conferma ed Elimina"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </main>
   );
 }
