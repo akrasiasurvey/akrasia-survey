@@ -604,13 +604,13 @@ function ProfileAnalysis({
       <Card title="Sezione 4 · Mappa delle Narrazioni">
         <div className="grid gap-6 md:grid-cols-2">
           <NarrativeBlock
-            title="Narrazioni Performative"
+            title="Narrazioni neoliberiste-razionaliste-individualiste"
             tone="performative"
             items={PERFORMATIVE_NARRATIVES}
             profile={profile}
           />
           <NarrativeBlock
-            title="Contro-Narrazioni del Benessere"
+            title="Contronarrazioni relazionali-del benessere"
             tone="protective"
             items={PROTECTIVE_NARRATIVES}
             profile={profile}
