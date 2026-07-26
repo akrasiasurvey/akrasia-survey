@@ -99,7 +99,7 @@ export const DEMO_PROFILES: Profile[] = [
     scenarios: {
       s1: {
         openResponse:
-          "Sinceramente credo che stringerei i denti e mi collegherei. Ho sempre pensato che chi guida un team debba dare l'esempio proprio nei momenti di difficoltà, anche se so che il mio corpo mi sta chiedendo di fermarmi.",
+          "Sinceramente credo che accetterei l'incarico e rimanderei la partenza. Ho sempre pensato che certe occasioni non si possano rifiutare, anche se so che deluderei chi mi aspetta a casa.",
         locked: true,
         choice: "C",
         winningVoiceIds: ["p1a", "p1e"],
@@ -107,7 +107,7 @@ export const DEMO_PROFILES: Profile[] = [
       },
       s2: {
         openResponse:
-          "Onestamente cercherei di non farmi coinvolgere troppo. Gli darei qualche consiglio ma continuerei a spingere sui miei obiettivi: se non prendo la promozione io la prende qualcun altro, non è una scelta.",
+          "Onestamente andrei comunque al lavoro con un antipiretico. In un periodo così teso una seconda assenza pesa troppo: se non ci sono io, si fanno avanti gli altri.",
         locked: true,
         choice: "B",
         winningVoiceIds: ["p1a", "p1e"],
@@ -115,7 +115,7 @@ export const DEMO_PROFILES: Profile[] = [
       },
       s3: {
         openResponse:
-          "Applicherei le clausole. È il mio lavoro, e i KPI di fine mese non si negoziano. Al massimo proverei a offrirgli qualche facilitazione in un secondo momento.",
+          "Applicherei le clausole. È lecito, è il mio lavoro, e i KPI non si negoziano. Al massimo proverei a offrire al cliente qualche facilitazione in un secondo momento.",
         locked: true,
         choice: "C",
         winningVoiceIds: ["p1a", "p1g"],
@@ -155,7 +155,7 @@ export const DEMO_PROFILES: Profile[] = [
     scenarios: {
       s1: {
         openResponse:
-          "Delegherei senza pensarci due volte. Ho imparato a mie spese che ignorare i segnali del corpo si paga sempre, e nessuna riunione vale un crollo. Chiamerei il mio secondo, spiegherei la situazione e mi rimetterei a letto.",
+          "Partirei comunque. Ho imparato a mie spese che il tempo con le persone care non si recupera, e nessuna pratica vale un fine settimana promesso da mesi.",
         locked: true,
         choice: "A",
         winningVoiceIds: ["p2b", "p2c", "p2e"],
@@ -163,7 +163,7 @@ export const DEMO_PROFILES: Profile[] = [
       },
       s2: {
         openResponse:
-          "Non riuscirei a lavorare tranquilla sapendo che un amico sta affondando accanto a me. Rallenterei, parlerei con lui e cercheremmo di capire insieme una strategia. La promozione può aspettare, la relazione no.",
+          "Resterei a casa a curarmi. So che le voci in ufficio circolerebbero, ma trascinarmi al lavoro con la febbre alta significherebbe solo peggiorare e stare male più a lungo.",
         locked: true,
         choice: "A",
         winningVoiceIds: ["p2c", "p2e", "p2h"],
@@ -171,7 +171,7 @@ export const DEMO_PROFILES: Profile[] = [
       },
       s3: {
         openResponse:
-          "Rinegozierei. Non riesco proprio a pensare di scaricare un surplus del 30% su una realtà no-profit che si occupa di persone fragili. Parlerei con il mio capo cercando di far capire che questa scelta ci qualifica come azienda.",
+          "Manterrei le condizioni preventivate. Non riesco a pensare di scaricare un 15% in più su un'azienda familiare. Parlerei con il mio capo cercando di far capire che questa scelta ci qualifica.",
         locked: true,
         choice: "A",
         winningVoiceIds: ["p2e", "p2g", "p2f"],
@@ -209,7 +209,7 @@ export const DEMO_PROFILES: Profile[] = [
     scenarios: {
       s1: {
         openResponse:
-          "Prendo antidolorifico e vado. Non c'è alternativa: un founder che si assenta il giorno prima di un lancio manda un messaggio devastante al team e agli investitori. Il mio corpo mi seguirà.",
+          "Accetto l'incarico, senza esitare. Un founder che rinuncia a un cliente di rilievo per una gita manda un messaggio devastante al team e agli investitori. Il weekend si recupera.",
         locked: true,
         choice: "B",
         winningVoiceIds: ["p3a", "p3b"],
@@ -217,7 +217,7 @@ export const DEMO_PROFILES: Profile[] = [
       },
       s2: {
         openResponse:
-          "Se non regge il ritmo è un suo problema, non posso caricarmelo. La competizione è quella cosa che ti fa capire chi sei davvero. Al massimo gli offrirei un caffè per parlarne dopo il trimestre.",
+          "Vado al lavoro comunque. La febbre passa, una reputazione da persona fragile no. La competizione è quella cosa che ti fa capire chi sei davvero.",
         locked: true,
         choice: "B",
         winningVoiceIds: ["p3a", "p3b", "p3c"],

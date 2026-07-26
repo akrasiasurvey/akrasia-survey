@@ -120,43 +120,42 @@ export interface ScenarioDef {
 export const SCENARIOS: readonly ScenarioDef[] = [
   {
     id: "s1",
-    title: "Scenario 1 — La Soglia del Limite",
-    theme: "Abnegazione psicofisica, controllo emotivo, lavoro-identità",
+    title: "Scenario 1 — Il fine settimana",
+    theme: "Tempo relazionale vs. dedizione lavorativa, riconoscimento professionale",
     text:
-      "Da settimane sei il responsabile di un lancio di prodotto cruciale. Lavori 14 ore al giorno, dormi pochissimo e il tuo corpo inizia a inviarti segnali d'allarme netti: tachicardia costante e attacchi d'ansia prima di entrare in riunione. Sai che mostrare questa fragilità comprometterebbe la tua immagine di leader imperturbabile e solido, una reputazione che coincide interamente con l'idea che hai di te stesso. Sabato mattina, il giorno prima del lancio, ti svegli con una forte emicrania che ti impedisce quasi di tenere gli occhi aperti, ma c'è un'ultima riunione di allineamento non obbligatoria ma strategicamente importante per fare pressione sul team.",
+      "Dopo settimane di lavoro molto intenso, in cui non hai avuto modo di trascorrere molto tempo in famiglia, finalmente arriva venerdì e la sera stessa partirai per il fine settimana fuori porta che avevi promesso al tuo partner. Ne parlate da tempo e siete entrambi felici di avere un momento di tranquillità in cui non dover pensare agli impegni della settimana. Appena prima di lasciare l’ufficio, però, ricevi una comunicazione dal tuo capo: ti offre la possibilità di occuparti delle pratiche per un cliente di rilievo, un compito importante ma che deve essere portato a termine tassativamente entro lunedì. Sai che accettare la proposta ti richiederebbe qualche ora di lavoro extra, straordinari pagati che ti farebbero comodo, e ti permetterebbe di dimostrare il tuo valore, ma sei consapevole che ciò significherebbe rimandare la gita tanto attesa.",
     optionA:
-      "Decido di delegare la riunione al mio secondo. Riconosco il limite del mio corpo, accetto la vulnerabilità emotiva e scelgo di riposare per preservare la mia salute, anche se questo potrebbe essere percepito come un momento di cedimento.",
+      "Declino la proposta e parto come previsto. Ritengo che il tempo promesso al mio partner e alla mia vita affettiva non sia negoziabile in cambio di un riconoscimento professionale.",
     optionB:
-      "Prendo un forte antidolorifico, reprimo l'ansia e mi presento in riunione mostrando massima energia. Ritengo che l'abnegazione e il controllo emotivo di fronte alle difficoltà siano l'unico modo lodevole di dimostrare chi sono veramente.",
+      "Accetto l'incarico e rimando la partenza. Un'occasione così per dimostrare il proprio valore, con in più gli straordinari pagati, non si può lasciar passare: la famiglia capirà.",
     optionC:
-      "Cerco una via di mezzo: decido di non andare fisicamente alla riunione, ma mi collego da remoto con la videocamera spenta mentre sono a letto, provando a riposare ma senza disconnettermi del tutto per non perdere il controllo della situazione.",
+      "Cerco un compromesso: parto comunque, ma porto con me il lavoro e mi ritaglio qualche ora durante il fine settimana per completare le pratiche entro lunedì.",
   },
   {
     id: "s2",
-    title: "Scenario 2 — Il Prezzo del Successo",
-    theme:
-      "Competitività come sviluppo, impegno unico fattore, giudizio morale del fallimento",
+    title: "Scenario 2 — La malattia",
+    theme: "Abnegazione psicofisica, competitività, immagine di produttività",
     text:
-      "Un tuo collega e amico storico all'interno dell'azienda sta attraversando un momento di grave difficoltà personale che si sta riflettendo sulle sue performance lavorative. La direzione ha fatto capire che nel prossimo trimestre ci sarà spazio per promuovere solo uno di voi due, e che chi non otterrà la promozione rischia il ridimensionamento o il licenziamento. Sai che se lo aiutassi attivamente a coprire le sue mancanze divideresti le tue energie, rischiando di non raggiungere i tuoi obiettivi iper-competitivi e di essere etichettato come un professionista che 'non si impegna abbastanza' o che sta fallendo.",
+      "Sul posto di lavoro è un periodo molto teso a causa di possibili ridimensionamenti e promozioni nel prossimo trimestre. Sei tornato sul posto di lavoro da appena qualche giorno dopo quasi una settimana di assenza per malattia a causa di un virus influenzale che ti ha costretto a letto. Una mattina, ti svegli con una forte sensazione di malessere; hai la febbre alta ed una forte emicrania. Sembra essere una ricaduta che dovresti contenere per evitare di stare peggio. In ufficio, però, c’è aria di competizione per ottenere la promozione ed evitare il ridimensionamento e temi che la tua seconda richiesta di malattia nel giro di poche settimane possa alimentare voci tra i colleghi circa il tuo impegno e la tua produttività ed influenzare la decisione.",
     optionA:
-      "Decido di rallentare i miei ritmi lavorativi per affiancare e supportare il mio collega. Accetto di mettere momentaneamente a rischio la mia promozione, ritenendo che la solidarietà e la relazione umana abbiano più valore della competizione selvaggia.",
+      "Resto a casa e mi curo. Riconosco il limite del mio corpo e accetto il rischio che questa assenza venga letta come scarsa dedizione: la salute viene prima della reputazione.",
     optionB:
-      "Mi concentro esclusivamente sui miei obiettivi, spingendo al massimo per assicurarmi la promozione. Penso che la competitività sia il motore della crescita professionale e che se il mio collega non riesce a tenere il passo sia indice di una sua temporanea mancanza di dedizione, della quale non posso farmi carico.",
+      "Prendo un antipiretico e vado comunque al lavoro. In un momento così delicato mostrare presenza e resistenza è l'unico modo per non compromettere la mia posizione.",
     optionC:
-      "Cerco di bilanciare le due cose: dedico il minimo tempo indispensabile ad aiutare il mio collega fuori dall'orario di lavoro per non intaccare i miei KPI personali, sperando che riesca a farcela senza che io debba sacrificare la mia performance.",
+      "Cerco una via di mezzo: avviso che lavorerò da casa, così evito l'assenza formale pur restando a letto, senza però potermi davvero riposare.",
   },
   {
     id: "s3",
-    title: "Scenario 3 — La Metrica del Valore",
-    theme: "Interesse economico, produttività come scopo supremo",
+    title: "Scenario 3 — Le clausole",
+    theme: "Interesse economico, produttività come scopo supremo, etica relazionale",
     text:
-      "Stai gestendo una trattativa per un importante contratto di consulenza. Ti rendi conto che, applicando in modo estremamente rigido le clausole contrattuali, potresti far fatturare alla tua azienda un surplus del 30% a spese di un cliente (un'associazione no-profit locale che si occupa di assistenza sociale), la quale subirebbe un danno relazionale ed economico enorme. Il tuo capo ti ricorda che l'unico scopo dell'azione aziendale è la massimizzazione del profitto e che i tuoi KPI di produttività personale per questo mese dipendono strettamente dal valore totale di questo contratto.",
+      "Sei incaricato di gestire la trattativa per un importante contratto di consulenza. Ti accorgi che, applicando in modo estremamente rigido ma lecito e legale le clausole, potresti far guadagnare alla tua azienda il 15% in più di quanto preventivato, a spese però del cliente, un’azienda a gestione familiare per la quale costituirebbe un danno economico considerevole. Cerchi un confronto con il tuo capo, il quale ti ricorda quali sono gli obiettivi dell’azienda. Inoltre, sei consapevole che i tuoi KPI di produttività personale dipendono in larga misura dal valore di questo contratto.",
     optionA:
-      "Propongo una rinegoziazione etica del contratto per non gravare sulla no-profit, accettando di non raggiungere il massimo dei miei KPI mensili. Credo che la responsabilità sociale e l'etica relazionale debbano prevalere sull'interesse puramente economico.",
+      "Non applico le clausole in modo rigido e mantengo le condizioni preventivate, accettando di non massimizzare i miei KPI: la correttezza verso il cliente viene prima del guadagno.",
     optionB:
-      "Applico rigidamente le clausole per massimizzare la fatturazione e garantire i miei standard di produttività. Ritengo che nel business l'interesse economico debba prevalere su considerazioni di tipo etico o relazionale, e che l'efficienza produttiva sia lo scopo ultimo del mio lavoro.",
+      "Applico rigidamente le clausole e porto a casa il 15% in più. È lecito, è ciò che l'azienda chiede e i miei risultati personali ne beneficiano.",
     optionC:
-      "Provo a mediare: applico le clausole rigide per ottenere il 30% in più come richiesto dal capo, ma propongo informalmente alla no-profit di compensare il danno dilazionando i pagamenti o promettendo loro uno sconto futuro su altri servizi.",
+      "Provo a mediare: applico le clausole come richiesto dal capo, ma propongo informalmente al cliente una dilazione dei pagamenti o uno sconto futuro per attenuare il danno.",
   },
 ];
 

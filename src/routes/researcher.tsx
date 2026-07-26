@@ -1294,7 +1294,23 @@ function download(filename: string, content: string, mime: string) {
 function exportProfileJSON(profile: Profile, interview?: InterviewData) {
   download(
     `${profile.participantId}.json`,
-    JSON.stringify({ ...profile, interview: interview ?? null }, null, 2),
+    JSON.stringify(
+      {
+        ...profile,
+        interview: interview ?? null,
+        scenarioDefinitions: SCENARIOS.map((s) => ({
+          id: s.id,
+          title: s.title,
+          theme: s.theme,
+          text: s.text,
+          optionA: s.optionA,
+          optionB: s.optionB,
+          optionC: s.optionC,
+        })),
+      },
+      null,
+      2,
+    ),
     "application/json",
   );
 }
@@ -1308,6 +1324,15 @@ function exportAllJSON(
     JSON.stringify(
       {
         exportedAt: Date.now(),
+        scenarioDefinitions: SCENARIOS.map((s) => ({
+          id: s.id,
+          title: s.title,
+          theme: s.theme,
+          text: s.text,
+          optionA: s.optionA,
+          optionB: s.optionB,
+          optionC: s.optionC,
+        })),
         profiles: profiles.map((p) => ({
           ...p,
           interview: interviews[p.participantId] ?? null,
