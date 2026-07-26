@@ -6,7 +6,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { ProgressSteps } from "@/components/ProgressSteps";
 import { useResearchStore, type Context } from "@/store/research";
-import { DEMO_PROFILES } from "@/data/demoProfiles";
 import { StepGate } from "@/lib/stepGating";
 
 export const Route = createFileRoute("/session-info")({
@@ -43,10 +42,9 @@ function SessionInfo() {
   const trimmedId = participantId.trim();
   const usernameTaken =
     trimmedId.length > 0 &&
-    [
-      ...archivedProfiles.map((p) => p.participantId),
-      ...DEMO_PROFILES.map((p) => p.participantId),
-    ].some((n) => n.trim().toLowerCase() === trimmedId.toLowerCase());
+    archivedProfiles
+      .map((p) => p.participantId)
+      .some((n) => n.trim().toLowerCase() === trimmedId.toLowerCase());
 
   const canProceed =
     trimmedId.length > 0 &&

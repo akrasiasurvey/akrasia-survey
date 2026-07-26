@@ -19,7 +19,7 @@ import {
   type ScenarioId,
   type InterviewData,
 } from "@/store/research";
-import { DEMO_PROFILES, type Profile } from "@/data/demoProfiles";
+import type { Profile } from "@/store/research";
 import { cn } from "@/lib/utils";
 import jsPDF from "jspdf";
 import { renderToStaticMarkup } from "react-dom/server";
@@ -168,7 +168,6 @@ function Dashboard() {
     if (liveProfile) push(liveProfile.profile);
     remoteProfiles.forEach(push);
     store.archivedProfiles.forEach(push);
-    DEMO_PROFILES.forEach(push);
     return out.filter((p) => !deletedIds.includes(p.participantId));
   }, [liveProfile, remoteProfiles, store.archivedProfiles, deletedIds]);
 
@@ -373,12 +372,14 @@ function Dashboard() {
           </div>
           {visibleProfiles.length === 0 && (
             <p className="rounded-md border border-dashed border-border bg-card px-3 py-4 text-center text-[11px] text-muted-foreground">
-              Nessun profilo corrisponde ai filtri.
+              {profiles.length === 0
+                ? "Nessuna sessione registrata. Le nuove compilazioni dei partecipanti compariranno qui in tempo reale."
+                : "Nessun profilo corrisponde ai filtri."}
             </p>
           )}
           {visibleProfiles.map((p) => {
             const isSel = p.participantId === selected?.participantId;
-            const isLive = !p.demo;
+            const isLive = true;
             const inProg = isInProgress(p);
             return (
               <div key={p.participantId} className="relative">
@@ -403,11 +404,6 @@ function Dashboard() {
                     ) : (
                       <span className="rounded border border-emerald-600/60 bg-emerald-600/10 px-1.5 py-0.5 text-[9px] uppercase tracking-widest text-emerald-700 dark:text-emerald-300">
                         Completata
-                      </span>
-                    )}
-                    {!isLive && (
-                      <span className="rounded border border-border px-1.5 py-0.5 text-[9px] uppercase tracking-widest text-muted-foreground">
-                        Demo
                       </span>
                     )}
                   </div>
@@ -446,7 +442,9 @@ function Dashboard() {
             <ProfileAnalysis profile={selected} showNumbers={showNumbers} />
           ) : (
             <div className="rounded-lg border border-dashed border-border bg-card p-16 text-center text-sm text-muted-foreground">
-              Nessun profilo selezionato.
+              {profiles.length === 0
+                ? "Nessuna sessione registrata. Le nuove compilazioni dei partecipanti compariranno qui in tempo reale."
+                : "Nessun profilo selezionato."}
             </div>
           )}
         </section>
