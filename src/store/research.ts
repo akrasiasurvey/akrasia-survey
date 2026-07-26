@@ -47,28 +47,32 @@ export function contextLabel(c: Context | "", custom?: string): string {
 }
 
 export const PERFORMATIVE_NARRATIVES = [
-  "Devi essere sempre reperibile e pronto a rispondere",
-  "La produttività e l'efficienza definiscono il tuo valore",
-  "Fermarsi significa perdere opportunità e rimanere indietro",
-  "Devi ottimizzare costantemente la gestione del tuo tempo",
+  "La produttività, l’efficienza e i risultati misurabili definiscono il tuo valore.",
+  "Devi ottimizzare costantemente la gestione del tuo tempo e delle tue energie.",
+  "Fermarsi o fallire significa rimanere indietro per colpa propria.",
+  "Devi dimostrare costante resilienza e controllo delle emozioni.",
+  "La competizione e la spinta individuale sono il motore della crescita.",
 ] as const;
 
 export const PROTECTIVE_NARRATIVES = [
-  "La salute psicofisica e il riposo sono prioritari",
-  "Le relazioni affettive e familiari vengono prima della performance",
-  "È fondamentale porre limiti sani tra vita privata e lavoro",
-  "Il valore di un'esperienza non si misura dai risultati quantificabili",
+  "Il valore di un'esperienza non si misura dai risultati quantificabili.",
+  "La salute psicofisica e il riposo sono prioritari rispetto alla performance.",
+  "Lo status o l'insuccesso professionale non definisce chi sei.",
+  "È fondamentale accettare la vulnerabilità e porre limiti tra vita privata e lavoro.",
+  "Le relazioni e il benessere collettivo contano più del successo individuale.",
 ] as const;
 
 export const NARRATIVES_SHUFFLED: readonly string[] = [
+  PERFORMATIVE_NARRATIVES[0],
+  PROTECTIVE_NARRATIVES[0],
   PERFORMATIVE_NARRATIVES[1],
+  PROTECTIVE_NARRATIVES[1],
+  PERFORMATIVE_NARRATIVES[2],
   PROTECTIVE_NARRATIVES[2],
   PERFORMATIVE_NARRATIVES[3],
-  PROTECTIVE_NARRATIVES[0],
-  PERFORMATIVE_NARRATIVES[0],
   PROTECTIVE_NARRATIVES[3],
-  PERFORMATIVE_NARRATIVES[2],
-  PROTECTIVE_NARRATIVES[1],
+  PERFORMATIVE_NARRATIVES[4],
+  PROTECTIVE_NARRATIVES[4],
 ];
 
 export function narrativeDomain(
