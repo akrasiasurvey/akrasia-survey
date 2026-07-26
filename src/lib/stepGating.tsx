@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
-import { useResearchStore } from "@/store/research";
+import { NARRATIVES_SHUFFLED, useResearchStore } from "@/store/research";
 
 export const STEP_META = [
   { label: "Consenso", to: "/consent" as const },
@@ -21,6 +21,7 @@ export function useMaxUnlockedLevel(): number {
   const contextCustom = useResearchStore((s) => s.contextCustom);
   const positions = useResearchStore((s) => s.positions);
   const continuumTouched = useResearchStore((s) => s.continuumTouched);
+  const narrativesSeen = useResearchStore((s) => s.narrativesSeen ?? 0);
 
   if (!consent) return 0;
   const idOk = participantId.trim().length > 0;
@@ -30,6 +31,7 @@ export function useMaxUnlockedLevel(): number {
   if (positions.length === 0) return 2;
   const allTouched = positions.every((p) => continuumTouched.includes(p.id));
   if (!allTouched) return 3;
+  if (narrativesSeen < NARRATIVES_SHUFFLED.length - 1) return 4;
   return 5;
 }
 
@@ -43,6 +45,10 @@ export function StepGate({
   const max = useMaxUnlockedLevel();
   if (level <= max) return <>{children}</>;
   const target = STEP_META[Math.min(max, STEP_META.length - 1)];
+  const message =
+    max === 4
+      ? "Per accedere allo Step 4 è necessario aver preso visione di tutte le affermazioni presenti nello Step 3."
+      : "Non è possibile accedere a questa sezione prima di aver completato le informazioni e le risposte dello step precedente.";
   return (
     <main className="min-h-screen bg-background text-foreground">
       <div className="mx-auto flex min-h-screen max-w-xl flex-col justify-center px-6 py-16">
@@ -51,8 +57,7 @@ export function StepGate({
         </p>
         <h1 className="mt-4 font-serif text-3xl font-medium">Attenzione</h1>
         <p className="mt-6 text-base leading-relaxed text-foreground/90">
-          Non è possibile accedere a questa sezione prima di aver completato
-          le informazioni e le risposte dello step precedente.
+          {message}
         </p>
         <p className="mt-3 text-sm text-muted-foreground">
           Passaggio da completare:{" "}
@@ -60,7 +65,7 @@ export function StepGate({
         </p>
         <div className="mt-10 flex justify-center">
           <Button asChild size="lg">
-            <Link to={target.to}>Torna allo step da compilare →</Link>
+            <Link to={target.to}>Torna allo step da completare →</Link>
           </Button>
         </div>
       </div>
