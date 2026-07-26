@@ -14,7 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      research_sessions: {
+        Row: {
+          context: string
+          context_custom: string
+          created_at: string
+          ended_at: string
+          id: string
+          participant_id: string
+          payload: Json
+          started_at: string
+          updated_at: string
+        }
+        Insert: {
+          context: string
+          context_custom?: string
+          created_at?: string
+          ended_at: string
+          id?: string
+          participant_id: string
+          payload: Json
+          started_at: string
+          updated_at?: string
+        }
+        Update: {
+          context?: string
+          context_custom?: string
+          created_at?: string
+          ended_at?: string
+          id?: string
+          participant_id?: string
+          payload?: Json
+          started_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
