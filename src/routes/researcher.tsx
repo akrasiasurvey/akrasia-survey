@@ -1773,8 +1773,8 @@ async function exportProfilePDF(
     [
       "I-Position",
       "Orientamento",
-      "Col. performativa",
-      "Col. benessere",
+      "Colonizz. perf.",
+      "Colonizz. bene.",
       "Sintesi",
     ],
     profile.positions.map((p) => {
@@ -1795,7 +1795,7 @@ async function exportProfilePDF(
         matrixSynthesis(v, perf, prot),
       ];
     }),
-    [110, 96, 74, 66, CONTENT_W - 346],
+    [104, 92, 82, 78, CONTENT_W - 356],
   );
   y += 6;
 
@@ -1850,7 +1850,7 @@ async function exportProfilePDF(
     doc.setFont("helvetica", "bold");
     doc.setFontSize(7.5);
     doc.setCharSpace(1.2);
-    const badgeW = doc.getTextWidth(badge) + 14;
+    const badgeW = doc.getTextWidth(badge) + badge.length * 1.2 + 14;
     doc.roundedRect(M + 10, y - 10, badgeW, 15, 7, 7, "F");
     setInk([255, 255, 255]);
     doc.text(badge, M + 10 + 7, y);
@@ -1861,7 +1861,7 @@ async function exportProfilePDF(
     }`;
     const chX = M + 10 + badgeW + 8;
     setFill(INK);
-    const chW = doc.getTextWidth(choiceStr) + 14;
+    const chW = doc.getTextWidth(choiceStr) + choiceStr.length * 1.2 + 14;
     doc.roundedRect(chX, y - 10, chW, 15, 7, 7, "F");
     setInk([255, 255, 255]);
     doc.text(choiceStr, chX + 7, y);
