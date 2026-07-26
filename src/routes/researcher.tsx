@@ -1707,8 +1707,100 @@ async function exportProfilePDF(
   }
   y += 10;
 
-  // Section: Scenari
-  uppercase("Sezione 2 · Scenari di Akrasia", { size: 8 });
+  // Section: Valutazione continuum (mirrors dashboard section 3)
+  uppercase("Sezione 3 · Valutazione Continuum", { size: 8 });
+  rule();
+  table(
+    ["I-Position", "Appartenenza", "Importanza", "Continuum", "Orientamento"],
+    profile.positions.map((p) => {
+      const v = profile.continuum[p.id]?.value ?? 50;
+      return [
+        p.label,
+        p.belonging === "internal" ? "Sé Interno" : "Sé Esterno",
+        String(p.dimension),
+        `${v}/100`,
+        orientation(v),
+      ];
+    }),
+    [150, 78, 78, 62, CONTENT_W - 368],
+  );
+  y += 6;
+
+  // Section: Mappa delle narrazioni (mirrors dashboard section 4)
+  uppercase("Sezione 4 · Mappa delle Narrazioni", { size: 8 });
+  rule();
+  const narrativeGroup = (title: string, items: readonly string[]) => {
+    uppercase(title, { size: 7.5, color: MUTED });
+    for (const n of items) {
+      ensureSpace(30);
+      text(`« ${n} »`, {
+        size: 9.5,
+        italic: true,
+        font: "times",
+        lineGap: 13,
+        x: M + 8,
+        maxW: CONTENT_W - 16,
+      });
+      const ids = profile.narrativeColonization[n] ?? [];
+      const labels = ids
+        .map((id) => profile.positions.find((p) => p.id === id)?.label)
+        .filter(Boolean)
+        .join(" · ");
+      text(labels || "Nessuna voce colonizzata.", {
+        size: 9,
+        color: MUTED,
+        lineGap: 12,
+        x: M + 8,
+        maxW: CONTENT_W - 16,
+      });
+      y += 6;
+    }
+    y += 6;
+  };
+  narrativeGroup(
+    "Narrazioni neoliberiste-razionaliste-individualiste",
+    PERFORMATIVE_NARRATIVES,
+  );
+  narrativeGroup(
+    "Contronarrazioni relazionali-del benessere",
+    PROTECTIVE_NARRATIVES,
+  );
+
+  // Section: Matrice continuum × colonizzazione (dashboard section 4b)
+  uppercase("Sezione 4b · Matrice Continuum × Colonizzazione", { size: 8 });
+  rule();
+  table(
+    [
+      "I-Position",
+      "Orientamento",
+      "Col. performativa",
+      "Col. benessere",
+      "Sintesi",
+    ],
+    profile.positions.map((p) => {
+      const v = profile.continuum[p.id]?.value ?? 50;
+      let perf = 0;
+      let prot = 0;
+      for (const [narr, ids] of Object.entries(profile.narrativeColonization)) {
+        if (!ids.includes(p.id)) continue;
+        const d = narrativeDomain(narr);
+        if (d === "performative") perf++;
+        else if (d === "protective") prot++;
+      }
+      return [
+        p.label,
+        `${orientation(v)} (${v})`,
+        `${perf}/${PERFORMATIVE_NARRATIVES.length}`,
+        `${prot}/${PROTECTIVE_NARRATIVES.length}`,
+        matrixSynthesis(v, perf, prot),
+      ];
+    }),
+    [110, 96, 74, 66, CONTENT_W - 346],
+  );
+  y += 6;
+
+  // Section: Scenari (dashboard section 5)
+  uppercase("Sezione 5 · Analisi Scenari Akratici", { size: 8 });
   rule();
   for (const s of SCENARIOS) {
     const e = profile.scenarios[s.id];
@@ -1719,12 +1811,10 @@ async function exportProfilePDF(
       parseInt(hex.slice(3, 5), 16),
       parseInt(hex.slice(5, 7), 16),
     ];
-    ensureSpace(160);
+    ensureSpace(120);
     const top = y;
+    const startPage = currentPage();
     y += 18;
-    // Left accent bar
-    setFill(rgb);
-    doc.rect(M - 6, top - 4, 3, 0, "F"); // placeholder; final height set later
 
     doc.setFont("helvetica", "bold");
     doc.setFontSize(8);
@@ -1734,13 +1824,27 @@ async function exportProfilePDF(
     doc.setCharSpace(0);
     y += 16;
 
-    doc.setFont("times", "normal");
-    doc.setFontSize(14);
-    setInk(INK);
-    doc.text(s.title, M + 10, y);
-    y += 22;
+    text(s.title, {
+      size: 14,
+      font: "times",
+      x: M + 10,
+      maxW: CONTENT_W - 24,
+      lineGap: 18,
+    });
+    y += 6;
+
+    // Testo integrale della vignetta
+    text(s.text, {
+      size: 9.5,
+      color: MUTED,
+      x: M + 10,
+      maxW: CONTENT_W - 24,
+      lineGap: 13,
+    });
+    y += 12;
 
     // Diagnostic badge
+    ensureSpace(24);
     setFill(rgb);
     const badge = DIAGNOSTIC_LABEL[d].toUpperCase();
     doc.setFont("helvetica", "bold");
@@ -1752,28 +1856,28 @@ async function exportProfilePDF(
     doc.text(badge, M + 10 + 7, y);
     doc.setCharSpace(0);
     // Choice pill
-    const choiceStr = `SCELTA ${e.choice ?? "—"}`;
+    const choiceStr = `OPZIONE ${e.choice ?? "—"}${
+      e.choice ? ` · ${CHOICE_POLARITY[e.choice].toUpperCase()}` : ""
+    }`;
     const chX = M + 10 + badgeW + 8;
     setFill(INK);
     const chW = doc.getTextWidth(choiceStr) + 14;
     doc.roundedRect(chX, y - 10, chW, 15, 7, 7, "F");
     setInk([255, 255, 255]);
     doc.text(choiceStr, chX + 7, y);
-    y += 22;
+    y += 24;
 
     // Open response — as blockquote
+    uppercase("Riflessione del partecipante", { size: 7.5, color: MUTED, x: M + 10 });
     text(`« ${e.openResponse} »`, {
       size: 10.5,
       italic: true,
       font: "times",
       color: INK,
       x: M + 18,
-      maxW: CONTENT_W - 28,
-      lineGap: 15,
+      maxW: CONTENT_W - 36,
+      lineGap: 16,
     });
-    // Left quote line
-    setStroke(rgb);
-    doc.setLineWidth(1.4);
 
     const winLabels = e.winningVoiceIds
       .map((id) => profile.positions.find((p) => p.id === id)?.label)
@@ -1784,14 +1888,14 @@ async function exportProfilePDF(
       .filter(Boolean)
       .join(" · ");
 
-    y += 8;
-    uppercase("Voci vincenti (alleanza)", { size: 7.5, color: MUTED });
-    text(winLabels || "—", { size: 10, lineGap: 14 });
-    y += 4;
-    uppercase("Voci perdenti (sottomissione)", { size: 7.5, color: MUTED });
-    text(loseLabels || "—", { size: 10, lineGap: 14 });
-
+    y += 10;
+    uppercase("Voci vincenti (alleanza)", { size: 7.5, color: MUTED, x: M + 10 });
+    text(winLabels || "—", { size: 10, lineGap: 14, x: M + 10, maxW: CONTENT_W - 24 });
     y += 6;
+    uppercase("Voci perdenti (sottomissione)", { size: 7.5, color: MUTED, x: M + 10 });
+    text(loseLabels || "—", { size: 10, lineGap: 14, x: M + 10, maxW: CONTENT_W - 24 });
+
+    y += 8;
     // description
     text(DIAGNOSTIC_DESCRIPTION[d], {
       size: 9.5,
@@ -1799,17 +1903,25 @@ async function exportProfilePDF(
       color: MUTED,
       font: "times",
       lineGap: 14,
+      x: M + 10,
+      maxW: CONTENT_W - 24,
     });
 
-    // Border around the scenario card
-    const bottom = y + 10;
-    setStroke(BORDER);
-    doc.setLineWidth(0.6);
-    doc.roundedRect(M - 6, top - 4, CONTENT_W + 12, bottom - top, 6, 6, "S");
-    // left color bar
-    setFill(rgb);
-    doc.rect(M - 6, top - 4, 3, bottom - top, "F");
-    y = bottom + 18;
+    // Note cliniche del ricercatore
+    const note = clinicalNotes?.[s.id]?.trim();
+    y += 8;
+    uppercase("Note cliniche del ricercatore", { size: 7.5, color: MUTED, x: M + 10 });
+    text(note || "(Nessuna nota inserita.)", {
+      size: 9.5,
+      color: note ? INK : MUTED,
+      x: M + 10,
+      maxW: CONTENT_W - 24,
+      lineGap: 14,
+    });
+
+    const bottom = y + 8;
+    drawCardFrame(startPage, top, currentPage(), bottom, rgb);
+    y = bottom + 22;
   }
 
   // Interview section
