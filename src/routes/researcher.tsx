@@ -1773,8 +1773,8 @@ async function exportProfilePDF(
     [
       "I-Position",
       "Orientamento",
-      "Colonizz. perf.",
-      "Colonizz. bene.",
+      "Performative",
+      "Benessere",
       "Sintesi",
     ],
     profile.positions.map((p) => {
