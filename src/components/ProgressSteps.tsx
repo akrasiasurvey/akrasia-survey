@@ -87,8 +87,9 @@ export function ProgressSteps({ current }: { current: number }) {
             </p>
             <h2 className="mt-4 font-serif text-3xl font-medium">Attenzione</h2>
             <p className="mt-6 text-base leading-relaxed text-foreground/90">
-              Non è possibile accedere a questa sezione prima di aver
-              completato le informazioni e le risposte dello step precedente.
+              {maxUnlocked === 4
+                ? "Per accedere allo Step 4 è necessario aver preso visione di tutte le affermazioni presenti nello Step 3."
+                : "Non è possibile accedere a questa sezione prima di aver completato le informazioni e le risposte dello step precedente."}
             </p>
             <p className="mt-3 text-sm text-muted-foreground">
               Passaggio da completare:{" "}
@@ -106,7 +107,7 @@ export function ProgressSteps({ current }: { current: number }) {
                   navigate({ to: target.to });
                 }}
               >
-                Torna allo step da compilare →
+                Torna allo step da completare →
               </Button>
             </div>
           </div>
