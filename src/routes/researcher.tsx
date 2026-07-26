@@ -363,11 +363,11 @@ function Dashboard() {
             const isLive = !p.demo;
             const inProg = isInProgress(p);
             return (
+              <div key={p.participantId} className="relative">
               <button
-                key={p.participantId}
                 onClick={() => setSelectedId(p.participantId)}
                 className={cn(
-                  "w-full rounded-md border px-3 py-3 text-left transition-colors",
+                  "w-full rounded-md border px-3 py-3 pr-10 text-left transition-colors",
                   isSel
                     ? "border-foreground bg-muted"
                     : "border-border bg-card hover:border-foreground/40",
@@ -401,6 +401,21 @@ function Dashboard() {
                   {formatDateTime(p.startedAt)}
                 </div>
               </button>
+              {isLive && (
+                <button
+                  type="button"
+                  aria-label={`Elimina la sessione di ${p.participantId}`}
+                  title="Elimina sessione"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setPendingDelete(p);
+                  }}
+                  className="absolute right-2 top-2 rounded-md p-1.5 text-destructive/70 transition-colors hover:bg-destructive/10 hover:text-destructive"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              )}
+              </div>
             );
           })}
         </aside>
