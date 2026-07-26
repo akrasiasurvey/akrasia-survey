@@ -433,6 +433,38 @@ function Dashboard() {
           )}
         </section>
       </div>
+
+      <AlertDialog
+        open={pendingDelete !== null}
+        onOpenChange={(o) => !o && setPendingDelete(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Eliminare la sessione?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Sei sicuro di voler eliminare la sessione di{" "}
+              <span className="font-medium text-foreground">
+                {pendingDelete?.participantId}
+              </span>
+              ? Questa azione è irreversibile e rimuoverà permanentemente i
+              dati dal database.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deleting}>Annulla</AlertDialogCancel>
+            <AlertDialogAction
+              disabled={deleting}
+              onClick={(e) => {
+                e.preventDefault();
+                void confirmDelete();
+              }}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {deleting ? "Eliminazione…" : "Conferma ed Elimina"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </main>
   );
 }
