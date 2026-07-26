@@ -58,7 +58,7 @@ function Step3() {
       <ProgressSteps current={4} />
       <div className="mx-auto max-w-6xl px-6 py-10">
         <p className="text-xs uppercase tracking-[0.25em] text-muted-foreground">
-          Step 3 di 4
+          STEP 3 DI 4
         </p>
         <h1 className="mt-3 font-serif text-3xl font-medium">
           Valutazione delle Narrazioni

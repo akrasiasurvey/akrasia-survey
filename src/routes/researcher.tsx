@@ -181,7 +181,7 @@ function Dashboard() {
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
           <div>
             <p className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
-              Dashboard Ricercatore
+              DASHBOARD RICERCATORE — AKRASIA E SÉ DIALOGICO
             </p>
             <h1 className="font-serif text-xl font-medium">
               Analisi dialogica dei processi decisionali akratici
@@ -1511,7 +1511,7 @@ async function exportProfilePDF(
   doc.setFont("helvetica", "bold");
   doc.setFontSize(8);
   doc.setCharSpace(2);
-  doc.text("STUDIO AKRASIA · SÉ DIALOGICO", M, 36);
+  doc.text("STRUMENTO DI RICERCA — AKRASIA E SÉ DIALOGICO", M, 36);
   doc.setCharSpace(0);
   setInk(HEADER_FG);
   doc.setFont("times", "normal");
@@ -1824,7 +1824,7 @@ function exportAggregatePDF(
       y += size + 4;
     }
   };
-  line("Studio Akrasia & Sé Dialogico — Report aggregato", 14, true);
+  line("Strumento di ricerca — Akrasia e Sé Dialogico — Report aggregato", 14, true);
   line(`Partecipanti totali: ${profiles.length}`);
   line(`Generato il ${formatDateTime(Date.now())}`);
   y += 8;

@@ -18,7 +18,7 @@ function Consent() {
       <ProgressSteps current={0} />
       <div className="mx-auto max-w-3xl px-6 py-12">
         <p className="text-xs uppercase tracking-[0.25em] text-muted-foreground">
-          Informativa e consenso
+          INFORMATIVA E CONSENSO
         </p>
         <h1 className="mt-3 font-serif text-3xl font-medium">
           Consenso Informato
@@ -35,7 +35,7 @@ function Consent() {
               performance. Lo studio si concentra nello specifico sul
               fenomeno dell'akrasia, ovvero il comportamento irrazionale per
               cui una persona agisce contro il proprio miglior giudizio.
-              Attraverso il modello del Sé dialogico (Hermans) si intende
+              Attraverso il modello del Sé Dialogico (Hermans) si intende
               indagare la possibilità che l'akrasia sia negoziata in
               contesti altamente performativi, sotto la spinta di narrazioni
               neoliberiste dell'efficienza e della razionalizzazione.

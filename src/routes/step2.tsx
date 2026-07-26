@@ -58,7 +58,7 @@ function Step2() {
       <ProgressSteps current={3} />
       <div className="mx-auto max-w-6xl px-6 py-10">
         <p className="text-xs uppercase tracking-[0.25em] text-muted-foreground">
-          Step 2 di 4
+          STEP 2 DI 4
         </p>
         <h1 className="mt-3 font-serif text-3xl font-medium">
           Il Continuum delle Voci del Sé
