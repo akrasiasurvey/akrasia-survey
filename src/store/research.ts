@@ -183,6 +183,7 @@ interface ResearchState {
   startSession: () => void;
   endSession: () => void;
   archiveAndComplete: () => void;
+  removeArchivedProfile: (participantId: string) => void;
   resetSession: () => void;
   isUsernameTaken: (name: string) => boolean;
   addPosition: (p: Omit<IPosition, "id">) => void;
@@ -357,6 +358,12 @@ export const useResearchStore = create<ResearchState>()(
         endedAt,
       };
     }),
+  removeArchivedProfile: (participantId) =>
+    set((s) => ({
+      archivedProfiles: s.archivedProfiles.filter(
+        (p) => p.participantId !== participantId,
+      ),
+    })),
   resetSession: () =>
     set(() => ({
       consent: false,
