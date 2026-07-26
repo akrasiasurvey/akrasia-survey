@@ -52,7 +52,7 @@ function Consent() {
               delle narrazioni che le colonizzano, la risposta a tre
               vignette di scelta akratica e la successiva intervista
               dialogica di approfondimento. Durata stimata: 15-20 minuti per
-              la prima parte e 10-15 minuti per l'intervista.
+              la prima parte e 15-20 minuti per l'intervista.
             </p>
           </section>
           <section>
