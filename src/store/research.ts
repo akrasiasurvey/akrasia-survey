@@ -553,7 +553,13 @@ export const useResearchStore = create<ResearchState>()(
       storage: createJSONStorage(() =>
         typeof window !== "undefined" ? window.localStorage : noopStorage,
       ),
-      version: 1,
+      version: 2,
+      migrate: (persisted) => {
+        // Il set di narrazioni è stato sostituito integralmente:
+        // azzeriamo le associazioni e il tracciamento dello Step 3.
+        const s = (persisted ?? {}) as Record<string, unknown>;
+        return { ...s, narrativeColonization: {}, narrativesSeen: 0 } as never;
+      },
     },
   ),
 );
