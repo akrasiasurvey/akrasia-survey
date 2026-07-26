@@ -378,6 +378,9 @@ function ProfileAnalysis({
   const interview = useResearchStore(
     (s) => s.interviews[profile.participantId],
   ) as InterviewData | undefined;
+  const clinicalNotes = useResearchStore(
+    (s) => s.clinicalNotes[profile.participantId],
+  ) as Partial<Record<ScenarioId, string>> | undefined;
   const displayId = pinnedId ?? hoverId;
   const hovered = profile.positions.find((p) => p.id === displayId);
   const hoveredValue =
@@ -437,7 +440,12 @@ function ProfileAnalysis({
             size="sm"
             variant="outline"
             onClick={() => {
-              void exportProfilePDF(profile, diagnostics, interview);
+              void exportProfilePDF(
+                profile,
+                diagnostics,
+                interview,
+                clinicalNotes,
+              );
             }}
           >
             Esporta PDF
