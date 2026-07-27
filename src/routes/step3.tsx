@@ -5,7 +5,7 @@ import { ProgressSteps } from "@/components/ProgressSteps";
 import { Instruction } from "@/components/Instruction";
 import { SelfGraph } from "@/components/SelfGraph";
 import { StepGate } from "@/lib/stepGating";
-import { NARRATIVES_SHUFFLED, useResearchStore } from "@/store/research";
+import { ALL_NARRATIVES, useResearchStore } from "@/store/research";
 
 export const Route = createFileRoute("/step3")({
   component: () => (
@@ -24,15 +24,26 @@ function Step3() {
   const toggleColonization = useResearchStore((s) => s.toggleColonization);
   const narrativesSeen = useResearchStore((s) => s.narrativesSeen ?? 0);
   const markNarrativeSeen = useResearchStore((s) => s.markNarrativeSeen);
+  const narrativeOrder = useResearchStore((s) => s.narrativeOrder);
+  const ensureNarrativeOrder = useResearchStore((s) => s.ensureNarrativeOrder);
 
   const [narrIdx, setNarrIdx] = useState(0);
   const [warn, setWarn] = useState(false);
 
   useEffect(() => {
+    ensureNarrativeOrder();
+  }, [ensureNarrativeOrder]);
+
+  const order =
+    narrativeOrder && narrativeOrder.length === ALL_NARRATIVES.length
+      ? narrativeOrder
+      : ALL_NARRATIVES;
+
+  useEffect(() => {
     markNarrativeSeen(narrIdx);
   }, [narrIdx, markNarrativeSeen]);
 
-  const allSeen = narrativesSeen >= NARRATIVES_SHUFFLED.length - 1;
+  const allSeen = narrativesSeen >= ALL_NARRATIVES.length - 1;
 
   if (positions.length === 0) {
     return (
@@ -50,7 +61,7 @@ function Step3() {
     );
   }
 
-  const activeNarrative = NARRATIVES_SHUFFLED[narrIdx];
+  const activeNarrative = order[narrIdx];
   const colonizedIds = narrativeColonization[activeNarrative] ?? [];
 
   return (
@@ -78,7 +89,7 @@ function Step3() {
             <article className="rounded-lg border border-border bg-card p-6">
               <div className="mb-4 flex items-center justify-between text-[10px] uppercase tracking-widest text-muted-foreground">
                 <span>
-                  Affermazione {narrIdx + 1} di {NARRATIVES_SHUFFLED.length}
+                  Affermazione {narrIdx + 1} di {order.length}
                 </span>
                 <span>Narrazione culturale</span>
               </div>
@@ -123,11 +134,9 @@ function Step3() {
                 </Button>
                 <Button
                   size="sm"
-                  disabled={narrIdx >= NARRATIVES_SHUFFLED.length - 1}
+                  disabled={narrIdx >= order.length - 1}
                   onClick={() =>
-                    setNarrIdx((i) =>
-                      Math.min(NARRATIVES_SHUFFLED.length - 1, i + 1),
-                    )
+                    setNarrIdx((i) => Math.min(order.length - 1, i + 1))
                   }
                 >
                   Affermazione Successiva →

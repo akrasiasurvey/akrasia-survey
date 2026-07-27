@@ -62,18 +62,28 @@ export const PROTECTIVE_NARRATIVES = [
   "Le relazioni e il benessere collettivo contano più del successo individuale.",
 ] as const;
 
-export const NARRATIVES_SHUFFLED: readonly string[] = [
-  PERFORMATIVE_NARRATIVES[0],
-  PROTECTIVE_NARRATIVES[0],
-  PERFORMATIVE_NARRATIVES[1],
-  PROTECTIVE_NARRATIVES[1],
-  PERFORMATIVE_NARRATIVES[2],
-  PROTECTIVE_NARRATIVES[2],
-  PERFORMATIVE_NARRATIVES[3],
-  PROTECTIVE_NARRATIVES[3],
-  PERFORMATIVE_NARRATIVES[4],
-  PROTECTIVE_NARRATIVES[4],
+/**
+ * Elenco canonico delle 10 affermazioni (ordine stabile, usato per calcoli,
+ * mappa delle narrazioni e dashboard). L'ordine di presentazione allo Step 3
+ * viene invece randomizzato per ogni sessione.
+ */
+export const ALL_NARRATIVES: readonly string[] = [
+  ...PERFORMATIVE_NARRATIVES,
+  ...PROTECTIVE_NARRATIVES,
 ];
+
+/** @deprecated usa ALL_NARRATIVES (ordine canonico) o narrativeOrder (ordine mostrato). */
+export const NARRATIVES_SHUFFLED: readonly string[] = ALL_NARRATIVES;
+
+/** Fisher-Yates: ordine di presentazione casuale, diverso per ogni partecipante. */
+export function shuffleNarratives(): string[] {
+  const arr = [...ALL_NARRATIVES];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
 
 export function narrativeDomain(
   n: string,
@@ -176,6 +186,7 @@ interface ResearchState {
   sessionCompleted: boolean;
   continuumTouched: string[];
   narrativesSeen: number;
+  narrativeOrder: string[];
   setConsent: (v: boolean) => void;
   setParticipantId: (v: string) => void;
   setContext: (v: Context) => void;
@@ -191,6 +202,7 @@ interface ResearchState {
   setContinuumValue: (id: string, value: number) => void;
   toggleColonization: (narrative: string, positionId: string) => void;
   markNarrativeSeen: (index: number) => void;
+  ensureNarrativeOrder: () => void;
   setScenarioResponse: (id: ScenarioId, text: string) => void;
   lockScenarioResponse: (id: ScenarioId) => void;
   setScenarioChoice: (id: ScenarioId, choice: ScenarioChoice) => void;
@@ -317,6 +329,7 @@ export const useResearchStore = create<ResearchState>()(
   sessionCompleted: false,
   continuumTouched: [],
   narrativesSeen: 0,
+  narrativeOrder: [],
   setConsent: (v) => set({ consent: v }),
   setParticipantId: (v) => set({ participantId: v }),
   setContext: (v) => set({ context: v }),
@@ -383,6 +396,7 @@ export const useResearchStore = create<ResearchState>()(
       sessionCompleted: false,
       continuumTouched: [],
       narrativesSeen: 0,
+      narrativeOrder: shuffleNarratives(),
     })),
   isUsernameTaken: (name) => {
     const n = name.trim().toLowerCase();
@@ -453,6 +467,14 @@ export const useResearchStore = create<ResearchState>()(
     set((s) => ({
       narrativesSeen: Math.max(s.narrativesSeen ?? 0, index),
     })),
+  ensureNarrativeOrder: () =>
+    set((s) => {
+      const cur = s.narrativeOrder ?? [];
+      const valid =
+        cur.length === ALL_NARRATIVES.length &&
+        ALL_NARRATIVES.every((n) => cur.includes(n));
+      return valid ? {} : { narrativeOrder: shuffleNarratives() };
+    }),
   setScenarioResponse: (id, text) =>
     set((s) => {
       if (s.scenarios[id].locked) return {};
