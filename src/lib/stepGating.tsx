@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { Link, Navigate } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
-import { NARRATIVES_SHUFFLED, useResearchStore } from "@/store/research";
+import { ALL_NARRATIVES, useResearchStore } from "@/store/research";
 
 export const STEP_META = [
   { label: "Consenso", to: "/consent" as const },
@@ -31,7 +31,7 @@ export function useMaxUnlockedLevel(): number {
   if (positions.length === 0) return 2;
   const allTouched = positions.every((p) => continuumTouched.includes(p.id));
   if (!allTouched) return 3;
-  if (narrativesSeen < NARRATIVES_SHUFFLED.length - 1) return 4;
+  if (narrativesSeen < ALL_NARRATIVES.length - 1) return 4;
   return 5;
 }
 
