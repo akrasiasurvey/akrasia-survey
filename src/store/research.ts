@@ -186,6 +186,7 @@ interface ResearchState {
   sessionCompleted: boolean;
   continuumTouched: string[];
   narrativesSeen: number;
+  narrativeOrder: string[];
   setConsent: (v: boolean) => void;
   setParticipantId: (v: string) => void;
   setContext: (v: Context) => void;
@@ -201,6 +202,7 @@ interface ResearchState {
   setContinuumValue: (id: string, value: number) => void;
   toggleColonization: (narrative: string, positionId: string) => void;
   markNarrativeSeen: (index: number) => void;
+  ensureNarrativeOrder: () => void;
   setScenarioResponse: (id: ScenarioId, text: string) => void;
   lockScenarioResponse: (id: ScenarioId) => void;
   setScenarioChoice: (id: ScenarioId, choice: ScenarioChoice) => void;
@@ -327,6 +329,7 @@ export const useResearchStore = create<ResearchState>()(
   sessionCompleted: false,
   continuumTouched: [],
   narrativesSeen: 0,
+  narrativeOrder: [],
   setConsent: (v) => set({ consent: v }),
   setParticipantId: (v) => set({ participantId: v }),
   setContext: (v) => set({ context: v }),
@@ -393,6 +396,7 @@ export const useResearchStore = create<ResearchState>()(
       sessionCompleted: false,
       continuumTouched: [],
       narrativesSeen: 0,
+      narrativeOrder: shuffleNarratives(),
     })),
   isUsernameTaken: (name) => {
     const n = name.trim().toLowerCase();
@@ -463,6 +467,14 @@ export const useResearchStore = create<ResearchState>()(
     set((s) => ({
       narrativesSeen: Math.max(s.narrativesSeen ?? 0, index),
     })),
+  ensureNarrativeOrder: () =>
+    set((s) => {
+      const cur = s.narrativeOrder ?? [];
+      const valid =
+        cur.length === ALL_NARRATIVES.length &&
+        ALL_NARRATIVES.every((n) => cur.includes(n));
+      return valid ? {} : { narrativeOrder: shuffleNarratives() };
+    }),
   setScenarioResponse: (id, text) =>
     set((s) => {
       if (s.scenarios[id].locked) return {};
