@@ -62,18 +62,28 @@ export const PROTECTIVE_NARRATIVES = [
   "Le relazioni e il benessere collettivo contano più del successo individuale.",
 ] as const;
 
-export const NARRATIVES_SHUFFLED: readonly string[] = [
-  PERFORMATIVE_NARRATIVES[0],
-  PROTECTIVE_NARRATIVES[0],
-  PERFORMATIVE_NARRATIVES[1],
-  PROTECTIVE_NARRATIVES[1],
-  PERFORMATIVE_NARRATIVES[2],
-  PROTECTIVE_NARRATIVES[2],
-  PERFORMATIVE_NARRATIVES[3],
-  PROTECTIVE_NARRATIVES[3],
-  PERFORMATIVE_NARRATIVES[4],
-  PROTECTIVE_NARRATIVES[4],
+/**
+ * Elenco canonico delle 10 affermazioni (ordine stabile, usato per calcoli,
+ * mappa delle narrazioni e dashboard). L'ordine di presentazione allo Step 3
+ * viene invece randomizzato per ogni sessione.
+ */
+export const ALL_NARRATIVES: readonly string[] = [
+  ...PERFORMATIVE_NARRATIVES,
+  ...PROTECTIVE_NARRATIVES,
 ];
+
+/** @deprecated usa ALL_NARRATIVES (ordine canonico) o narrativeOrder (ordine mostrato). */
+export const NARRATIVES_SHUFFLED: readonly string[] = ALL_NARRATIVES;
+
+/** Fisher-Yates: ordine di presentazione casuale, diverso per ogni partecipante. */
+export function shuffleNarratives(): string[] {
+  const arr = [...ALL_NARRATIVES];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
 
 export function narrativeDomain(
   n: string,
