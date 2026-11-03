@@ -57,15 +57,12 @@ function Step3() {
           STEP 3 DI 4
         </p>
         <h1 className="mt-3 font-serif text-3xl font-medium">
-          Valutazione delle Narrazioni
+          Convinzioni Diffuse
         </h1>
 
         <div className="mt-6">
           <Instruction>
-            Leggi l'affermazione che rappresenta una narrazione culturalmente
-            diffusa presentata a sinistra. Seleziona direttamente sul grafico a
-            destra quali delle tue posizioni senti influenzate, pressate o
-            abitate da questa dichiarazione.
+            {'\u00a0Nella vita di tutti i giorni incontriamo idee e frasi fatte molto diffuse su lavoro, efficienza, benessere e relazioni. Leggi l’affermazione a sinistra, che rappresenta una convinzione diffusa e clicca direttamente sui cerchi nella tua mappa a destra per selezionare quali dei tuoi ruoli o quali persone esterne sono d’accordo o pronuncerebbero questa frase.\u00a0'}
           </Instruction>
         </div>
 
