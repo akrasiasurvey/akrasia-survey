@@ -229,8 +229,8 @@ function Step1() {
 
   const internal = positions.filter((p) => p.belonging === "internal");
   const external = positions.filter((p) => p.belonging === "external");
-  function handleAdd(label: string, belonging: Belonging) {
-    const dim = DIMENSIONS.find((d) => d.key === "intermedia");
+  function handleAdd(label: string, belonging: Belonging, dimension: DimensionKey) {
+    const dim = DIMENSIONS.find((d) => d.key === dimension);
     if (!dim) return;
     addPosition({ label, belonging, dimension: dim.key, radius: dim.radius });
   }
@@ -339,9 +339,13 @@ function Step1() {
                 {positions.length}
               </span>
             </p>
-            <Button asChild>
-              <Link to="/step2">Salva la mappa e vai allo Step 2 →</Link>
-            </Button>
+            {positions.length > 0 ? (
+              <Button asChild>
+                <Link to="/step2">Salva la mappa e vai allo Step 2 →</Link>
+              </Button>
+            ) : (
+              <Button disabled>Salva la mappa e vai allo Step 2 →</Button>
+            )}
           </div>
         </div>
       </div>
