@@ -125,7 +125,7 @@ function Step3() {
           STEP 4 DI 4
         </p>
         <h1 className="mt-3 font-serif text-3xl font-medium">
-          La Dinamica Dialogica — Vignette Cliniche
+          Situazioni Reali
         </h1>
 
         <div className="mt-6">
@@ -134,9 +134,8 @@ function Step3() {
             modo efficace, ti invitiamo a immaginare vividamente la situazione,
             provando a immedesimarti nel protagonista. Se ti aiuta, ripensa a
             eventi del tuo passato che ti hanno fatto sentire in modo simile.
-            Rispondi nel modo più sincero e autentico possibile: non esistono
-            risposte giuste o sbagliate, ma solo modi diversi di dialogare con
-            se stessi.
+            Rispondi in modo spontaneo e sincero: non esistono risposte giuste
+            o sbagliate, ci interessa solo il tuo personale punto di vista.
           </Instruction>
         </div>
 

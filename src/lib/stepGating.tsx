@@ -8,7 +8,7 @@ export const STEP_META = [
   { label: "Info Sessione", to: "/session-info" as const },
   { label: "Step 1: Mappa delle Voci", to: "/step1" as const },
   { label: "Step 2: La Scala dei Valori", to: "/step2" as const },
-  { label: "Step 3: Valutazione delle Narrazioni", to: "/step3" as const },
+  { label: "STEP 3: CONVINZIONI DIFFUSE", to: "/step3" as const },
   { label: "Step 4: Vignette", to: "/step4" as const },
 ];
 
