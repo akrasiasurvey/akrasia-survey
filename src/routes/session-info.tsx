@@ -9,6 +9,7 @@ import { useResearchStore, type Context } from "@/store/research";
 import { StepGate } from "@/lib/stepGating";
 
 export const Route = createFileRoute("/session-info")({
+  head: () => ({ meta: [{"title": "Informazioni della sessione — AKRASIA"}, {"name": "description", "content": "Informazioni iniziali per contestualizzare la sessione di ricerca sul Sé Dialogico."}, {"property": "og:title", "content": "Informazioni della sessione — AKRASIA"}, {"property": "og:description", "content": "Informazioni iniziali per contestualizzare la sessione di ricerca sul Sé Dialogico."}, {"property": "og:type", "content": "website"}, {"name": "twitter:card", "content": "summary"}] }),
   component: () => (
     <StepGate level={1}>
       <SessionInfo />

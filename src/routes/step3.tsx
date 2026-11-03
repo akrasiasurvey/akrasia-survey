@@ -8,6 +8,7 @@ import { StepGate } from "@/lib/stepGating";
 import { ALL_NARRATIVES, useResearchStore } from "@/store/research";
 
 export const Route = createFileRoute("/step3")({
+  head: () => ({ meta: [{"title": "Valutazione delle Narrazioni — AKRASIA"}, {"name": "description", "content": "Valutazione delle dieci affermazioni culturali e della loro influenza sulle voci del Sé."}, {"property": "og:title", "content": "Valutazione delle Narrazioni — AKRASIA"}, {"property": "og:description", "content": "Valutazione delle dieci affermazioni culturali e della loro influenza sulle voci del Sé."}, {"property": "og:type", "content": "website"}, {"name": "twitter:card", "content": "summary"}] }),
   component: () => (
     <StepGate level={4}>
       <Step3 />

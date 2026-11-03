@@ -5,6 +5,7 @@ import { ProgressSteps } from "@/components/ProgressSteps";
 import { useResearchStore } from "@/store/research";
 
 export const Route = createFileRoute("/consent")({
+  head: () => ({ meta: [{"title": "Consenso informato — AKRASIA"}, {"name": "description", "content": "Informazioni sulla partecipazione alla ricerca AKRASIA e sul trattamento dei dati personali."}, {"property": "og:title", "content": "Consenso informato — AKRASIA"}, {"property": "og:description", "content": "Informazioni sulla partecipazione alla ricerca AKRASIA e sul trattamento dei dati personali."}, {"property": "og:type", "content": "website"}, {"name": "twitter:card", "content": "summary"}] }),
   component: Consent,
 });
 

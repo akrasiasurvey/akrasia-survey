@@ -39,6 +39,7 @@ import {
 import { Trash2 } from "lucide-react";
 
 export const Route = createFileRoute("/researcher")({
+  head: () => ({ meta: [{"title": "Dashboard Ricercatore — AKRASIA"}, {"name": "description", "content": "Analisi dialogica dei processi decisionali akratici nelle sessioni raccolte."}, {"property": "og:title", "content": "Dashboard Ricercatore — AKRASIA"}, {"property": "og:description", "content": "Analisi dialogica dei processi decisionali akratici nelle sessioni raccolte."}, {"property": "og:type", "content": "website"}, {"name": "twitter:card", "content": "summary"}] }),
   component: Researcher,
 });
 

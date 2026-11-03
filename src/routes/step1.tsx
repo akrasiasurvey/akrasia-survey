@@ -22,6 +22,7 @@ import {
 import { Lightbulb, Plus, X } from "lucide-react";
 
 export const Route = createFileRoute("/step1")({
+  head: () => ({ meta: [{"title": "Mappa delle Voci — AKRASIA"}, {"name": "description", "content": "Mappatura delle voci interne ed esterne e valutazione della loro importanza nelle scelte quotidiane."}, {"property": "og:title", "content": "Mappa delle Voci — AKRASIA"}, {"property": "og:description", "content": "Mappatura delle voci interne ed esterne e valutazione della loro importanza nelle scelte quotidiane."}, {"property": "og:type", "content": "website"}, {"name": "twitter:card", "content": "summary"}] }),
   component: () => (
     <StepGate level={2}>
       <Step1 />

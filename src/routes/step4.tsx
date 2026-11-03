@@ -18,6 +18,7 @@ import { saveProfileRemote } from "@/lib/sessionsRepo";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/step4")({
+  head: () => ({ meta: [{"title": "Vignette — AKRASIA"}, {"name": "description", "content": "Tre scenari per esplorare i processi decisionali akratici e la dinamica dialogica delle voci."}, {"property": "og:title", "content": "Vignette — AKRASIA"}, {"property": "og:description", "content": "Tre scenari per esplorare i processi decisionali akratici e la dinamica dialogica delle voci."}, {"property": "og:type", "content": "website"}, {"name": "twitter:card", "content": "summary"}] }),
   component: () => (
     <StepGate level={5}>
       <Step3 />

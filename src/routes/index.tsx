@@ -4,6 +4,7 @@ import { useResearchStore } from "@/store/research";
 import { STEP_META, useMaxUnlockedLevel } from "@/lib/stepGating";
 
 export const Route = createFileRoute("/")({
+  head: () => ({ meta: [{"title": "AKRASIA — Akrasia e Sé Dialogico"}, {"name": "description", "content": "Strumento per la ricerca qualitativa in psicologia sui processi decisionali akratici."}, {"property": "og:title", "content": "AKRASIA — Akrasia e Sé Dialogico"}, {"property": "og:description", "content": "Strumento per la ricerca qualitativa in psicologia sui processi decisionali akratici."}, {"property": "og:type", "content": "website"}, {"name": "twitter:card", "content": "summary"}] }),
   component: Welcome,
 });
 

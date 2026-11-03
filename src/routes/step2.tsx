@@ -9,6 +9,7 @@ import { StepGate } from "@/lib/stepGating";
 import { DIMENSIONS, useResearchStore } from "@/store/research";
 
 export const Route = createFileRoute("/step2")({
+  head: () => ({ meta: [{"title": "Continuum delle Voci — AKRASIA"}, {"name": "description", "content": "Posizionamento delle voci del Sé sul continuum tra dimensioni morali e affettive e compiti misurabili."}, {"property": "og:title", "content": "Continuum delle Voci — AKRASIA"}, {"property": "og:description", "content": "Posizionamento delle voci del Sé sul continuum tra dimensioni morali e affettive e compiti misurabili."}, {"property": "og:type", "content": "website"}, {"name": "twitter:card", "content": "summary"}] }),
   component: () => (
     <StepGate level={3}>
       <Step2 />
