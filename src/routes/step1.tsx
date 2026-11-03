@@ -45,8 +45,6 @@ const EXTERNAL_SUGGESTIONS = [
   "I miei colleghi o pari",
 ] as const;
 
-const MIN_PER_SIDE = 3;
-
 interface VoiceColumnProps {
   belonging: Belonging;
   title: string;
@@ -92,16 +90,29 @@ function VoiceColumn({
         {instruction}
       </p>
 
+      <p className="mt-4 border-l-2 border-primary bg-muted/40 px-4 py-3 text-sm font-semibold leading-relaxed text-foreground">
+        Ricordati di attribuire un valore a ciascuna voce aggiunta utilizzando
+        l'apposita scala, in base all'importanza che ricopre nelle scelte che
+        compi.
+      </p>
+
+      <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
+        Gli esempi selezionabili di seguito sono solo alcune delle possibili
+        opzioni. Ti invitiamo a inserire e scrivere liberamente le voci più
+        personali che pensi ti influenzino.
+      </p>
+
       <div className="mt-4 flex flex-wrap gap-2">
         {available.map((s) => (
-          <button
+          <Button
             key={s}
             type="button"
+            variant="outline"
             onClick={() => onAdd(s, belonging)}
-            className="rounded-full border border-border bg-background px-3 py-1.5 text-xs transition-colors hover:border-foreground/40 hover:bg-muted"
+            className="h-auto whitespace-normal rounded-full px-3 py-1.5 text-left text-xs"
           >
             + {s}
-          </button>
+          </Button>
         ))}
         {available.length === 0 && (
           <p className="text-[11px] text-muted-foreground">
@@ -149,13 +160,16 @@ function VoiceColumn({
                   <span className="min-w-0 flex-1 truncate text-sm font-medium">
                     {p.label}
                   </span>
-                  <button
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
                     onClick={() => onRemove(p.id)}
-                    className="rounded p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-destructive"
+                    className="h-6 w-6 shrink-0 text-muted-foreground hover:text-destructive"
                     aria-label={`Elimina ${p.label}`}
                   >
                     <X className="h-3.5 w-3.5" />
-                  </button>
+                  </Button>
                 </div>
                 <div className="mt-2 flex items-center gap-2">
                   <span className="text-[10px] uppercase tracking-widest text-muted-foreground">
@@ -198,11 +212,9 @@ function Step1() {
 
   const internal = positions.filter((p) => p.belonging === "internal");
   const external = positions.filter((p) => p.belonging === "external");
-  const enough =
-    internal.length >= MIN_PER_SIDE && external.length >= MIN_PER_SIDE;
-
   function handleAdd(label: string, belonging: Belonging) {
-    const dim = DIMENSIONS.find((d) => d.key === "intermedia")!;
+    const dim = DIMENSIONS.find((d) => d.key === "intermedia");
+    if (!dim) return;
     addPosition({ label, belonging, dimension: dim.key, radius: dim.radius });
   }
 
@@ -312,21 +324,11 @@ function Step1() {
               Voci inserite e valutate:{" "}
               <span className="font-medium text-foreground">
                 {positions.length}
-              </span>{" "}
-              (minimo {MIN_PER_SIDE} interne e {MIN_PER_SIDE} esterne richieste)
+              </span>
             </p>
-            {enough ? (
-              <Button asChild>
-                <Link to="/step2">Salva la mappa e vai allo Step 2 →</Link>
-              </Button>
-            ) : (
-              <Button
-                disabled
-                title={`Inserisci almeno ${MIN_PER_SIDE} voci interne e ${MIN_PER_SIDE} esterne`}
-              >
-                Salva la mappa e vai allo Step 2 →
-              </Button>
-            )}
+            <Button asChild>
+              <Link to="/step2">Salva la mappa e vai allo Step 2 →</Link>
+            </Button>
           </div>
         </div>
       </div>

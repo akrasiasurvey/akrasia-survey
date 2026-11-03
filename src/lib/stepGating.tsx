@@ -28,9 +28,6 @@ export function useMaxUnlockedLevel(): number {
   const ctxOk =
     context !== "" && (context !== "other" || contextCustom.trim().length > 0);
   if (!idOk || !ctxOk) return 1;
-  const internal = positions.filter((p) => p.belonging === "internal").length;
-  const external = positions.filter((p) => p.belonging === "external").length;
-  if (internal < 3 || external < 3) return 2;
   const allTouched = positions.every((p) => continuumTouched.includes(p.id));
   if (!allTouched) return 3;
   if (narrativesSeen < ALL_NARRATIVES.length - 1) return 4;
