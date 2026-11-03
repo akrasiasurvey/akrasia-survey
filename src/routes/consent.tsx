@@ -44,6 +44,58 @@ function Consent() {
           </section>
           <section>
             <h2 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+              Come si articola il percorso
+            </h2>
+            <div className="mt-4 space-y-4">
+              <div>
+                <h3 className="text-sm font-semibold text-foreground">
+                  Parte 1: Compilazione online (circa 15-20 minuti)
+                </h3>
+                <ul className="mt-2 list-disc space-y-3 pl-5">
+                  <li>
+                    <span className="font-semibold">La mappa delle “voci”:</span>{" "}
+                    Ti verrà chiesto di identificare i ruoli che ricopri nel
+                    quotidiano (es. madre/padre-lavoratrice/lavoratore) e le
+                    persone (es. genitori-amici-colleghi-capi) esterne che guidano
+                    le tue decisioni. Mentre le elenchi dovrai definire
+                    l’importanza che queste “voci” hanno per te.
+                  </li>
+                  <li>
+                    <span className="font-semibold">La scala dei valori:</span>{" "}
+                    Successivamente dovrai disporre le “voci” che hai identificato
+                    su un asse tra produttività e cura di sé in base a quanto le
+                    senti compatibili con un estremo o l’altro.
+                  </li>
+                  <li>
+                    <span className="font-semibold">I modi di pensare:</span>{" "}
+                    In questo passaggio ti sarà chiesto di associare alcune
+                    affermazioni di senso comune alle diverse voci in base a
+                    quanto le senti compatibili.
+                  </li>
+                  <li>
+                    <span className="font-semibold">Tre situazioni reali:</span>{" "}
+                    Infine dovrai descrivere brevemente come ti comporteresti in
+                    tre semplici scenari quotidiani.
+                  </li>
+                </ul>
+              </div>
+              <div>
+                <h3 className="text-sm font-semibold text-foreground">
+                  Parte 2: Breve colloquio (circa 15-20 minuti)
+                </h3>
+                <p className="mt-2">
+                  A conclusione del percorso, ci accorderemo per una breve
+                  conversazione per commentare insieme le tue risposte.
+                </p>
+              </div>
+              <p className="border-l-2 border-primary bg-muted/40 px-4 py-3 text-sm font-medium leading-relaxed text-foreground">
+                Ricorda: “Non ci sono risposte giuste o sbagliate, ci interessa
+                solo la tua prospettiva personale.”
+              </p>
+            </div>
+          </section>
+          <section>
+            <h2 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
               Modalità di restituzione
             </h2>
             <p className="mt-2">
