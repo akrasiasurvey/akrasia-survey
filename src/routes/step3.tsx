@@ -73,15 +73,13 @@ function Step3() {
                 <span>
                   Affermazione {narrIdx + 1} di {order.length}
                 </span>
-                <span>Narrazione culturale</span>
+                <span></span>
               </div>
               <blockquote className="border-l-2 border-foreground/40 pl-4 font-serif text-xl leading-snug">
                 «{activeNarrative}»
               </blockquote>
               <p className="mt-6 text-sm text-muted-foreground">
-                Clicca sui cerchi nel grafico per indicare quali posizioni
-                senti influenzate da questa narrazione. Puoi selezionarne più
-                di una.
+                Clicca sui cerchi nel grafico per indicare quali ruoli o persone condividono questa frase. Puoi selezionarne più di una.
               </p>
               {colonizedIds.length > 0 && (
                 <div className="mt-4 rounded-md border border-border bg-background p-3 text-xs">
@@ -130,7 +128,7 @@ function Step3() {
           <section className="lg:sticky lg:top-6 lg:h-fit">
             <div className="rounded-lg border border-border bg-card p-4">
               <div className="mb-3 flex items-center justify-between text-[10px] uppercase tracking-widest text-muted-foreground">
-                <span>Società del Sé</span>
+                <span>LA TUA MAPPA</span>
                 <span>Clicca per associare</span>
               </div>
               <div className="flex justify-center">
