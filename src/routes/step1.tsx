@@ -31,19 +31,19 @@ export const Route = createFileRoute("/step1")({
 });
 
 const INTERNAL_SUGGESTIONS = [
-  "Io come lavoratore / professionista",
-  "Io quando sono esausto / sotto stress",
-  "Io nel tempo libero / nei miei hobby",
-  "Io il perfezionista / la parte ambiziosa",
-  "Io come genitore / partner / amico",
+  "Lavoratore",
+  "Sotto stress",
+  "Tempo libero",
+  "Perfezionista",
+  "Genitore",
 ] as const;
 
 const EXTERNAL_SUGGESTIONS = [
-  "Il mio responsabile / il mio capo",
-  "I miei genitori / la mia famiglia",
-  "L'azienda o il contesto lavorativo",
-  "La società / la cultura",
-  "I miei colleghi o pari",
+  "Capo",
+  "Famiglia",
+  "Azienda",
+  "Società",
+  "Colleghi",
 ] as const;
 
 interface VoiceColumnProps {

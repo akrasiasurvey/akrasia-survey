@@ -10,4 +10,4 @@
 <!-- LOVABLE:END -->
 
 - Keep navigation eligibility in `src/lib/stepGating.tsx` shared by route guards and the progress header, so both enforce the same prerequisites.
-- Treat an empty voice map as valid throughout the participant flow and archival; skip only voice-specific inputs when no voices exist, so unrestricted mapping does not create downstream dead ends.
+- Preserve empty-map compatibility in archival and downstream data handling; enforce entry prerequisites through the shared step-gating logic so header navigation cannot bypass them.
