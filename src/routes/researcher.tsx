@@ -39,6 +39,7 @@ import {
 import { Trash2 } from "lucide-react";
 
 export const Route = createFileRoute("/researcher")({
+  head: () => ({ meta: [{"title": "Dashboard Ricercatore — AKRASIA"}, {"name": "description", "content": "Analisi dialogica dei processi decisionali akratici nelle sessioni raccolte."}, {"property": "og:title", "content": "Dashboard Ricercatore — AKRASIA"}, {"property": "og:description", "content": "Analisi dialogica dei processi decisionali akratici nelle sessioni raccolte."}, {"property": "og:type", "content": "website"}, {"name": "twitter:card", "content": "summary"}] }),
   component: Researcher,
 });
 
@@ -103,8 +104,7 @@ function Dashboard() {
   const liveProfile: { profile: Profile; inProgress: boolean } | null = useMemo(() => {
     if (
       !store.participantId ||
-      !store.context ||
-      store.positions.length === 0
+      !store.context
     ) {
       return null;
     }

@@ -342,8 +342,7 @@ export const useResearchStore = create<ResearchState>()(
       if (s.sessionCompleted) return {};
       if (
         !s.participantId ||
-        !s.context ||
-        s.positions.length === 0
+        !s.context
       ) {
         return {};
       }

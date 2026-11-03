@@ -18,6 +18,7 @@ import { saveProfileRemote } from "@/lib/sessionsRepo";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/step4")({
+  head: () => ({ meta: [{"title": "Vignette — AKRASIA"}, {"name": "description", "content": "Tre scenari per esplorare i processi decisionali akratici e la dinamica dialogica delle voci."}, {"property": "og:title", "content": "Vignette — AKRASIA"}, {"property": "og:description", "content": "Tre scenari per esplorare i processi decisionali akratici e la dinamica dialogica delle voci."}, {"property": "og:type", "content": "website"}, {"name": "twitter:card", "content": "summary"}] }),
   component: () => (
     <StepGate level={5}>
       <Step3 />
@@ -57,25 +58,6 @@ function Step3() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  if (positions.length === 0) {
-    return (
-      <main className="min-h-screen bg-background text-foreground">
-        <ProgressSteps current={5} />
-        <div className="mx-auto max-w-2xl px-6 py-16 text-center">
-          <h1 className="font-serif text-2xl font-medium">
-            Nessuna I-Position dichiarata
-          </h1>
-          <p className="mt-3 text-sm text-muted-foreground">
-            Le vignette richiedono le posizioni identitarie dello Step 1.
-          </p>
-          <Button asChild className="mt-6">
-            <Link to="/step1">← Torna allo Step 1</Link>
-          </Button>
-        </div>
-      </main>
-    );
-  }
-
   const scenario = SCENARIOS[idx];
   const entry = scenarios[scenario.id];
   const canUnlock = entry.openResponse.trim().length >= 10;
@@ -85,8 +67,8 @@ function Step3() {
     return (
       e.locked &&
       !!e.choice &&
-      e.winningVoiceIds.length > 0 &&
-      e.losingVoiceIds.length > 0
+      (positions.length === 0 ||
+        (e.winningVoiceIds.length > 0 && e.losingVoiceIds.length > 0))
     );
   };
   const allComplete = SCENARIOS.every((s) => complete(s.id));
@@ -254,7 +236,7 @@ function Step3() {
                 })}
               </div>
 
-              {entry.choice && (
+              {entry.choice && positions.length > 0 && (
                 <div className="mt-6 grid gap-5 md:grid-cols-2">
                   <VoiceMultiSelect
                     title="Voci Vincenti (Alleanza)"

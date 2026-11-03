@@ -9,6 +9,7 @@ import { StepGate } from "@/lib/stepGating";
 import { DIMENSIONS, useResearchStore } from "@/store/research";
 
 export const Route = createFileRoute("/step2")({
+  head: () => ({ meta: [{"title": "Continuum delle Voci — AKRASIA"}, {"name": "description", "content": "Posizionamento delle voci del Sé sul continuum tra dimensioni morali e affettive e compiti misurabili."}, {"property": "og:title", "content": "Continuum delle Voci — AKRASIA"}, {"property": "og:description", "content": "Posizionamento delle voci del Sé sul continuum tra dimensioni morali e affettive e compiti misurabili."}, {"property": "og:type", "content": "website"}, {"name": "twitter:card", "content": "summary"}] }),
   component: () => (
     <StepGate level={3}>
       <Step2 />
@@ -26,8 +27,7 @@ function Step2() {
   const touchedCount = positions.filter((p) =>
     continuumTouched.includes(p.id),
   ).length;
-  const allPositioned =
-    positions.length > 0 && touchedCount === positions.length;
+  const allPositioned = touchedCount === positions.length;
 
   if (positions.length === 0) {
     return (
@@ -35,15 +35,19 @@ function Step2() {
         <ProgressSteps current={3} />
         <div className="mx-auto max-w-2xl px-6 py-16 text-center">
           <h1 className="font-serif text-2xl font-medium">
-            Nessuna I-Position dichiarata
+            Il Continuum delle Voci del Sé
           </h1>
           <p className="mt-3 text-sm text-muted-foreground">
-            Torna allo Step 1 per dichiarare almeno una posizione identitaria
-            prima di procedere.
+            Nessuna voce inserita.
           </p>
-          <Button asChild className="mt-6">
-            <Link to="/step1">← Torna allo Step 1</Link>
-          </Button>
+          <div className="mt-10 flex items-center justify-between border-t border-border pt-6">
+            <Button variant="ghost" asChild>
+              <Link to="/step1">← Indietro</Link>
+            </Button>
+            <Button asChild>
+              <Link to="/step3">Avanti →</Link>
+            </Button>
+          </div>
         </div>
       </main>
     );

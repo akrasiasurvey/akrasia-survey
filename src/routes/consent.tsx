@@ -5,6 +5,7 @@ import { ProgressSteps } from "@/components/ProgressSteps";
 import { useResearchStore } from "@/store/research";
 
 export const Route = createFileRoute("/consent")({
+  head: () => ({ meta: [{"title": "Consenso informato — AKRASIA"}, {"name": "description", "content": "Informazioni sulla partecipazione alla ricerca AKRASIA e sul trattamento dei dati personali."}, {"property": "og:title", "content": "Consenso informato — AKRASIA"}, {"property": "og:description", "content": "Informazioni sulla partecipazione alla ricerca AKRASIA e sul trattamento dei dati personali."}, {"property": "og:type", "content": "website"}, {"name": "twitter:card", "content": "summary"}] }),
   component: Consent,
 });
 
@@ -39,73 +40,6 @@ function Consent() {
               meccanismi psicologici dietro le nostre decisioni, per capire
               come la pressione all'efficienza e al rendimento influenzi i
               nostri comportamenti.
-            </p>
-          </section>
-          <section className="rounded-lg border border-border bg-card p-5">
-            <h2 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-              Come si articola il percorso
-            </h2>
-            <div className="mt-4 space-y-4">
-              <div>
-                <h3 className="text-sm font-semibold">
-                  Parte 1: Compilazione online (circa 15-20 minuti)
-                </h3>
-                <ul className="mt-2 list-disc space-y-2 pl-5">
-                  <li>
-                    <span className="font-medium">La mappa delle "voci":</span>{" "}
-                    ti verrà chiesto di identificare i ruoli che ricopri nel
-                    quotidiano (es. madre/padre-lavoratrice/lavoratore) e le
-                    persone (es. genitori-amici-colleghi-capi) esterne che
-                    guidano le tue decisioni. Mentre le elenchi dovrai
-                    definire l'importanza che queste "voci" hanno per te.
-                  </li>
-                  <li>
-                    <span className="font-medium">La scala dei valori:</span>{" "}
-                    successivamente dovrai disporre le "voci" che hai
-                    identificato su un asse tra produttività e cura di sé in
-                    base a quanto le senti compatibili con un estremo o
-                    l'altro.
-                  </li>
-                  <li>
-                    <span className="font-medium">I modi di pensare:</span> in
-                    questo passaggio ti sarà chiesto di associare alcune
-                    affermazioni di senso comune alle diverse voci in base a
-                    quanto le senti compatibili.
-                  </li>
-                  <li>
-                    <span className="font-medium">Tre situazioni reali:</span>{" "}
-                    infine dovrai descrivere brevemente come ti comporteresti
-                    in tre semplici scenari quotidiani.
-                  </li>
-                </ul>
-              </div>
-              <div>
-                <h3 className="text-sm font-semibold">
-                  Parte 2: Breve colloquio (circa 15-20 minuti)
-                </h3>
-                <p className="mt-2">
-                  A conclusione del percorso, ci accorderemo per una breve
-                  conversazione per commentare insieme le tue risposte.
-                </p>
-              </div>
-              <p className="rounded-md bg-muted/50 px-4 py-3 text-sm font-medium">
-                Ricorda: non ci sono risposte giuste o sbagliate, ci interessa
-                solo la tua prospettiva personale.
-              </p>
-            </div>
-          </section>
-          <section>
-            <h2 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-              Metodologia
-            </h2>
-            <p className="mt-2">
-              La procedura include: la mappatura grafica delle voci che
-              costituiscono il Sé, il posizionamento delle voci del Sé
-              all'interno di un continuum di commisurazione, la valutazione
-              delle narrazioni che le colonizzano, la risposta a tre
-              vignette di scelta akratica e la successiva intervista
-              dialogica di approfondimento. Durata stimata: 15-20 minuti per
-              la prima parte e 15-20 minuti per l'intervista.
             </p>
           </section>
           <section>

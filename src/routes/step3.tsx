@@ -8,6 +8,7 @@ import { StepGate } from "@/lib/stepGating";
 import { ALL_NARRATIVES, useResearchStore } from "@/store/research";
 
 export const Route = createFileRoute("/step3")({
+  head: () => ({ meta: [{"title": "Valutazione delle Narrazioni — AKRASIA"}, {"name": "description", "content": "Valutazione delle dieci affermazioni culturali e della loro influenza sulle voci del Sé."}, {"property": "og:title", "content": "Valutazione delle Narrazioni — AKRASIA"}, {"property": "og:description", "content": "Valutazione delle dieci affermazioni culturali e della loro influenza sulle voci del Sé."}, {"property": "og:type", "content": "website"}, {"name": "twitter:card", "content": "summary"}] }),
   component: () => (
     <StepGate level={4}>
       <Step3 />
@@ -44,22 +45,6 @@ function Step3() {
   }, [narrIdx, markNarrativeSeen]);
 
   const allSeen = narrativesSeen >= ALL_NARRATIVES.length - 1;
-
-  if (positions.length === 0) {
-    return (
-      <main className="min-h-screen bg-background text-foreground">
-        <ProgressSteps current={4} />
-        <div className="mx-auto max-w-2xl px-6 py-16 text-center">
-          <h1 className="font-serif text-2xl font-medium">
-            Nessuna I-Position dichiarata
-          </h1>
-          <Button asChild className="mt-6">
-            <Link to="/step1">← Torna allo Step 1</Link>
-          </Button>
-        </div>
-      </main>
-    );
-  }
 
   const activeNarrative = order[narrIdx];
   const colonizedIds = narrativeColonization[activeNarrative] ?? [];

@@ -14,6 +14,25 @@ export const STEP_META = [
 
 export type StepPath = (typeof STEP_META)[number]["to"];
 
+export function getMaxUnlockedLevel({
+  consent, participantId, context, contextCustom, positions, continuumTouched,
+  narrativesSeen,
+}: {
+  consent: boolean;
+  participantId: string;
+  context: string;
+  contextCustom: string;
+  positions: { id: string }[];
+  continuumTouched: string[];
+  narrativesSeen: number;
+}): number {
+  if (!consent) return 0;
+  if (!participantId.trim() || !context || (context === "other" && !contextCustom.trim())) return 1;
+  if (!positions.every((p) => continuumTouched.includes(p.id))) return 3;
+  if (narrativesSeen < ALL_NARRATIVES.length - 1) return 4;
+  return 5;
+}
+
 export function useMaxUnlockedLevel(): number {
   const consent = useResearchStore((s) => s.consent);
   const participantId = useResearchStore((s) => s.participantId);
@@ -23,18 +42,8 @@ export function useMaxUnlockedLevel(): number {
   const continuumTouched = useResearchStore((s) => s.continuumTouched);
   const narrativesSeen = useResearchStore((s) => s.narrativesSeen ?? 0);
 
-  if (!consent) return 0;
-  const idOk = participantId.trim().length > 0;
-  const ctxOk =
-    context !== "" && (context !== "other" || contextCustom.trim().length > 0);
-  if (!idOk || !ctxOk) return 1;
-  const internal = positions.filter((p) => p.belonging === "internal").length;
-  const external = positions.filter((p) => p.belonging === "external").length;
-  if (internal < 3 || external < 3) return 2;
-  const allTouched = positions.every((p) => continuumTouched.includes(p.id));
-  if (!allTouched) return 3;
-  if (narrativesSeen < ALL_NARRATIVES.length - 1) return 4;
-  return 5;
+  return getMaxUnlockedLevel({ consent, participantId, context, contextCustom,
+    positions, continuumTouched, narrativesSeen });
 }
 
 export function StepGate({
