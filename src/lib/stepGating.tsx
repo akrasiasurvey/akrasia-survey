@@ -6,7 +6,7 @@ import { ALL_NARRATIVES, useResearchStore } from "@/store/research";
 export const STEP_META = [
   { label: "Consenso", to: "/consent" as const },
   { label: "Info Sessione", to: "/session-info" as const },
-  { label: "Step 1: Struttura del Sé", to: "/step1" as const },
+  { label: "Step 1: Mappa delle Voci", to: "/step1" as const },
   { label: "Step 2: Continuum delle Voci", to: "/step2" as const },
   { label: "Step 3: Valutazione delle Narrazioni", to: "/step3" as const },
   { label: "Step 4: Vignette", to: "/step4" as const },
@@ -28,7 +28,9 @@ export function useMaxUnlockedLevel(): number {
   const ctxOk =
     context !== "" && (context !== "other" || contextCustom.trim().length > 0);
   if (!idOk || !ctxOk) return 1;
-  if (positions.length === 0) return 2;
+  const internal = positions.filter((p) => p.belonging === "internal").length;
+  const external = positions.filter((p) => p.belonging === "external").length;
+  if (internal < 3 || external < 3) return 2;
   const allTouched = positions.every((p) => continuumTouched.includes(p.id));
   if (!allTouched) return 3;
   if (narrativesSeen < ALL_NARRATIVES.length - 1) return 4;

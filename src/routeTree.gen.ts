@@ -9,49 +9,19 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as Step4RouteImport } from './routes/step4'
-import { Route as Step3RouteImport } from './routes/step3'
-import { Route as Step2RouteImport } from './routes/step2'
-import { Route as Step1RouteImport } from './routes/step1'
-import { Route as SessionInfoRouteImport } from './routes/session-info'
-import { Route as ResearcherRouteImport } from './routes/researcher'
-import { Route as GrazieRouteImport } from './routes/grazie'
-import { Route as ConsentRouteImport } from './routes/consent'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ConsentRouteImport } from './routes/consent'
+import { Route as GrazieRouteImport } from './routes/grazie'
+import { Route as ResearcherRouteImport } from './routes/researcher'
+import { Route as SessionInfoRouteImport } from './routes/session-info'
+import { Route as Step1RouteImport } from './routes/step1'
+import { Route as Step2RouteImport } from './routes/step2'
+import { Route as Step3RouteImport } from './routes/step3'
+import { Route as Step4RouteImport } from './routes/step4'
 
-const Step4Route = Step4RouteImport.update({
-  id: '/step4',
-  path: '/step4',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const Step3Route = Step3RouteImport.update({
-  id: '/step3',
-  path: '/step3',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const Step2Route = Step2RouteImport.update({
-  id: '/step2',
-  path: '/step2',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const Step1Route = Step1RouteImport.update({
-  id: '/step1',
-  path: '/step1',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SessionInfoRoute = SessionInfoRouteImport.update({
-  id: '/session-info',
-  path: '/session-info',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ResearcherRoute = ResearcherRouteImport.update({
-  id: '/researcher',
-  path: '/researcher',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const GrazieRoute = GrazieRouteImport.update({
-  id: '/grazie',
-  path: '/grazie',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ConsentRoute = ConsentRouteImport.update({
@@ -59,9 +29,39 @@ const ConsentRoute = ConsentRouteImport.update({
   path: '/consent',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const GrazieRoute = GrazieRouteImport.update({
+  id: '/grazie',
+  path: '/grazie',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResearcherRoute = ResearcherRouteImport.update({
+  id: '/researcher',
+  path: '/researcher',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SessionInfoRoute = SessionInfoRouteImport.update({
+  id: '/session-info',
+  path: '/session-info',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const Step1Route = Step1RouteImport.update({
+  id: '/step1',
+  path: '/step1',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const Step2Route = Step2RouteImport.update({
+  id: '/step2',
+  path: '/step2',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const Step3Route = Step3RouteImport.update({
+  id: '/step3',
+  path: '/step3',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const Step4Route = Step4RouteImport.update({
+  id: '/step4',
+  path: '/step4',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -149,53 +149,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/step4': {
-      id: '/step4'
-      path: '/step4'
-      fullPath: '/step4'
-      preLoaderRoute: typeof Step4RouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/step3': {
-      id: '/step3'
-      path: '/step3'
-      fullPath: '/step3'
-      preLoaderRoute: typeof Step3RouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/step2': {
-      id: '/step2'
-      path: '/step2'
-      fullPath: '/step2'
-      preLoaderRoute: typeof Step2RouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/step1': {
-      id: '/step1'
-      path: '/step1'
-      fullPath: '/step1'
-      preLoaderRoute: typeof Step1RouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/session-info': {
-      id: '/session-info'
-      path: '/session-info'
-      fullPath: '/session-info'
-      preLoaderRoute: typeof SessionInfoRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/researcher': {
-      id: '/researcher'
-      path: '/researcher'
-      fullPath: '/researcher'
-      preLoaderRoute: typeof ResearcherRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/grazie': {
-      id: '/grazie'
-      path: '/grazie'
-      fullPath: '/grazie'
-      preLoaderRoute: typeof GrazieRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/consent': {
@@ -205,11 +163,53 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ConsentRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/grazie': {
+      id: '/grazie'
+      path: '/grazie'
+      fullPath: '/grazie'
+      preLoaderRoute: typeof GrazieRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/researcher': {
+      id: '/researcher'
+      path: '/researcher'
+      fullPath: '/researcher'
+      preLoaderRoute: typeof ResearcherRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/session-info': {
+      id: '/session-info'
+      path: '/session-info'
+      fullPath: '/session-info'
+      preLoaderRoute: typeof SessionInfoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/step1': {
+      id: '/step1'
+      path: '/step1'
+      fullPath: '/step1'
+      preLoaderRoute: typeof Step1RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/step2': {
+      id: '/step2'
+      path: '/step2'
+      fullPath: '/step2'
+      preLoaderRoute: typeof Step2RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/step3': {
+      id: '/step3'
+      path: '/step3'
+      fullPath: '/step3'
+      preLoaderRoute: typeof Step3RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/step4': {
+      id: '/step4'
+      path: '/step4'
+      fullPath: '/step4'
+      preLoaderRoute: typeof Step4RouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -229,3 +229,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

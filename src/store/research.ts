@@ -199,6 +199,7 @@ interface ResearchState {
   isUsernameTaken: (name: string) => boolean;
   addPosition: (p: Omit<IPosition, "id">) => void;
   removePosition: (id: string) => void;
+  updatePositionDimension: (id: string, dimension: DimensionKey) => void;
   setContinuumValue: (id: string, value: number) => void;
   toggleColonization: (narrative: string, positionId: string) => void;
   markNarrativeSeen: (index: number) => void;
@@ -413,6 +414,20 @@ export const useResearchStore = create<ResearchState>()(
         continuum: { ...s.continuum, [id]: { value: 50, narratives: [] } },
       };
     }),
+  updatePositionDimension: (id, dimension) =>
+    set((s) => ({
+      positions: s.positions.map((p) =>
+        p.id === id
+          ? {
+              ...p,
+              dimension,
+              radius:
+                DIMENSIONS.find((d) => d.key === dimension)?.radius ??
+                p.radius,
+            }
+          : p,
+      ),
+    })),
   removePosition: (id) =>
     set((s) => {
       const { [id]: _, ...rest } = s.continuum;

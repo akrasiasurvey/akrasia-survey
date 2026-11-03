@@ -30,16 +30,69 @@ function Consent() {
               Ambito e scopo
             </h2>
             <p className="mt-2">
-              Ricerca universitaria in ambito psicologico sulla dinamica del
-              Sé e sui processi decisionali in contesti professionali ad alta
-              performance. Lo studio si concentra nello specifico sul
-              fenomeno dell'akrasia, ovvero il comportamento irrazionale per
-              cui una persona agisce contro il proprio miglior giudizio.
-              Attraverso il modello del Sé Dialogico (Hermans) si intende
-              indagare la possibilità che l'akrasia sia negoziata in
-              contesti altamente performativi, sotto la spinta di narrazioni
-              neoliberiste dell'efficienza e della razionalizzazione.
+              Benvenuta/o! Di cosa si tratta? Questo studio universitario
+              esplora come prendiamo le nostre decisioni quando siamo
+              sottoposti ad aspettative quotidiane di successo e produttività.
+              Ti è mai capitato di fare una scelta (sul lavoro o nella
+              gestione del tempo) sapendo che l'opzione migliore per il tuo
+              benessere sarebbe stata un'altra? Questa ricerca indaga i
+              meccanismi psicologici dietro le nostre decisioni, per capire
+              come la pressione all'efficienza e al rendimento influenzi i
+              nostri comportamenti.
             </p>
+          </section>
+          <section className="rounded-lg border border-border bg-card p-5">
+            <h2 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+              Come si articola il percorso
+            </h2>
+            <div className="mt-4 space-y-4">
+              <div>
+                <h3 className="text-sm font-semibold">
+                  Parte 1: Compilazione online (circa 15-20 minuti)
+                </h3>
+                <ul className="mt-2 list-disc space-y-2 pl-5">
+                  <li>
+                    <span className="font-medium">La mappa delle "voci":</span>{" "}
+                    ti verrà chiesto di identificare i ruoli che ricopri nel
+                    quotidiano (es. madre/padre-lavoratrice/lavoratore) e le
+                    persone (es. genitori-amici-colleghi-capi) esterne che
+                    guidano le tue decisioni. Mentre le elenchi dovrai
+                    definire l'importanza che queste "voci" hanno per te.
+                  </li>
+                  <li>
+                    <span className="font-medium">La scala dei valori:</span>{" "}
+                    successivamente dovrai disporre le "voci" che hai
+                    identificato su un asse tra produttività e cura di sé in
+                    base a quanto le senti compatibili con un estremo o
+                    l'altro.
+                  </li>
+                  <li>
+                    <span className="font-medium">I modi di pensare:</span> in
+                    questo passaggio ti sarà chiesto di associare alcune
+                    affermazioni di senso comune alle diverse voci in base a
+                    quanto le senti compatibili.
+                  </li>
+                  <li>
+                    <span className="font-medium">Tre situazioni reali:</span>{" "}
+                    infine dovrai descrivere brevemente come ti comporteresti
+                    in tre semplici scenari quotidiani.
+                  </li>
+                </ul>
+              </div>
+              <div>
+                <h3 className="text-sm font-semibold">
+                  Parte 2: Breve colloquio (circa 15-20 minuti)
+                </h3>
+                <p className="mt-2">
+                  A conclusione del percorso, ci accorderemo per una breve
+                  conversazione per commentare insieme le tue risposte.
+                </p>
+              </div>
+              <p className="rounded-md bg-muted/50 px-4 py-3 text-sm font-medium">
+                Ricorda: non ci sono risposte giuste o sbagliate, ci interessa
+                solo la tua prospettiva personale.
+              </p>
+            </div>
           </section>
           <section>
             <h2 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
