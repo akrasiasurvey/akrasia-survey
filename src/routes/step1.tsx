@@ -100,7 +100,7 @@ function VoiceColumn({
       <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
         Gli esempi selezionabili di seguito sono solo alcune delle possibili
         opzioni. Ti invitiamo a inserire e scrivere liberamente le voci più
-        personali che pensi ti influenzino.
+        personali che pensi ti guidino.
       </p>
 
       <div className="mt-4 flex flex-wrap gap-2">
@@ -229,11 +229,7 @@ function Step1() {
         <h1 className="mt-3 font-serif text-3xl font-medium">
           Step 1: Mappa le tue Voci
         </h1>
-        <p className="mt-2 max-w-3xl text-sm leading-relaxed text-muted-foreground">
-          Identifica i tuoi ruoli quotidiani o le caratteristiche che ti
-          descrivono e le persone o ambienti esterni che guidano le tue
-          giornate e le tue decisioni.
-        </p>
+        <p className="mt-2 max-w-3xl text-sm leading-relaxed text-muted-foreground"></p>
 
         <div className="mt-6 rounded-md border border-border bg-muted/40 px-5 py-4">
           <div className="mb-2 text-[10px] font-semibold uppercase tracking-[0.25em] text-muted-foreground">
