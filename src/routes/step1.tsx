@@ -54,7 +54,7 @@ interface VoiceColumnProps {
   placeholder: string;
   addLabel: string;
   positions: IPosition[];
-  onAdd: (label: string, belonging: Belonging) => void;
+  onAdd: (label: string, belonging: Belonging, dimension: DimensionKey) => void;
   onRemove: (id: string) => void;
   onDimensionChange: (id: string, dimension: DimensionKey) => void;
 }
@@ -72,16 +72,19 @@ function VoiceColumn({
   onDimensionChange,
 }: VoiceColumnProps) {
   const [custom, setCustom] = useState("");
+  const [dimension, setDimension] = useState<DimensionKey | "">("");
   const existing = new Set(positions.map((p) => p.label.trim().toLowerCase()));
   const available = suggestions.filter(
     (s) => !existing.has(s.trim().toLowerCase()),
   );
+  const canAdd = custom.trim().length > 0 && dimension !== "";
 
   function addCustom() {
     const trimmed = custom.trim();
-    if (!trimmed) return;
-    onAdd(trimmed, belonging);
+    if (!trimmed || !dimension) return;
+    onAdd(trimmed, belonging, dimension);
     setCustom("");
+    setDimension("");
   }
 
   return (
@@ -89,12 +92,6 @@ function VoiceColumn({
       <h2 className="text-sm font-semibold">{title}</h2>
       <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
         {instruction}
-      </p>
-
-      <p className="mt-4 border-l-2 border-primary bg-muted/40 px-4 py-3 text-sm font-semibold leading-relaxed text-foreground">
-        Ricordati di attribuire un valore a ciascuna voce aggiunta utilizzando
-        l'apposita scala, in base all'importanza che ricopre nelle scelte che
-        compi.
       </p>
 
       <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
@@ -109,7 +106,7 @@ function VoiceColumn({
             key={s}
             type="button"
             variant="outline"
-            onClick={() => onAdd(s, belonging)}
+            onClick={() => setCustom(s)}
             className="h-auto whitespace-normal rounded-full px-3 py-1.5 text-left text-xs"
           >
             + {s}
@@ -122,20 +119,39 @@ function VoiceColumn({
         )}
       </div>
 
-      <div className="mt-4 flex gap-2">
+      <div className="mt-4 space-y-3 rounded-md border border-border bg-background p-4">
         <Input
           value={custom}
           onChange={(e) => setCustom(e.target.value)}
           placeholder={placeholder}
-          onKeyDown={(e) => e.key === "Enter" && addCustom()}
+          onKeyDown={(e) => e.key === "Enter" && canAdd && addCustom()}
           aria-label={placeholder}
         />
+        <div>
+          <p className="mb-1.5 text-[10px] uppercase tracking-widest text-muted-foreground">
+            Imposta l'importanza prima di aggiungere
+          </p>
+          <Select
+            value={dimension}
+            onValueChange={(v) => setDimension(v as DimensionKey)}
+          >
+            <SelectTrigger className="h-9 text-xs" aria-label="Importanza">
+              <SelectValue placeholder="Seleziona un valore…" />
+            </SelectTrigger>
+            <SelectContent>
+              {DIMENSIONS.map((d) => (
+                <SelectItem key={d.key} value={d.key}>
+                  {d.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
         <Button
           type="button"
-          variant="outline"
           onClick={addCustom}
-          disabled={!custom.trim()}
-          className="shrink-0"
+          disabled={!canAdd}
+          className="w-full"
         >
           <Plus className="mr-1 h-3.5 w-3.5" />
           {addLabel}
