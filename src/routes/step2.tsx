@@ -66,15 +66,12 @@ function Step2() {
           Step 2: La Scala dei Valori
         </h1>
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-          Indica se ciascuna voce è guidata dalla cura di sé o dalla ricerca del rendimento.
+          {"\n"}
         </p>
 
         <div className="mt-6">
           <Instruction>
-            Ogni voce o ruolo guida le nostre scelte verso priorità diverse. Per ciascuna delle tue voci,
-            sposta il cursore lungo la linea per indicare da cosa si lascia guidare maggiormente:
-            verso il Benessere e le Relazioni (a sinistra) o verso la Produttività e i Risultati
-            (a destra). Osserva come cambia la tua mappa a destra.
+            Ogni ruolo guida le nostre scelte secondo priorità diverse. Per ognuna delle voci che hai elencato, sposta il cursore lungo la linea per indicare da cosa è maggiormente influenzata: da Benessere e Relazioni (a sinistra) o da Produttività e Risultati (a destra). Osserva come cambia la tua mappa a destra.
           </Instruction>
         </div>
 
