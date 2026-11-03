@@ -1,4 +1,7 @@
 # Attività
+- [ ] Semplificare testi, poli e avanzamento dello Step 2 mantenendo lo stile esistente.
+- [ ] Rendere leggibili le etichette brevi nella Mappa dei Valori senza modificare i dati raccolti.
+- [ ] Verificare che lo Step 3 si abiliti solo dopo aver posizionato tutte le voci.
 - [x] Accorciare gli esempi dello Step 1 preservando inserimento contestuale e dimensioni della mappa.
 - [x] Richiedere almeno una voce complessiva anche nella navigazione dell'intestazione.
 - [x] Verificare inserimento, reset dei campi, raggi della mappa, persistenza e avanzamento nello Step 1: sei test superati e prova nel sito senza errori.
