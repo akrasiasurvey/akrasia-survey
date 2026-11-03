@@ -28,6 +28,7 @@ export function getMaxUnlockedLevel({
 }): number {
   if (!consent) return 0;
   if (!participantId.trim() || !context || (context === "other" && !contextCustom.trim())) return 1;
+  if (positions.length === 0) return 2;
   if (!positions.every((p) => continuumTouched.includes(p.id))) return 3;
   if (narrativesSeen < ALL_NARRATIVES.length - 1) return 4;
   return 5;
