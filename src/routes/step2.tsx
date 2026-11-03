@@ -6,10 +6,10 @@ import { ProgressSteps } from "@/components/ProgressSteps";
 import { Instruction } from "@/components/Instruction";
 import { SelfGraph } from "@/components/SelfGraph";
 import { StepGate } from "@/lib/stepGating";
-import { DIMENSIONS, useResearchStore } from "@/store/research";
+import { useResearchStore } from "@/store/research";
 
 export const Route = createFileRoute("/step2")({
-  head: () => ({ meta: [{"title": "Continuum delle Voci — AKRASIA"}, {"name": "description", "content": "Posizionamento delle voci del Sé sul continuum tra dimensioni morali e affettive e compiti misurabili."}, {"property": "og:title", "content": "Continuum delle Voci — AKRASIA"}, {"property": "og:description", "content": "Posizionamento delle voci del Sé sul continuum tra dimensioni morali e affettive e compiti misurabili."}, {"property": "og:type", "content": "website"}, {"name": "twitter:card", "content": "summary"}] }),
+  head: () => ({ meta: [{"title": "La Scala dei Valori — AKRASIA"}, {"name": "description", "content": "Posiziona le tue voci tra Benessere e Relazioni e Produttività e Risultati nella tua Mappa dei Valori."}, {"property": "og:title", "content": "La Scala dei Valori — AKRASIA"}, {"property": "og:description", "content": "Posiziona le tue voci tra Benessere e Relazioni e Produttività e Risultati nella tua Mappa dei Valori."}, {"property": "og:type", "content": "website"}, {"name": "twitter:card", "content": "summary"}] }),
   component: () => (
     <StepGate level={3}>
       <Step2 />
@@ -27,7 +27,7 @@ function Step2() {
   const touchedCount = positions.filter((p) =>
     continuumTouched.includes(p.id),
   ).length;
-  const allPositioned = touchedCount === positions.length;
+  const allPositioned = positions.length > 0 && touchedCount === positions.length;
 
   if (positions.length === 0) {
     return (
@@ -35,7 +35,7 @@ function Step2() {
         <ProgressSteps current={3} />
         <div className="mx-auto max-w-2xl px-6 py-16 text-center">
           <h1 className="font-serif text-2xl font-medium">
-            Il Continuum delle Voci del Sé
+            Step 2: La Scala dei Valori
           </h1>
           <p className="mt-3 text-sm text-muted-foreground">
             Nessuna voce inserita.
@@ -44,9 +44,7 @@ function Step2() {
             <Button variant="ghost" asChild>
               <Link to="/step1">← Indietro</Link>
             </Button>
-            <Button asChild>
-              <Link to="/step3">Avanti →</Link>
-            </Button>
+            <Button disabled>Vai allo Step 3 ➔</Button>
           </div>
         </div>
       </main>
@@ -55,7 +53,7 @@ function Step2() {
 
   const activePos = positions[Math.min(posIdx, positions.length - 1)];
   const activeEntry = continuum[activePos.id] ?? { value: 50, narratives: [] };
-  const dimLabel = DIMENSIONS.find((d) => d.key === activePos.dimension)?.label;
+  const activeLabel = activePos.label.split("/")[0]?.trim() || activePos.label;
 
   return (
     <main className="min-h-screen bg-background text-foreground">
@@ -65,15 +63,18 @@ function Step2() {
           STEP 2 DI 4
         </p>
         <h1 className="mt-3 font-serif text-3xl font-medium">
-          Il Continuum delle Voci del Sé
+          Step 2: La Scala dei Valori
         </h1>
+        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+          Indica se ciascuna voce è guidata dalla cura di sé o dalla ricerca del rendimento.
+        </p>
 
         <div className="mt-6">
           <Instruction>
-            Per ciascuna delle tue posizioni, sposta il cursore lungo la linea
-            per indicare se è orientata a dimensioni morali e affettive
-            (sinistra) o a compiti quantificabili e razionali (destra). Osserva
-            come cambia il perimetro del cerchio nel grafico.
+            Ogni voce o ruolo guida le nostre scelte verso priorità diverse. Per ciascuna delle tue voci,
+            sposta il cursore lungo la linea per indicare da cosa si lascia guidare maggiormente:
+            verso il Benessere e le Relazioni (a sinistra) o verso la Produttività e i Risultati
+            (a destra). Osserva come cambia la tua mappa a destra.
           </Instruction>
         </div>
 
@@ -82,21 +83,14 @@ function Step2() {
             <article className="rounded-lg border border-border bg-card p-6">
               <div className="mb-4 flex items-center justify-between text-[10px] uppercase tracking-widest text-muted-foreground">
                 <span>
-                  Posizione {posIdx + 1} di {positions.length}
-                </span>
-                <span>
-                  {activePos.belonging === "internal"
-                    ? "Sé Interno"
-                    : "Sé Esterno"}{" "}
-                  · {dimLabel}
+                  Voce {posIdx + 1} di {positions.length}
                 </span>
               </div>
-              <h2 className="font-serif text-2xl font-medium">
-                {activePos.label}
+              <h2 className="break-words font-serif text-2xl font-medium">
+                {activeLabel}
               </h2>
               <p className="mt-3 text-sm text-muted-foreground">
-                Come ti rapporti e valuti te stesso, gli altri e il mondo
-                attraverso questa voce?
+                Quando ascolti o interpreti questa voce, cosa viene al primo posto?
               </p>
 
               <div className="mt-10">
@@ -108,33 +102,27 @@ function Step2() {
                   onValueChange={(v) =>
                     setContinuumValue(activePos.id, v[0] ?? 50)
                   }
-                  aria-label={`Continuum per ${activePos.label}`}
+                  aria-label={`Scala dei valori per ${activeLabel}`}
                 />
                 <div className="mt-4 grid grid-cols-2 gap-6 text-[11px] leading-snug text-muted-foreground">
                   <div className="text-left">
-                    <span className="mb-1 block text-[9px] uppercase tracking-widest text-foreground/60">
-                      Sinistra
+                    <span className="mb-1 block text-sm font-medium text-foreground">
+                      🌿 Benessere e Relazioni
                     </span>
-                    Dimensione valutativa morale e affettiva (principi
-                    relazionali, benessere psicofisico).
+                    Cura di sé, affetti, salute psicofisica, ritmi personali.
                   </div>
                   <div className="text-right">
-                    <span className="mb-1 block text-[9px] uppercase tracking-widest text-foreground/60">
-                      Destra
+                    <span className="mb-1 block text-sm font-medium text-foreground">
+                      🎯 Produttività e Risultati
                     </span>
-                    Dimensione valutativa misurabile e razionale (compiti
-                    tangibili, performance).
+                    Efficienza, prestazioni, compiti tangibili, successo lavorativo.
                   </div>
                 </div>
               </div>
 
-              {!allPositioned && (
-                <p className="mt-6 rounded-md border border-dashed border-border bg-background p-3 text-[11px] leading-relaxed text-muted-foreground">
-                  Sposta manualmente il cursore per ogni voce ({touchedCount}/
-                  {positions.length} completate) prima di procedere allo Step
-                  successivo.
-                </p>
-              )}
+              <p className="mt-6 rounded-md border border-dashed border-border bg-background p-3 text-xs leading-relaxed text-muted-foreground" aria-live="polite">
+                Voci posizionate: {touchedCount} su {positions.length}. Sposta il cursore per ciascuna voce per abilitare lo Step successivo.
+              </p>
               <div className="mt-8 flex items-center justify-between border-t border-border pt-4">
                 <Button
                   variant="outline"
@@ -159,23 +147,24 @@ function Step2() {
 
           <section className="lg:sticky lg:top-6 lg:h-fit">
             <div className="rounded-lg border border-border bg-card p-4">
-              <div className="mb-3 flex items-center justify-between text-[10px] uppercase tracking-widest text-muted-foreground">
-                <span>Società del Sé</span>
-                <span>Reattivo al continuum</span>
+              <div className="mb-3">
+                <h2 className="font-serif text-lg font-medium">La tua Mappa dei Valori</h2>
+                <p className="mt-1 text-xs text-muted-foreground">Visualizzazione delle posizioni</p>
               </div>
               <div className="flex justify-center">
                 <SelfGraph
                   positions={positions}
                   continuum={continuum}
                   activeId={activePos.id}
+                  compactLabels
                 />
               </div>
               <p className="mt-4 border-t border-border pt-3 text-[11px] leading-relaxed text-muted-foreground">
                 <span className="font-medium text-foreground">—</span> Linea
-                continua: voce orientata a compiti e razionali
+                continua: Produttività e Risultati
                 {"  |  "}
                 <span className="font-medium text-foreground">- -</span> Linea
-                tratteggiata: voce orientata a dimensioni morali e affettive
+                tratteggiata: Benessere e Relazioni
               </p>
             </div>
           </section>
@@ -187,11 +176,11 @@ function Step2() {
           </Button>
           {allPositioned ? (
             <Button asChild>
-              <Link to="/step3">Avanti →</Link>
+              <Link to="/step3">Vai allo Step 3 ➔</Link>
             </Button>
           ) : (
             <Button disabled title="Posiziona prima tutte le voci sul continuum">
-              Avanti →
+              Vai allo Step 3 ➔
             </Button>
           )}
         </div>

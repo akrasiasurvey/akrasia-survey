@@ -128,6 +128,8 @@ export interface SelfGraphProps {
   selectedIds?: string[];
   onSelect?: (id: string) => void;
   emptyMessage?: string;
+  /** Short display labels and fitted text, without changing research data. */
+  compactLabels?: boolean;
   /** Overrides visivi per singolo cerchio (usato per la diagnostica). */
   highlights?: Record<string, DiagnosticColor>;
   /**
@@ -163,6 +165,7 @@ export function SelfGraph({
   emptyMessage = "Aggiungi una I-Position per iniziare",
   highlights,
   emphasizedIds,
+  compactLabels = false,
 }: SelfGraphProps) {
   const laidOut = useMemo(() => computeLayout(positions), [positions]);
   const selected = new Set(selectedIds ?? []);
@@ -225,6 +228,10 @@ export function SelfGraph({
         const isEmphasized = !!diagnostic && emphasized.has(p.id);
         const isFaded = !!diagnostic && !isEmphasized && emphasized.size > 0;
         const displayRadius = isEmphasized ? p.radius + 4 : p.radius;
+        const displayLabel = compactLabels ? p.label.split("/")[0]?.trim() || p.label : p.label;
+        const labelSize = Math.max(9, Math.min(12, displayRadius / 3.5));
+        const labelWidth = displayRadius * 2 - 8;
+        const fitLabel = compactLabels && showInside && displayLabel.length * labelSize * 0.55 > labelWidth;
 
         const baseStroke = diagnostic
           ? DIAGNOSTIC_STROKE[diagnostic]
@@ -256,9 +263,10 @@ export function SelfGraph({
         return (
           <g
             key={p.id}
-            onClick={clickable ? () => onSelect!(p.id) : undefined}
+            onClick={clickable ? () => onSelect?.(p.id) : undefined}
             style={{ cursor: clickable ? "pointer" : "default" }}
           >
+            {compactLabels && <title>{p.label}</title>}
             {isSelected && (
               <circle
                 cx={p.x}
@@ -307,13 +315,15 @@ export function SelfGraph({
                 y={p.y}
                 textAnchor="middle"
                 dominantBaseline="middle"
+                textLength={fitLabel ? labelWidth : undefined}
+                lengthAdjust={fitLabel ? "spacingAndGlyphs" : undefined}
                 className="pointer-events-none fill-foreground"
                 style={{
-                  fontSize: Math.max(9, Math.min(12, displayRadius / 3.5)),
+                  fontSize: labelSize,
                   fontWeight: 500,
                 }}
               >
-                {p.label}
+                {displayLabel}
               </text>
             ) : (
               <text
@@ -323,7 +333,7 @@ export function SelfGraph({
                 className="pointer-events-none fill-foreground"
                 style={{ fontSize: 10, fontWeight: 500 }}
               >
-                {p.label}
+                {displayLabel}
               </text>
             )}
           </g>

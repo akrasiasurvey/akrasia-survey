@@ -18,6 +18,11 @@ describe("Avanzamento con almeno una voce, senza vincoli per sezione", () => {
   test("nessun limite massimo di voci", () => {
     assert.equal(getMaxUnlockedLevel({ ...session, positions: Array.from({ length: 100 }, (_, i) => ({ id: String(i) })) }), 3);
   });
+  test("lo Step 3 richiede il posizionamento di tutte le voci inserite", () => {
+    const voices = { ...session, positions: [{ id: "one" }, { id: "two" }] };
+    assert.equal(getMaxUnlockedLevel({ ...voices, continuumTouched: ["one"] }), 3);
+    assert.equal(getMaxUnlockedLevel({ ...voices, continuumTouched: ["one", "two"] }), 4);
+  });
   test("resta obbligatoria la visione delle dieci affermazioni", () => {
     const mapped = { ...session, positions: [{ id: "one" }], continuumTouched: ["one"] };
     assert.equal(getMaxUnlockedLevel({ ...mapped, narrativesSeen: 8 }), 4);
