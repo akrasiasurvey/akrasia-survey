@@ -8,3 +8,6 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- Keep navigation eligibility in `src/lib/stepGating.tsx` shared by route guards and the progress header, so both enforce the same prerequisites.
+- Treat an empty voice map as valid throughout the participant flow and archival; skip only voice-specific inputs when no voices exist, so unrestricted mapping does not create downstream dead ends.

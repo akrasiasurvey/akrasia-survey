@@ -45,22 +45,6 @@ function Step3() {
 
   const allSeen = narrativesSeen >= ALL_NARRATIVES.length - 1;
 
-  if (positions.length === 0) {
-    return (
-      <main className="min-h-screen bg-background text-foreground">
-        <ProgressSteps current={4} />
-        <div className="mx-auto max-w-2xl px-6 py-16 text-center">
-          <h1 className="font-serif text-2xl font-medium">
-            Nessuna I-Position dichiarata
-          </h1>
-          <Button asChild className="mt-6">
-            <Link to="/step1">← Torna allo Step 1</Link>
-          </Button>
-        </div>
-      </main>
-    );
-  }
-
   const activeNarrative = order[narrIdx];
   const colonizedIds = narrativeColonization[activeNarrative] ?? [];
 

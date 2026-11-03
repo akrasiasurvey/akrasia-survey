@@ -103,8 +103,7 @@ function Dashboard() {
   const liveProfile: { profile: Profile; inProgress: boolean } | null = useMemo(() => {
     if (
       !store.participantId ||
-      !store.context ||
-      store.positions.length === 0
+      !store.context
     ) {
       return null;
     }
