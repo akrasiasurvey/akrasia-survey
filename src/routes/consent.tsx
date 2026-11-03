@@ -67,7 +67,7 @@ function Consent() {
                     senti compatibili con un estremo o l’altro.
                   </li>
                   <li>
-                    <span className="font-semibold">I modi di pensare:</span>{" "}
+                    <span className="font-semibold">Convinzioni diffuse:</span>{" "}
                     In questo passaggio ti sarà chiesto di associare alcune
                     affermazioni di senso comune alle diverse voci in base a
                     quanto le senti compatibili.
