@@ -159,7 +159,7 @@ export const SCENARIOS: readonly ScenarioDef[] = [
     title: "Scenario 3 — Le clausole",
     theme: "Interesse economico, produttività come scopo supremo, etica relazionale",
     text:
-      "Sei incaricato di gestire la trattativa per un importante contratto di consulenza. Ti accorgi che, applicando in modo estremamente rigido ma lecito e legale le clausole, potresti far guadagnare alla tua azienda il 15% in più di quanto preventivato, a spese però del cliente, un’azienda a gestione familiare per la quale costituirebbe un danno economico considerevole. Cerchi un confronto con il tuo capo, il quale ti ricorda quali sono gli obiettivi dell’azienda. Inoltre, sei consapevole che i tuoi KPI di produttività personale dipendono in larga misura dal valore di questo contratto.",
+      "Sei incaricato di gestire la trattativa per un importante contratto di consulenza. Ti accorgi che, applicando in modo estremamente rigido ma lecito e legale le clausole, potresti far guadagnare alla tua azienda il 15% in più di quanto preventivato, a spese però del cliente, un’azienda a gestione familiare per la quale costituirebbe un danno economico considerevole. Cerchi un confronto con il tuo capo, il quale ti ricorda quali sono gli obiettivi dell’azienda. Inoltre, sei consapevole che i tuoi KPI (punteggio di produttività personale) dipendono in larga misura dal valore di questo contratto.",
     optionA:
       "Non applico le clausole in modo rigido e mantengo le condizioni preventivate, accettando di non massimizzare i miei KPI: la correttezza verso il cliente viene prima del guadagno.",
     optionB:
