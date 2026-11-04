@@ -992,8 +992,8 @@ function ContinuumMatrix({
     const v = profile.continuum[p.id]?.value ?? 50;
     let perf = 0;
     let prot = 0;
-    for (const [narr, ids] of Object.entries(profile.narrativeColonization)) {
-      if (!ids.includes(p.id)) continue;
+    for (const [narr, modes] of Object.entries(profile.narrativeColonization)) {
+      if (!(p.id in modes)) continue;
       const d = narrativeDomain(narr);
       if (d === "performative") perf++;
       else if (d === "protective") prot++;
@@ -1102,27 +1102,12 @@ function AggregateAnalysis({
   const interviews = useResearchStore((s) => s.interviews);
   const n = profiles.length;
 
-  // distribuzione diagnostica per scenario
-  const dist = useMemo(() => {
-    const out: Record<ScenarioId, Record<DiagnosticColor, number>> = {
-      s1: { green: 0, yellow: 0, orange: 0, red: 0 },
-      s2: { green: 0, yellow: 0, orange: 0, red: 0 },
-      s3: { green: 0, yellow: 0, orange: 0, red: 0 },
-    };
-    for (const p of profiles) {
-      for (const s of SCENARIOS) {
-        out[s.id][classifyScenario(p, s.id)]++;
-      }
-    }
-    return out;
-  }, [profiles]);
-
-  // Ranking narrazioni performative più diffuse (totale colonizzazioni)
+  // Ranking narrazioni più diffuse (totale attivazioni)
   const narrTotals = useMemo(() => {
     const counts: Record<string, number> = {};
     for (const p of profiles) {
-      for (const [narr, ids] of Object.entries(p.narrativeColonization)) {
-        counts[narr] = (counts[narr] ?? 0) + ids.length;
+      for (const [narr, modes] of Object.entries(p.narrativeColonization)) {
+        counts[narr] = (counts[narr] ?? 0) + Object.keys(modes).length;
       }
     }
     return counts;
