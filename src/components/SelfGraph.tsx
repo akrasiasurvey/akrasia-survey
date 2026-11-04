@@ -304,6 +304,17 @@ export function SelfGraph({
                 {displayLabel}
               </text>
             )}
+            {badge && (
+              <text
+                x={p.x}
+                y={p.y + displayRadius + (showInside ? 12 : 23)}
+                textAnchor="middle"
+                className="pointer-events-none fill-muted-foreground"
+                style={{ fontSize: 8.5, letterSpacing: 1, fontWeight: 600 }}
+              >
+                {badge.toUpperCase()}
+              </text>
+            )}
           </g>
         );
       })}
