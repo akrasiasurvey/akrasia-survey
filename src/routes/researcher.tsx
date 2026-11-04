@@ -596,7 +596,7 @@ function ProfileAnalysis({
                 >
                   Nessuno
                 </button>
-                {SCENARIOS.map((s, i) => (
+                 {SCENARIOS.map((s, i) => (
                   <button
                     key={s.id}
                     onClick={() => setActiveScenario(s.id)}
@@ -607,15 +607,10 @@ function ProfileAnalysis({
                         : "border-border text-muted-foreground hover:text-foreground",
                     )}
                   >
-                    <span
-                      className="mr-1 inline-block h-2 w-2 rounded-full align-middle"
-                      style={{ background: diagnosticHex(diagnostics[s.id]) }}
-                    />
                     Scenario {i + 1}
                   </button>
                 ))}
               </div>
-              <DiagnosticLegend />
             </div>
             <div className="rounded-md border border-border bg-background p-4 text-xs">
             {hovered ? (
@@ -735,23 +730,14 @@ function ProfileAnalysis({
         <div className="space-y-6">
           {SCENARIOS.map((s) => {
             const e = profile.scenarios[s.id];
-            const diag = diagnostics[s.id];
             return (
               <article
                 key={s.id}
                 className="rounded-md border-l-4 border border-border bg-background p-5"
-                style={{ borderLeftColor: diagnosticHex(diag) }}
+                style={{ borderLeftColor: "var(--color-foreground)" }}
               >
-                <div className="flex items-center justify-between">
-                  <div className="text-[10px] uppercase tracking-widest text-muted-foreground">
-                    {s.theme}
-                  </div>
-                  <div
-                    className="rounded-full px-2 py-0.5 text-[10px] uppercase tracking-widest text-background"
-                    style={{ background: diagnosticHex(diag) }}
-                  >
-                    {DIAGNOSTIC_LABEL[diag]}
-                  </div>
+                <div className="text-[10px] uppercase tracking-widest text-muted-foreground">
+                  {s.theme}
                 </div>
                 <h3 className="mt-1 font-serif text-lg">{s.title}</h3>
 
@@ -759,15 +745,13 @@ function ProfileAnalysis({
                   «{e.openResponse}»
                 </blockquote>
 
-                <div className="mt-4 flex flex-wrap items-center gap-2 text-xs">
-                  <span className="rounded-full border border-foreground/60 bg-foreground px-2.5 py-0.5 text-background">
-                    Opzione {e.choice ?? "—"}
-                  </span>
-                  {e.choice && (
-                    <span className="text-muted-foreground">
-                      Polarità: {CHOICE_POLARITY[e.choice]}
-                    </span>
-                  )}
+                <div className="mt-4">
+                  <div className="text-[10px] uppercase tracking-widest text-muted-foreground">
+                    Vissuto emotivo
+                  </div>
+                  <p className="mt-1 text-sm leading-relaxed text-foreground">
+                    {e.emotionalResponse?.trim() || "—"}
+                  </p>
                 </div>
 
                 <div className="mt-4 grid gap-4 md:grid-cols-2">
