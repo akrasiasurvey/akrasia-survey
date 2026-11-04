@@ -5,7 +5,12 @@ import { ProgressSteps } from "@/components/ProgressSteps";
 import { Instruction } from "@/components/Instruction";
 import { SelfGraph } from "@/components/SelfGraph";
 import { StepGate } from "@/lib/stepGating";
-import { ALL_NARRATIVES, useResearchStore } from "@/store/research";
+import {
+  ALL_NARRATIVES,
+  COLONIZATION_BADGE,
+  COLONIZATION_OPTIONS,
+  useResearchStore,
+} from "@/store/research";
 
 export const Route = createFileRoute("/step3")({
   head: () => ({ meta: [{"title": "Valutazione delle Narrazioni — AKRASIA"}, {"name": "description", "content": "Valutazione delle dieci affermazioni culturali e della loro influenza sulle voci del Sé."}, {"property": "og:title", "content": "Valutazione delle Narrazioni — AKRASIA"}, {"property": "og:description", "content": "Valutazione delle dieci affermazioni culturali e della loro influenza sulle voci del Sé."}, {"property": "og:type", "content": "website"}, {"name": "twitter:card", "content": "summary"}] }),
@@ -22,7 +27,7 @@ function Step3() {
   const narrativeColonization = useResearchStore(
     (s) => s.narrativeColonization,
   );
-  const toggleColonization = useResearchStore((s) => s.toggleColonization);
+  const setColonization = useResearchStore((s) => s.setColonization);
   const narrativesSeen = useResearchStore((s) => s.narrativesSeen ?? 0);
   const markNarrativeSeen = useResearchStore((s) => s.markNarrativeSeen);
   const narrativeOrder = useResearchStore((s) => s.narrativeOrder);
@@ -30,6 +35,7 @@ function Step3() {
 
   const [narrIdx, setNarrIdx] = useState(0);
   const [warn, setWarn] = useState(false);
+  const [menuFor, setMenuFor] = useState<string | null>(null);
 
   useEffect(() => {
     ensureNarrativeOrder();
@@ -42,12 +48,17 @@ function Step3() {
 
   useEffect(() => {
     markNarrativeSeen(narrIdx);
+    setMenuFor(null);
   }, [narrIdx, markNarrativeSeen]);
 
   const allSeen = narrativesSeen >= ALL_NARRATIVES.length - 1;
 
   const activeNarrative = order[narrIdx];
-  const colonizedIds = narrativeColonization[activeNarrative] ?? [];
+  const colonized = narrativeColonization[activeNarrative] ?? {};
+  const colonizedIds = Object.keys(colonized);
+  const menuPosition = menuFor
+    ? positions.find((p) => p.id === menuFor)
+    : undefined;
 
   return (
     <main className="min-h-screen bg-background text-foreground">
@@ -62,7 +73,7 @@ function Step3() {
 
         <div className="mt-6">
           <Instruction>
-            {'\u00a0Nella vita di tutti i giorni incontriamo idee e frasi fatte molto diffuse su lavoro, efficienza, benessere e relazioni. Leggi l’affermazione a sinistra, che rappresenta una convinzione diffusa e clicca direttamente sui cerchi nella tua mappa a destra per selezionare quali dei tuoi ruoli o quali persone esterne sono d’accordo o pronuncerebbero questa frase.\u00a0'}
+            Nella vita quotidiana ci confrontiamo con idee molto diffuse sul lavoro e sul successo. Leggi l'affermazione. Clicca direttamente sui cerchi nella tua mappa per selezionare le tue voci che vengono "attivate" da questa frase, sia in positivo che in negativo.
           </Instruction>
         </div>
 
