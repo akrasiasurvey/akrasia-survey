@@ -505,24 +505,6 @@ function ProfileAnalysis({
   const hoveredValue =
     displayId != null ? profile.continuum[displayId]?.value ?? 50 : null;
 
-  const diagnostics = useMemo(
-    () =>
-      Object.fromEntries(
-        SCENARIOS.map((s) => [s.id, classifyScenario(profile, s.id)] as const),
-      ) as Record<ScenarioId, DiagnosticColor>,
-    [profile],
-  );
-
-  const highlights: Record<string, DiagnosticColor> | undefined = useMemo(() => {
-    if (!activeScenario) return undefined;
-    const e = profile.scenarios[activeScenario];
-    const color = diagnostics[activeScenario];
-    const map: Record<string, DiagnosticColor> = {};
-    e.winningVoiceIds.forEach((id) => (map[id] = color));
-    e.losingVoiceIds.forEach((id) => (map[id] = color));
-    return map;
-  }, [activeScenario, diagnostics, profile]);
-
   const emphasizedIds: string[] | undefined = useMemo(() => {
     if (!activeScenario) return undefined;
     return profile.scenarios[activeScenario].winningVoiceIds;
@@ -561,7 +543,6 @@ function ProfileAnalysis({
             onClick={() => {
               void exportProfilePDF(
                 profile,
-                diagnostics,
                 interview,
                 clinicalNotes,
               );
@@ -590,7 +571,6 @@ function ProfileAnalysis({
               <SelfGraph
                 positions={profile.positions}
                 continuum={profile.continuum}
-                highlights={highlights}
                 emphasizedIds={emphasizedIds}
                 selectedIds={pinnedId ? [pinnedId] : undefined}
                 onSelect={(id) =>
