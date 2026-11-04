@@ -198,7 +198,7 @@ function Step3() {
               {positions.length > 0 && (
                 <div className="mt-6 grid gap-5 md:grid-cols-2">
                   <VoiceMultiSelect
-                    title="Voci Vincenti (Alleanza)"
+                    title="Voci alleate vincenti"
                     hint="Quali parti di te senti che hanno guidato o si sono alleate maggiormente con questa decisione?"
                     positions={positions}
                     selectedIds={entry.winningVoiceIds}
@@ -207,7 +207,7 @@ function Step3() {
                     }
                   />
                   <VoiceMultiSelect
-                    title="Voci Perdenti (Sottomissione)"
+                    title="Voci contrarie sconfitte"
                     hint="Quali parti di te senti che sono state messe a tacere, ignorate o sacrificate?"
                     positions={positions}
                     selectedIds={entry.losingVoiceIds}
