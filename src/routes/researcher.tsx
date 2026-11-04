@@ -867,7 +867,9 @@ function NarrativeBlock({
       </div>
       <ul className="space-y-3">
         {items.map((n) => {
-          const ids = profile.narrativeColonization[n] ?? [];
+          const entries = Object.entries(
+            profile.narrativeColonization[n] ?? {},
+          );
           return (
             <li
               key={n}
@@ -875,12 +877,12 @@ function NarrativeBlock({
             >
               <p className="text-xs italic text-foreground">«{n}»</p>
               <div className="mt-2 flex flex-wrap gap-1">
-                {ids.length === 0 ? (
+                {entries.length === 0 ? (
                   <span className="text-[10px] text-muted-foreground">
-                    Nessuna voce colonizzata.
+                    Nessuna voce attivata.
                   </span>
                 ) : (
-                  ids.map((id) => {
+                  entries.map(([id, mode]) => {
                     const p = profile.positions.find((x) => x.id === id);
                     if (!p) return null;
                     return (
@@ -889,6 +891,9 @@ function NarrativeBlock({
                         className="rounded-full border border-border bg-muted px-2 py-0.5 text-[11px]"
                       >
                         {p.label}
+                        <span className="ml-1 text-muted-foreground">
+                          · {COLONIZATION_BADGE[mode]}
+                        </span>
                       </span>
                     );
                   })
@@ -972,126 +977,6 @@ function formatDuration(startedAt: number, endedAt?: number): string {
   const h = Math.floor(totalMin / 60);
   const m = totalMin % 60;
   return h > 0 ? `${h}h ${m}min` : `${m} min`;
-}
-
-// ---------- Diagnostic classification ----------
-
-const DIAGNOSTIC_LABEL: Record<DiagnosticColor, string> = {
-  green: "Continente",
-  yellow: "Continente razionalizzato",
-  orange: "Akrasia razionalizzata",
-  red: "Akrasia neoliberista",
-};
-
-const DIAGNOSTIC_DESCRIPTION: Record<DiagnosticColor, string> = {
-  green:
-    "Le voci più centrali e orientate al benessere prevalgono senza essere ricodificate in termini performativi: la decisione è coerente con il Sé morale e l'akrasia non emerge.",
-  yellow:
-    "Il partecipante mantiene la coerenza con le voci più orientate al benessere: l'akrasia è contenuta e la decisione è razionalizzata come atto di autodeterminazione.",
-  orange:
-    "La scelta è razionalizzata a favore della logica produttiva: le voci morali vengono argomentativamente ridimensionate per legittimare la sottomissione al KPI.",
-  red:
-    "Le voci morali e centrali vengono messe a tacere in favore di voci quantitative anche periferiche: la razionalità neoliberista colonizza il Sé e l'akrasia diventa dissonanza aperta.",
-};
-
-const DIAGNOSTIC_HEX: Record<DiagnosticColor, string> = {
-  green: "#4a9d6c",
-  yellow: "#d4b23a",
-  orange: "#d78544",
-  red: "#c14b45",
-};
-
-function diagnosticHex(c: DiagnosticColor): string {
-  return DIAGNOSTIC_HEX[c];
-}
-
-function DiagnosticLegend() {
-  return (
-    <div className="mt-3 space-y-1 border-t border-border pt-2">
-      {(Object.keys(DIAGNOSTIC_LABEL) as DiagnosticColor[]).map((k) => (
-        <div key={k} className="flex items-center gap-2 text-[10px]">
-          <span
-            className="h-2 w-2 rounded-full"
-            style={{ background: DIAGNOSTIC_HEX[k] }}
-          />
-          <span className="uppercase tracking-widest text-muted-foreground">
-            {DIAGNOSTIC_LABEL[k]}
-          </span>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function avg(xs: number[]): number {
-  if (xs.length === 0) return 0;
-  return xs.reduce((a, b) => a + b, 0) / xs.length;
-}
-
-function classifyScenario(profile: Profile, sid: ScenarioId): DiagnosticColor {
-  const e = profile.scenarios[sid];
-  const posById = (id: string) => profile.positions.find((p) => p.id === id);
-  const contById = (id: string) => profile.continuum[id]?.value ?? 50;
-
-  const wins = e.winningVoiceIds
-    .map(posById)
-    .filter(Boolean) as NonNullable<ReturnType<typeof posById>>[];
-  const loses = e.losingVoiceIds
-    .map(posById)
-    .filter(Boolean) as NonNullable<ReturnType<typeof posById>>[];
-
-  if (wins.length === 0 || loses.length === 0) {
-    // fallback su polarità della scelta
-    if (e.choice === "A") return "green";
-    if (e.choice === "C") return "yellow";
-    if (e.choice === "B") return "orange";
-    return "green";
-  }
-
-  const avgRadWin = avg(wins.map((p) => p.radius));
-  const avgRadLose = avg(loses.map((p) => p.radius));
-  const avgContWin = avg(wins.map((p) => contById(p.id)));
-  const avgContLose = avg(loses.map((p) => contById(p.id)));
-
-  // Quota di voci colonizzate da narrazioni performative in ciascun gruppo
-  const colonizedBy = (id: string, dom: "performative" | "protective") => {
-    for (const [narr, ids] of Object.entries(profile.narrativeColonization)) {
-      if (ids.includes(id) && narrativeDomain(narr) === dom) return true;
-    }
-    return false;
-  };
-  const winPerfShare =
-    wins.filter((p) => colonizedBy(p.id, "performative")).length / wins.length;
-  const losePerfShare =
-    loses.filter((p) => colonizedBy(p.id, "performative")).length /
-    loses.length;
-
-  // Regole:
-  //  - YELLOW (Continente razionalizzato): le vincenti sono più morali
-  //    (continuum più basso) e almeno tanto grandi quanto le perdenti →
-  //    coerenza con il Sé centrale morale.
-  if (avgContWin < avgContLose - 5 && avgRadWin >= avgRadLose - 2) {
-    // Continente puro: nessuna colonizzazione performativa sulle vincenti
-    // e nessuna razionalizzazione manifesta sulle perdenti.
-    if (winPerfShare === 0 && losePerfShare < 0.34) return "green";
-    return "yellow";
-  }
-  //  - RED: le perdenti sono più morali e più grandi delle vincenti che
-  //    invece sono razionali → sottomissione aperta.
-  if (
-    avgContWin > avgContLose + 5 &&
-    avgRadWin < avgRadLose - 2 &&
-    losePerfShare < 0.4
-  ) {
-    return "red";
-  }
-  //  - ORANGE: vincenti razionali che neutralizzano perdenti (di solito
-  //    piccole/marginali o già colonizzate dal performativo).
-  if (avgContWin > avgContLose && winPerfShare >= 0.5) {
-    return "orange";
-  }
-  //  - YELLOW: compromesso, o entrambi i gruppi mescolano performativo e cura.
-  return "yellow";
 }
 
 // ---------- Continuum × Colonization matrix ----------
