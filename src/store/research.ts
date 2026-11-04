@@ -101,18 +101,45 @@ export interface ContinuumEntry {
 }
 
 export type ScenarioId = "s1" | "s2" | "s3";
-export type ScenarioChoice = "A" | "B" | "C";
 
-export const CHOICE_POLARITY: Record<ScenarioChoice, string> = {
-  A: "Autotutela",
-  B: "Iper-performance",
-  C: "Compromesso",
+/**
+ * Reazione di una voce a un'affermazione diffusa (Step 3): la voce può
+ * adottare la frase, subirla oppure rifiutarla.
+ */
+export type ColonizationMode = "adotta" | "subisce" | "rifiuta";
+
+export const COLONIZATION_OPTIONS: readonly {
+  key: ColonizationMode;
+  label: string;
+  description: string;
+}[] = [
+  {
+    key: "adotta",
+    label: "La adotta",
+    description: "La pronuncia con convinzione e ne fa una regola.",
+  },
+  {
+    key: "subisce",
+    label: "La subisce",
+    description: "Sente la pressione o il senso di colpa se non la rispetta.",
+  },
+  {
+    key: "rifiuta",
+    label: "La rifiuta",
+    description: "Non è d'accordo e cerca di opporsi.",
+  },
+];
+
+export const COLONIZATION_BADGE: Record<ColonizationMode, string> = {
+  adotta: "Adotta",
+  subisce: "Subisce",
+  rifiuta: "Rifiuta",
 };
 
 export interface ScenarioEntry {
   openResponse: string;
   locked: boolean;
-  choice: ScenarioChoice | null;
+  emotionalResponse: string;
   winningVoiceIds: string[];
   losingVoiceIds: string[];
 }
@@ -122,9 +149,6 @@ export interface ScenarioDef {
   title: string;
   theme: string;
   text: string;
-  optionA: string;
-  optionB: string;
-  optionC: string;
 }
 
 export const SCENARIOS: readonly ScenarioDef[] = [
