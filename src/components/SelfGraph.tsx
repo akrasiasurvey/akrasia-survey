@@ -130,31 +130,18 @@ export interface SelfGraphProps {
   emptyMessage?: string;
   /** Short display labels and fitted text, without changing research data. */
   compactLabels?: boolean;
-  /** Overrides visivi per singolo cerchio (usato per la diagnostica). */
-  highlights?: Record<string, DiagnosticColor>;
   /**
    * Sottoinsieme di id (tipicamente le "voci vincenti" di uno scenario) da
    * mettere maggiormente in evidenza: fill più carico, contorno più marcato
-   * e leggero incremento di raggio rispetto alle altre voci evidenziate.
+   * e leggero incremento di raggio.
    */
   emphasizedIds?: string[];
+  /**
+   * Piccole etichette testuali mostrate sotto ciascun cerchio (es. la
+   * reazione della voce a un'affermazione: Adotta / Subisce / Rifiuta).
+   */
+  nodeBadges?: Record<string, string>;
 }
-
-export type DiagnosticColor = "green" | "yellow" | "orange" | "red";
-
-const DIAGNOSTIC_STROKE: Record<DiagnosticColor, string> = {
-  green: "oklch(0.60 0.16 150)",
-  yellow: "oklch(0.80 0.17 90)",
-  orange: "oklch(0.68 0.18 55)",
-  red: "oklch(0.58 0.22 25)",
-};
-
-const DIAGNOSTIC_FILL: Record<DiagnosticColor, string> = {
-  green: "oklch(0.85 0.14 150)",
-  yellow: "oklch(0.90 0.15 90)",
-  orange: "oklch(0.85 0.14 55)",
-  red: "oklch(0.80 0.15 25)",
-};
 
 export function SelfGraph({
   positions,
@@ -163,8 +150,8 @@ export function SelfGraph({
   selectedIds,
   onSelect,
   emptyMessage = "Aggiungi una I-Position per iniziare",
-  highlights,
   emphasizedIds,
+  nodeBadges,
   compactLabels = false,
 }: SelfGraphProps) {
   const laidOut = useMemo(() => computeLayout(positions), [positions]);
