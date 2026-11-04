@@ -5,11 +5,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import { SelfGraph, type DiagnosticColor } from "@/components/SelfGraph";
+import { SelfGraph } from "@/components/SelfGraph";
 import { InterviewSection } from "@/components/InterviewSection";
 import { buildSegments, MATRIX_LABEL } from "@/lib/lexicon";
 import {
-  CHOICE_POLARITY,
+  COLONIZATION_BADGE,
   PERFORMATIVE_NARRATIVES,
   PROTECTIVE_NARRATIVES,
   SCENARIOS,
@@ -36,7 +36,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Trash2 } from "lucide-react";
 
 export const Route = createFileRoute("/researcher")({
   head: () => ({ meta: [{"title": "Dashboard Ricercatore — AKRASIA"}, {"name": "description", "content": "Analisi dialogica dei processi decisionali akratici nelle sessioni raccolte."}, {"property": "og:title", "content": "Dashboard Ricercatore — AKRASIA"}, {"property": "og:description", "content": "Analisi dialogica dei processi decisionali akratici nelle sessioni raccolte."}, {"property": "og:type", "content": "website"}, {"name": "twitter:card", "content": "summary"}] }),
@@ -112,7 +111,7 @@ function Dashboard() {
       const e = store.scenarios[s.id];
       return (
         e.locked &&
-        !!e.choice &&
+        e.emotionalResponse.trim().length > 0 &&
         e.winningVoiceIds.length > 0 &&
         e.losingVoiceIds.length > 0
       );
@@ -424,9 +423,9 @@ function Dashboard() {
                     e.stopPropagation();
                     setPendingDelete(p);
                   }}
-                  className="absolute right-2 top-2 rounded-md p-1.5 text-destructive/70 transition-colors hover:bg-destructive/10 hover:text-destructive"
+                  className="absolute right-2 top-2 rounded-md px-1.5 py-1 text-[9px] uppercase tracking-widest text-destructive/70 transition-colors hover:bg-destructive/10 hover:text-destructive"
                 >
-                  <Trash2 className="h-4 w-4" />
+                  Elimina
                 </button>
               )}
               </div>
