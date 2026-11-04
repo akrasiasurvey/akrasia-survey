@@ -1713,13 +1713,7 @@ async function exportProfilePDF(
   rule();
   for (const s of SCENARIOS) {
     const e = profile.scenarios[s.id];
-    const d = diagnostics[s.id];
-    const hex = DIAGNOSTIC_HEX[d];
-    const rgb: [number, number, number] = [
-      parseInt(hex.slice(1, 3), 16),
-      parseInt(hex.slice(3, 5), 16),
-      parseInt(hex.slice(5, 7), 16),
-    ];
+    const rgb: [number, number, number] = ACCENT;
     ensureSpace(120);
     const top = y;
     const startPage = currentPage();
@@ -1752,30 +1746,6 @@ async function exportProfilePDF(
     });
     y += 12;
 
-    // Diagnostic badge
-    ensureSpace(24);
-    setFill(rgb);
-    const badge = DIAGNOSTIC_LABEL[d].toUpperCase();
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(7.5);
-    doc.setCharSpace(1.2);
-    const badgeW = doc.getTextWidth(badge) + badge.length * 1.2 + 14;
-    doc.roundedRect(M + 10, y - 10, badgeW, 15, 7, 7, "F");
-    setInk([255, 255, 255]);
-    doc.text(badge, M + 10 + 7, y);
-    doc.setCharSpace(0);
-    // Choice pill
-    const choiceStr = `OPZIONE ${e.choice ?? "—"}${
-      e.choice ? ` · ${CHOICE_POLARITY[e.choice].toUpperCase()}` : ""
-    }`;
-    const chX = M + 10 + badgeW + 8;
-    setFill(INK);
-    const chW = doc.getTextWidth(choiceStr) + choiceStr.length * 1.2 + 14;
-    doc.roundedRect(chX, y - 10, chW, 15, 7, 7, "F");
-    setInk([255, 255, 255]);
-    doc.text(choiceStr, chX + 7, y);
-    y += 24;
-
     // Open response — as blockquote
     uppercase("Riflessione del partecipante", { size: 7.5, color: MUTED, x: M + 10 });
     text(`« ${e.openResponse} »`, {
@@ -1786,6 +1756,17 @@ async function exportProfilePDF(
       x: M + 18,
       maxW: CONTENT_W - 36,
       lineGap: 16,
+    });
+
+    // Vissuto emotivo
+    y += 6;
+    uppercase("Vissuto emotivo", { size: 7.5, color: MUTED, x: M + 10 });
+    text(e.emotionalResponse?.trim() || "(Non compilato.)", {
+      size: 10,
+      color: e.emotionalResponse?.trim() ? INK : MUTED,
+      x: M + 18,
+      maxW: CONTENT_W - 36,
+      lineGap: 15,
     });
 
     const winLabels = e.winningVoiceIds
@@ -1803,18 +1784,6 @@ async function exportProfilePDF(
     y += 6;
     uppercase("Voci perdenti (sottomissione)", { size: 7.5, color: MUTED, x: M + 10 });
     text(loseLabels || "—", { size: 10, lineGap: 14, x: M + 10, maxW: CONTENT_W - 24 });
-
-    y += 8;
-    // description
-    text(DIAGNOSTIC_DESCRIPTION[d], {
-      size: 9.5,
-      italic: true,
-      color: MUTED,
-      font: "times",
-      lineGap: 14,
-      x: M + 10,
-      maxW: CONTENT_W - 24,
-    });
 
     // Note cliniche del ricercatore
     const note = clinicalNotes?.[s.id]?.trim();
@@ -1939,10 +1908,7 @@ async function exportProfilePDF(
   void cardClose;
 }
 
-function exportAggregatePDF(
-  profiles: Profile[],
-  dist: Record<ScenarioId, Record<DiagnosticColor, number>>,
-) {
+function exportAggregatePDF(profiles: Profile[]) {
   const doc = new jsPDF({ unit: "pt", format: "a4" });
   const M = 40;
   let y = M;
@@ -1964,12 +1930,9 @@ function exportAggregatePDF(
   line(`Generato il ${formatDateTime(Date.now())}`);
   y += 8;
 
+  line("Scenari somministrati", 12, true);
   for (const s of SCENARIOS) {
-    line(s.title, 12, true);
-    (Object.keys(DIAGNOSTIC_LABEL) as DiagnosticColor[]).forEach((k) => {
-      line(`  ${DIAGNOSTIC_LABEL[k]}: ${dist[s.id][k]}`);
-    });
-    y += 4;
+    line(`  ${s.title} — ${s.theme}`);
   }
 
   y += 8;
