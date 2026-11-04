@@ -158,12 +158,6 @@ export const SCENARIOS: readonly ScenarioDef[] = [
     theme: "Tempo relazionale vs. dedizione lavorativa, riconoscimento professionale",
     text:
       "Dopo settimane di lavoro molto intenso, in cui non hai avuto modo di trascorrere molto tempo in famiglia, finalmente arriva venerdì e la sera stessa partirai per il fine settimana fuori porta che avevi promesso al tuo partner. Ne parlate da tempo e siete entrambi felici di avere un momento di tranquillità in cui non dover pensare agli impegni della settimana. Appena prima di lasciare l’ufficio, però, ricevi una comunicazione dal tuo capo: ti offre la possibilità di occuparti delle pratiche per un cliente di rilievo, un compito importante ma che deve essere portato a termine tassativamente entro lunedì. Sai che accettare la proposta ti richiederebbe qualche ora di lavoro extra, straordinari pagati che ti farebbero comodo, e ti permetterebbe di dimostrare il tuo valore, ma sei consapevole che ciò significherebbe rimandare la gita tanto attesa.",
-    optionA:
-      "Declino la proposta e parto come previsto. Ritengo che il tempo promesso al mio partner e alla mia vita affettiva non sia negoziabile in cambio di un riconoscimento professionale.",
-    optionB:
-      "Accetto l'incarico e rimando la partenza. Un'occasione così per dimostrare il proprio valore, con in più gli straordinari pagati, non si può lasciar passare: la famiglia capirà.",
-    optionC:
-      "Cerco un compromesso: parto comunque, ma porto con me il lavoro e mi ritaglio qualche ora durante il fine settimana per completare le pratiche entro lunedì.",
   },
   {
     id: "s2",
@@ -171,12 +165,6 @@ export const SCENARIOS: readonly ScenarioDef[] = [
     theme: "Abnegazione psicofisica, competitività, immagine di produttività",
     text:
       "Sul posto di lavoro è un periodo molto teso a causa di possibili ridimensionamenti e promozioni nel prossimo trimestre. Sei tornato sul posto di lavoro da appena qualche giorno dopo quasi una settimana di assenza per malattia a causa di un virus influenzale che ti ha costretto a letto. Una mattina, ti svegli con una forte sensazione di malessere; hai la febbre alta ed una forte emicrania. Sembra essere una ricaduta che dovresti contenere per evitare di stare peggio. In ufficio, però, c’è aria di competizione per ottenere la promozione ed evitare il ridimensionamento e temi che la tua seconda richiesta di malattia nel giro di poche settimane possa alimentare voci tra i colleghi circa il tuo impegno e la tua produttività ed influenzare la decisione.",
-    optionA:
-      "Resto a casa e mi curo. Riconosco il limite del mio corpo e accetto il rischio che questa assenza venga letta come scarsa dedizione: la salute viene prima della reputazione.",
-    optionB:
-      "Prendo un antipiretico e vado comunque al lavoro. In un momento così delicato mostrare presenza e resistenza è l'unico modo per non compromettere la mia posizione.",
-    optionC:
-      "Cerco una via di mezzo: avviso che lavorerò da casa, così evito l'assenza formale pur restando a letto, senza però potermi davvero riposare.",
   },
   {
     id: "s3",
@@ -184,12 +172,6 @@ export const SCENARIOS: readonly ScenarioDef[] = [
     theme: "Interesse economico, produttività come scopo supremo, etica relazionale",
     text:
       "Sei incaricato di gestire la trattativa per un importante contratto di consulenza. Ti accorgi che, applicando in modo estremamente rigido ma lecito e legale le clausole, potresti far guadagnare alla tua azienda il 15% in più di quanto preventivato, a spese però del cliente, un’azienda a gestione familiare per la quale costituirebbe un danno economico considerevole. Cerchi un confronto con il tuo capo, il quale ti ricorda quali sono gli obiettivi dell’azienda. Inoltre, sei consapevole che i tuoi KPI (punteggio di produttività personale) dipendono in larga misura dal valore di questo contratto.",
-    optionA:
-      "Non applico le clausole in modo rigido e mantengo le condizioni preventivate, accettando di non massimizzare i miei KPI: la correttezza verso il cliente viene prima del guadagno.",
-    optionB:
-      "Applico rigidamente le clausole e porto a casa il 15% in più. È lecito, è ciò che l'azienda chiede e i miei risultati personali ne beneficiano.",
-    optionC:
-      "Provo a mediare: applico le clausole come richiesto dal capo, ma propongo informalmente al cliente una dilazione dei pagamenti o uno sconto futuro per attenuare il danno.",
   },
 ];
 
