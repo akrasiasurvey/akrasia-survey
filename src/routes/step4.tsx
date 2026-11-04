@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -9,7 +9,6 @@ import { Instruction } from "@/components/Instruction";
 import {
   SCENARIOS,
   useResearchStore,
-  type ScenarioChoice,
   type ScenarioId,
 } from "@/store/research";
 import { cn } from "@/lib/utils";
@@ -31,7 +30,7 @@ function Step3() {
   const scenarios = useResearchStore((s) => s.scenarios);
   const setResp = useResearchStore((s) => s.setScenarioResponse);
   const lockResp = useResearchStore((s) => s.lockScenarioResponse);
-  const setChoice = useResearchStore((s) => s.setScenarioChoice);
+  const setEmotion = useResearchStore((s) => s.setScenarioEmotion);
   const toggleVoice = useResearchStore((s) => s.toggleScenarioVoice);
   const endSession = useResearchStore((s) => s.endSession);
   const archiveAndComplete = useResearchStore((s) => s.archiveAndComplete);
@@ -39,24 +38,6 @@ function Step3() {
   const [idx, setIdx] = useState(0);
   const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
-
-  // Ordine di presentazione delle opzioni A/B/C mescolato per sessione
-  // (evita bias di posizione). Stabilizzato in useState per non rimescolare
-  // ad ogni render.
-  const displayOrder = useMemo<Record<ScenarioId, ScenarioChoice[]>>(() => {
-    const shuffle = <T,>(a: T[]) =>
-      a
-        .map((v) => ({ v, k: Math.random() }))
-        .sort((x, y) => x.k - y.k)
-        .map(({ v }) => v);
-    const base: ScenarioChoice[] = ["A", "B", "C"];
-    return {
-      s1: shuffle(base),
-      s2: shuffle(base),
-      s3: shuffle(base),
-    };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const scenario = SCENARIOS[idx];
   const entry = scenarios[scenario.id];
@@ -66,7 +47,7 @@ function Step3() {
     const e = scenarios[id];
     return (
       e.locked &&
-      !!e.choice &&
+      e.emotionalResponse.trim().length > 0 &&
       (positions.length === 0 ||
         (e.winningVoiceIds.length > 0 && e.losingVoiceIds.length > 0))
     );
@@ -101,21 +82,6 @@ function Step3() {
       navigate({ to: "/grazie", replace: true });
     }
   };
-
-  const OPTIONS: {
-    k: ScenarioChoice;
-    tag: string;
-    label: string;
-  }[] = displayOrder[scenario.id].map((k, i) => ({
-    k,
-    tag: `Opzione ${String.fromCharCode(65 + i)}`,
-    label:
-      k === "A"
-        ? scenario.optionA
-        : k === "B"
-          ? scenario.optionB
-          : scenario.optionC,
-  }));
 
   return (
     <main className="min-h-screen bg-background text-foreground">
@@ -155,7 +121,6 @@ function Step3() {
               )}
             >
               Scenario {i + 1}
-              {complete(s.id) && " ✓"}
             </button>
           ))}
         </div>
