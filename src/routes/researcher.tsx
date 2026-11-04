@@ -1647,12 +1647,15 @@ async function exportProfilePDF(
         x: M + 8,
         maxW: CONTENT_W - 16,
       });
-      const ids = profile.narrativeColonization[n] ?? [];
-      const labels = ids
-        .map((id) => profile.positions.find((p) => p.id === id)?.label)
+      const entries = Object.entries(profile.narrativeColonization[n] ?? {});
+      const labels = entries
+        .map(([id, mode]) => {
+          const label = profile.positions.find((p) => p.id === id)?.label;
+          return label ? `${label} (${COLONIZATION_BADGE[mode]})` : null;
+        })
         .filter(Boolean)
         .join(" · ");
-      text(labels || "Nessuna voce colonizzata.", {
+      text(labels || "Nessuna voce attivata.", {
         size: 9,
         color: MUTED,
         lineGap: 12,
@@ -1687,8 +1690,8 @@ async function exportProfilePDF(
       const v = profile.continuum[p.id]?.value ?? 50;
       let perf = 0;
       let prot = 0;
-      for (const [narr, ids] of Object.entries(profile.narrativeColonization)) {
-        if (!ids.includes(p.id)) continue;
+      for (const [narr, modes] of Object.entries(profile.narrativeColonization)) {
+        if (!(p.id in modes)) continue;
         const d = narrativeDomain(narr);
         if (d === "performative") perf++;
         else if (d === "protective") prot++;
