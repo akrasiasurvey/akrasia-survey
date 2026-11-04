@@ -164,7 +164,7 @@ function Step3() {
                   disabled={!canUnlock}
                   onClick={() => lockResp(scenario.id)}
                 >
-                  Procedi alla scelta guidata →
+                  Procedi al vissuto emotivo →
                 </Button>
               )}
             </div>
@@ -174,33 +174,28 @@ function Step3() {
           {entry.locked && (
             <div className="mt-8 border-t border-border pt-6">
               <div className="mb-4 text-xs uppercase tracking-widest text-muted-foreground">
-                Fase B — Scelta guidata & Mappatura delle voci
+                Fase B — Vissuto emotivo & Mappatura delle voci
               </div>
 
-              <div className="grid gap-3 md:grid-cols-3">
-                {OPTIONS.map((o) => {
-                  const selected = entry.choice === o.k;
-                  return (
-                    <button
-                      key={o.k}
-                      onClick={() => setChoice(scenario.id, o.k)}
-                      className={cn(
-                        "rounded-md border p-4 text-left text-sm leading-relaxed transition-colors",
-                        selected
-                          ? "border-foreground bg-muted"
-                          : "border-border bg-background hover:border-foreground/40",
-                      )}
-                    >
-                      <div className="mb-1 text-[10px] uppercase tracking-widest text-muted-foreground">
-                        {o.tag}
-                      </div>
-                      {o.label}
-                    </button>
-                  );
-                })}
-              </div>
+              <Label
+                htmlFor={`emotion-${scenario.id}`}
+                className="text-xs uppercase tracking-widest text-muted-foreground"
+              >
+                Vissuto emotivo
+              </Label>
+              <p className="mt-2 text-sm text-foreground">
+                Come ti senti o cosa provi subito dopo aver preso questa
+                decisione?
+              </p>
+              <Textarea
+                id={`emotion-${scenario.id}`}
+                value={entry.emotionalResponse}
+                onChange={(e) => setEmotion(scenario.id, e.target.value)}
+                placeholder="Scrivi in poche righe il tuo vissuto emotivo…"
+                className="mt-3 min-h-[80px]"
+              />
 
-              {entry.choice && positions.length > 0 && (
+              {positions.length > 0 && (
                 <div className="mt-6 grid gap-5 md:grid-cols-2">
                   <VoiceMultiSelect
                     title="Voci Vincenti (Alleanza)"
