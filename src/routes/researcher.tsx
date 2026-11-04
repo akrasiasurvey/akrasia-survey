@@ -1224,9 +1224,6 @@ function exportProfileJSON(profile: Profile, interview?: InterviewData) {
           title: s.title,
           theme: s.theme,
           text: s.text,
-          optionA: s.optionA,
-          optionB: s.optionB,
-          optionC: s.optionC,
         })),
       },
       null,
@@ -1250,9 +1247,6 @@ function exportAllJSON(
           title: s.title,
           theme: s.theme,
           text: s.text,
-          optionA: s.optionA,
-          optionB: s.optionB,
-          optionC: s.optionC,
         })),
         profiles: profiles.map((p) => ({
           ...p,
@@ -1334,7 +1328,6 @@ async function renderSelfGraphImage(
 
 async function exportProfilePDF(
   profile: Profile,
-  diagnostics: Record<ScenarioId, DiagnosticColor>,
   interview?: InterviewData,
   clinicalNotes?: Partial<Record<ScenarioId, string>>,
 ) {
