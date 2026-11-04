@@ -440,9 +440,10 @@ export const useResearchStore = create<ResearchState>()(
   removePosition: (id) =>
     set((s) => {
       const { [id]: _, ...rest } = s.continuum;
-      const nc: Record<string, string[]> = {};
-      for (const [k, arr] of Object.entries(s.narrativeColonization)) {
-        nc[k] = arr.filter((x) => x !== id);
+      const nc: Record<string, Record<string, ColonizationMode>> = {};
+      for (const [k, modes] of Object.entries(s.narrativeColonization)) {
+        const { [id]: _removed, ...others } = modes;
+        nc[k] = others;
       }
       const scenarios = { ...s.scenarios };
       (Object.keys(scenarios) as ScenarioId[]).forEach((sid) => {
@@ -474,16 +475,15 @@ export const useResearchStore = create<ResearchState>()(
         ? s.continuumTouched
         : [...s.continuumTouched, id],
     })),
-  toggleColonization: (narrative, positionId) =>
+  setColonization: (narrative, positionId, mode) =>
     set((s) => {
-      const list = s.narrativeColonization[narrative] ?? [];
-      const has = list.includes(positionId);
+      const current = { ...(s.narrativeColonization[narrative] ?? {}) };
+      if (mode === null) delete current[positionId];
+      else current[positionId] = mode;
       return {
         narrativeColonization: {
           ...s.narrativeColonization,
-          [narrative]: has
-            ? list.filter((x) => x !== positionId)
-            : [...list, positionId],
+          [narrative]: current,
         },
       };
     }),
@@ -513,9 +513,12 @@ export const useResearchStore = create<ResearchState>()(
     set((s) => ({
       scenarios: { ...s.scenarios, [id]: { ...s.scenarios[id], locked: true } },
     })),
-  setScenarioChoice: (id, choice) =>
+  setScenarioEmotion: (id, text) =>
     set((s) => ({
-      scenarios: { ...s.scenarios, [id]: { ...s.scenarios[id], choice } },
+      scenarios: {
+        ...s.scenarios,
+        [id]: { ...s.scenarios[id], emotionalResponse: text },
+      },
     })),
   toggleScenarioVoice: (id, kind, positionId) =>
     set((s) => {
@@ -605,12 +608,22 @@ export const useResearchStore = create<ResearchState>()(
       storage: createJSONStorage(() =>
         typeof window !== "undefined" ? window.localStorage : noopStorage,
       ),
-      version: 2,
+      version: 3,
       migrate: (persisted) => {
-        // Il set di narrazioni è stato sostituito integralmente:
-        // azzeriamo le associazioni e il tracciamento dello Step 3.
+        // v3: le associazioni dello Step 3 sono diventate tipizzate
+        // (adotta/subisce/rifiuta) e gli scenari non hanno più la scelta
+        // multipla ma il vissuto emotivo: azzeriamo i dati incompatibili.
         const s = (persisted ?? {}) as Record<string, unknown>;
-        return { ...s, narrativeColonization: {}, narrativesSeen: 0 } as never;
+        return {
+          ...s,
+          narrativeColonization: {},
+          narrativesSeen: 0,
+          scenarios: {
+            s1: emptyScenario(),
+            s2: emptyScenario(),
+            s3: emptyScenario(),
+          },
+        } as never;
       },
     },
   ),
