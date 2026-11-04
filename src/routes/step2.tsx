@@ -44,7 +44,7 @@ function Step2() {
             <Button variant="ghost" asChild>
               <Link to="/step1">← Indietro</Link>
             </Button>
-            <Button disabled>Vai allo Step 3 ➔</Button>
+            <Button disabled>Vai allo Step 3 →</Button>
           </div>
         </div>
       </main>
@@ -104,15 +104,15 @@ function Step2() {
                 <div className="mt-4 grid grid-cols-2 gap-6 text-[11px] leading-snug text-muted-foreground">
                   <div className="text-left">
                     <span className="mb-1 block text-sm font-medium text-foreground">
-                      🌿 Benessere e Relazioni
+                      Valori, Relazioni e Benessere
                     </span>
-                    Cura di sé, affetti, salute psicofisica, ritmi personali.
+                    Aspetti non quantificabili matematicamente (es. affetti, morale, salute psicofisica).
                   </div>
                   <div className="text-right">
                     <span className="mb-1 block text-sm font-medium text-foreground">
-                      🎯 Produttività e Risultati
+                      Risultati, Numeri e Compiti
                     </span>
-                    Efficienza, prestazioni, compiti tangibili, successo lavorativo.
+                    Aspetti misurabili e quantificabili (es. performance, produttività, obiettivi e guadagno).
                   </div>
                 </div>
               </div>
@@ -158,10 +158,10 @@ function Step2() {
               </div>
               <p className="mt-4 border-t border-border pt-3 text-[11px] leading-relaxed text-muted-foreground">
                 <span className="font-medium text-foreground">—</span> Linea
-                continua: Produttività e Risultati
+                continua: Risultati, Numeri e Compiti
                 {"  |  "}
                 <span className="font-medium text-foreground">- -</span> Linea
-                tratteggiata: Benessere e Relazioni
+                tratteggiata: Valori, Relazioni e Benessere
               </p>
             </div>
           </section>
@@ -173,11 +173,11 @@ function Step2() {
           </Button>
           {allPositioned ? (
             <Button asChild>
-              <Link to="/step3">Vai allo Step 3 ➔</Link>
+              <Link to="/step3">Vai allo Step 3 →</Link>
             </Button>
           ) : (
             <Button disabled title="Posiziona prima tutte le voci sul continuum">
-              Vai allo Step 3 ➔
+              Vai allo Step 3 →
             </Button>
           )}
         </div>
