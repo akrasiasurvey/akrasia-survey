@@ -71,7 +71,7 @@ function Step2() {
 
         <div className="mt-6">
           <Instruction>
-            Ogni ruolo guida le nostre scelte secondo priorità diverse. Per ognuna delle voci che hai elencato, sposta il cursore lungo la linea per indicare da cosa è maggiormente influenzata: da Benessere e Relazioni (a sinistra) o da Produttività e Risultati (a destra). Osserva come cambia la tua mappa a destra.
+            Ogni ruolo guida le nostre scelte secondo priorità diverse. Per ognuna delle voci che hai elencato, sposta il cursore lungo la linea per indicare da cosa è maggiormente influenzata: da Valori, Relazioni e Benessere (a sinistra) o da Risultati, Numeri e Compiti (a destra). Osserva come cambia la tua mappa a destra.
           </Instruction>
         </div>
 
