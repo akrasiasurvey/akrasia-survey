@@ -269,13 +269,7 @@ export function SelfGraph({
               fill={baseFill}
               fillOpacity={fillOpacity}
               stroke={baseStroke}
-              strokeOpacity={
-                isEmphasized || isActive || isSelected
-                  ? 1
-                  : isFaded
-                    ? 0.55
-                    : 0.85
-              }
+              strokeOpacity={isEmphasized || isActive || isSelected ? 1 : 0.85}
               strokeWidth={strokeW}
               strokeDasharray={dash}
               style={{
