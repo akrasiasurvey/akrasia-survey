@@ -1155,54 +1155,14 @@ function AggregateAnalysis({
           <Button
             size="sm"
             variant="outline"
-            onClick={() => exportAggregatePDF(profiles, dist)}
+            onClick={() => exportAggregatePDF(profiles)}
           >
             Esporta report aggregato (PDF)
           </Button>
         </div>
       </Card>
 
-      <Card title="Distribuzione diagnostica per scenario">
-        <div className="space-y-4">
-          {SCENARIOS.map((s, i) => (
-            <div key={s.id}>
-              <div className="mb-1 flex items-center justify-between text-xs">
-                <span className="font-medium">
-                  Scenario {i + 1} — {s.title.replace(/^Scenario \d+ — /, "")}
-                </span>
-                <span className="text-[10px] text-muted-foreground">
-                  {n} risposte
-                </span>
-              </div>
-              <div className="flex h-4 w-full overflow-hidden rounded">
-                {(Object.keys(DIAGNOSTIC_LABEL) as DiagnosticColor[]).map(
-                  (k) => {
-                    const c = dist[s.id][k];
-                    if (c === 0) return null;
-                    const pct = (c / Math.max(n, 1)) * 100;
-                    return (
-                      <div
-                        key={k}
-                        title={`${DIAGNOSTIC_LABEL[k]}: ${c}`}
-                        style={{
-                          width: `${pct}%`,
-                          background: DIAGNOSTIC_HEX[k],
-                        }}
-                        className="flex items-center justify-center text-[10px] text-background"
-                      >
-                        {showNumbers && pct > 8 ? c : ""}
-                      </div>
-                    );
-                  },
-                )}
-              </div>
-            </div>
-          ))}
-          <DiagnosticLegend />
-        </div>
-      </Card>
-
-      <Card title="Narrazioni più colonizzanti">
+      <Card title="Narrazioni più attivanti">
         <ul className="space-y-2">
           {Object.entries(narrTotals)
             .sort((a, b) => b[1] - a[1])
@@ -1226,7 +1186,7 @@ function AggregateAnalysis({
                   <span className="flex-1 italic">«{narr}»</span>
                   {showNumbers && (
                     <span className="tabular-nums text-muted-foreground">
-                      {count} colonizzazioni
+                      {count} attivazioni
                     </span>
                   )}
                 </li>
