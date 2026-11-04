@@ -211,36 +211,23 @@ export function SelfGraph({
         const isActive = activeId === p.id;
         const isSelected = selected.has(p.id);
         const showInside = p.radius >= 22;
-        const diagnostic = highlights?.[p.id];
-        const isEmphasized = !!diagnostic && emphasized.has(p.id);
-        const isFaded = !!diagnostic && !isEmphasized && emphasized.size > 0;
+        const isEmphasized = emphasized.has(p.id);
         const displayRadius = isEmphasized ? p.radius + 4 : p.radius;
         const displayLabel = compactLabels ? p.label.split("/")[0]?.trim() || p.label : p.label;
         const labelSize = Math.max(9, Math.min(12, displayRadius / 3.5));
         const labelWidth = displayRadius * 2 - 8;
         const fitLabel = compactLabels && showInside && displayLabel.length * labelSize * 0.55 > labelWidth;
+        const badge = nodeBadges?.[p.id];
 
-        const baseStroke = diagnostic
-          ? DIAGNOSTIC_STROKE[diagnostic]
-          : isActive
+        const baseStroke = isActive
           ? "oklch(0.55 0.18 25)"
           : isSelected
             ? "oklch(0.55 0.18 145)"
             : "oklch(0.35 0.05 240)";
-        const baseFill = diagnostic
-          ? DIAGNOSTIC_FILL[diagnostic]
-          : isSelected
+        const baseFill = isSelected
           ? "oklch(0.75 0.15 145)"
           : "oklch(0.55 0.05 240)";
-        const fillOpacity = diagnostic
-          ? isEmphasized
-            ? 0.8
-            : isFaded
-              ? 0.3
-              : 0.55
-          : continuum
-            ? 0.15
-            : 0.55;
+        const fillOpacity = continuum ? 0.15 : 0.55;
         const strokeW = isEmphasized
           ? Math.max(sw, 2.5)
           : isActive
