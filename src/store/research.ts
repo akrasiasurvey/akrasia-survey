@@ -184,7 +184,7 @@ interface ResearchState {
   endedAt: number | null;
   positions: IPosition[];
   continuum: Record<string, ContinuumEntry>;
-  narrativeColonization: Record<string, string[]>;
+  narrativeColonization: Record<string, Record<string, ColonizationMode>>;
   scenarios: Record<ScenarioId, ScenarioEntry>;
   interviews: Record<string, InterviewData>;
   clinicalNotes: Record<string, Partial<Record<ScenarioId, string>>>;
@@ -207,12 +207,16 @@ interface ResearchState {
   removePosition: (id: string) => void;
   updatePositionDimension: (id: string, dimension: DimensionKey) => void;
   setContinuumValue: (id: string, value: number) => void;
-  toggleColonization: (narrative: string, positionId: string) => void;
+  setColonization: (
+    narrative: string,
+    positionId: string,
+    mode: ColonizationMode | null,
+  ) => void;
   markNarrativeSeen: (index: number) => void;
   ensureNarrativeOrder: () => void;
   setScenarioResponse: (id: ScenarioId, text: string) => void;
   lockScenarioResponse: (id: ScenarioId) => void;
-  setScenarioChoice: (id: ScenarioId, choice: ScenarioChoice) => void;
+  setScenarioEmotion: (id: ScenarioId, text: string) => void;
   toggleScenarioVoice: (
     id: ScenarioId,
     kind: "winning" | "losing",
@@ -246,7 +250,7 @@ export interface Profile {
   endedAt?: number;
   positions: IPosition[];
   continuum: Record<string, ContinuumEntry>;
-  narrativeColonization: Record<string, string[]>;
+  narrativeColonization: Record<string, Record<string, ColonizationMode>>;
   scenarios: Record<ScenarioId, ScenarioEntry>;
   demo?: boolean;
 }
@@ -302,7 +306,7 @@ export const RATIONALIST_LEXICON: readonly string[] = [
 const emptyScenario = (): ScenarioEntry => ({
   openResponse: "",
   locked: false,
-  choice: null,
+  emotionalResponse: "",
   winningVoiceIds: [],
   losingVoiceIds: [],
 });
