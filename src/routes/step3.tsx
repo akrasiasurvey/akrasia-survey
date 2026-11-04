@@ -90,12 +90,12 @@ function Step3() {
                 «{activeNarrative}»
               </blockquote>
               <p className="mt-6 text-sm text-muted-foreground">
-                Clicca sui cerchi nel grafico per indicare quali ruoli o persone condividono questa frase. Puoi selezionarne più di una.
+                Clicca sui cerchi nel grafico e scegli come reagisce ciascuna voce a questa frase. Puoi selezionarne più di una.
               </p>
               {colonizedIds.length > 0 && (
                 <div className="mt-4 rounded-md border border-border bg-background p-3 text-xs">
                   <span className="mb-2 block text-[10px] uppercase tracking-widest text-muted-foreground">
-                    Posizioni influenzate
+                    Voci attivate
                   </span>
                   <ul className="flex flex-wrap gap-1.5">
                     {colonizedIds.map((id) => {
@@ -107,6 +107,9 @@ function Step3() {
                           className="rounded-full border border-border bg-muted px-2 py-0.5"
                         >
                           {p.label}
+                          <span className="ml-1 text-muted-foreground">
+                            · {COLONIZATION_BADGE[colonized[id]]}
+                          </span>
                         </li>
                       );
                     })}
@@ -147,9 +150,68 @@ function Step3() {
                   positions={positions}
                   continuum={continuum}
                   selectedIds={colonizedIds}
-                  onSelect={(id) => toggleColonization(activeNarrative, id)}
+                  nodeBadges={Object.fromEntries(
+                    colonizedIds.map((id) => [
+                      id,
+                      COLONIZATION_BADGE[colonized[id]],
+                    ]),
+                  )}
+                  onSelect={(id) =>
+                    setMenuFor((cur) => (cur === id ? null : id))
+                  }
                 />
               </div>
+              {menuFor && menuPosition && (
+                <div className="mt-4 rounded-md border border-border bg-background p-4">
+                  <p className="text-xs text-muted-foreground">
+                    Come reagisce la voce{" "}
+                    <span className="font-medium text-foreground">
+                      {menuPosition.label}
+                    </span>{" "}
+                    a questa affermazione?
+                  </p>
+                  <ul className="mt-3 space-y-2">
+                    {COLONIZATION_OPTIONS.map((opt) => {
+                      const active = colonized[menuFor] === opt.key;
+                      return (
+                        <li key={opt.key}>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setColonization(activeNarrative, menuFor, opt.key);
+                              setMenuFor(null);
+                            }}
+                            className={
+                              active
+                                ? "w-full rounded-md border border-foreground bg-muted px-3 py-2 text-left"
+                                : "w-full rounded-md border border-border bg-card px-3 py-2 text-left transition-colors hover:border-foreground/40"
+                            }
+                          >
+                            <span className="block text-sm font-medium">
+                              {opt.label}
+                            </span>
+                            <span className="block text-xs text-muted-foreground">
+                              {opt.description}
+                            </span>
+                          </button>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                  {colonized[menuFor] && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setColonization(activeNarrative, menuFor, null);
+                        setMenuFor(null);
+                      }}
+                      className="mt-3 text-[11px] uppercase tracking-widest text-muted-foreground underline hover:text-foreground"
+                    >
+                      Rimuovi associazione
+                    </button>
+                  )}
+                </div>
+              )}
               <p className="mt-4 border-t border-border pt-3 text-[11px] leading-relaxed text-muted-foreground">
                 <span className="font-medium text-foreground">—</span> Linea
                 continua: voce orientata a compiti e scadenze
