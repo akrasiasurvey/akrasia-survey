@@ -130,31 +130,18 @@ export interface SelfGraphProps {
   emptyMessage?: string;
   /** Short display labels and fitted text, without changing research data. */
   compactLabels?: boolean;
-  /** Overrides visivi per singolo cerchio (usato per la diagnostica). */
-  highlights?: Record<string, DiagnosticColor>;
   /**
    * Sottoinsieme di id (tipicamente le "voci vincenti" di uno scenario) da
    * mettere maggiormente in evidenza: fill più carico, contorno più marcato
-   * e leggero incremento di raggio rispetto alle altre voci evidenziate.
+   * e leggero incremento di raggio.
    */
   emphasizedIds?: string[];
+  /**
+   * Piccole etichette testuali mostrate sotto ciascun cerchio (es. la
+   * reazione della voce a un'affermazione: Adotta / Subisce / Rifiuta).
+   */
+  nodeBadges?: Record<string, string>;
 }
-
-export type DiagnosticColor = "green" | "yellow" | "orange" | "red";
-
-const DIAGNOSTIC_STROKE: Record<DiagnosticColor, string> = {
-  green: "oklch(0.60 0.16 150)",
-  yellow: "oklch(0.80 0.17 90)",
-  orange: "oklch(0.68 0.18 55)",
-  red: "oklch(0.58 0.22 25)",
-};
-
-const DIAGNOSTIC_FILL: Record<DiagnosticColor, string> = {
-  green: "oklch(0.85 0.14 150)",
-  yellow: "oklch(0.90 0.15 90)",
-  orange: "oklch(0.85 0.14 55)",
-  red: "oklch(0.80 0.15 25)",
-};
 
 export function SelfGraph({
   positions,
@@ -163,8 +150,8 @@ export function SelfGraph({
   selectedIds,
   onSelect,
   emptyMessage = "Aggiungi una I-Position per iniziare",
-  highlights,
   emphasizedIds,
+  nodeBadges,
   compactLabels = false,
 }: SelfGraphProps) {
   const laidOut = useMemo(() => computeLayout(positions), [positions]);
@@ -224,36 +211,23 @@ export function SelfGraph({
         const isActive = activeId === p.id;
         const isSelected = selected.has(p.id);
         const showInside = p.radius >= 22;
-        const diagnostic = highlights?.[p.id];
-        const isEmphasized = !!diagnostic && emphasized.has(p.id);
-        const isFaded = !!diagnostic && !isEmphasized && emphasized.size > 0;
+        const isEmphasized = emphasized.has(p.id);
         const displayRadius = isEmphasized ? p.radius + 4 : p.radius;
         const displayLabel = compactLabels ? p.label.split("/")[0]?.trim() || p.label : p.label;
         const labelSize = Math.max(9, Math.min(12, displayRadius / 3.5));
         const labelWidth = displayRadius * 2 - 8;
         const fitLabel = compactLabels && showInside && displayLabel.length * labelSize * 0.55 > labelWidth;
+        const badge = nodeBadges?.[p.id];
 
-        const baseStroke = diagnostic
-          ? DIAGNOSTIC_STROKE[diagnostic]
-          : isActive
+        const baseStroke = isActive
           ? "oklch(0.55 0.18 25)"
           : isSelected
             ? "oklch(0.55 0.18 145)"
             : "oklch(0.35 0.05 240)";
-        const baseFill = diagnostic
-          ? DIAGNOSTIC_FILL[diagnostic]
-          : isSelected
+        const baseFill = isSelected
           ? "oklch(0.75 0.15 145)"
           : "oklch(0.55 0.05 240)";
-        const fillOpacity = diagnostic
-          ? isEmphasized
-            ? 0.8
-            : isFaded
-              ? 0.3
-              : 0.55
-          : continuum
-            ? 0.15
-            : 0.55;
+        const fillOpacity = continuum ? 0.15 : 0.55;
         const strokeW = isEmphasized
           ? Math.max(sw, 2.5)
           : isActive
@@ -295,13 +269,7 @@ export function SelfGraph({
               fill={baseFill}
               fillOpacity={fillOpacity}
               stroke={baseStroke}
-              strokeOpacity={
-                isEmphasized || isActive || isSelected
-                  ? 1
-                  : isFaded
-                    ? 0.55
-                    : 0.85
-              }
+              strokeOpacity={isEmphasized || isActive || isSelected ? 1 : 0.85}
               strokeWidth={strokeW}
               strokeDasharray={dash}
               style={{
@@ -334,6 +302,17 @@ export function SelfGraph({
                 style={{ fontSize: 10, fontWeight: 500 }}
               >
                 {displayLabel}
+              </text>
+            )}
+            {badge && (
+              <text
+                x={p.x}
+                y={p.y + displayRadius + (showInside ? 12 : 23)}
+                textAnchor="middle"
+                className="pointer-events-none fill-muted-foreground"
+                style={{ fontSize: 8.5, letterSpacing: 1, fontWeight: 600 }}
+              >
+                {badge.toUpperCase()}
               </text>
             )}
           </g>

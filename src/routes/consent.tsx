@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 import { ProgressSteps } from "@/components/ProgressSteps";
 import { useResearchStore } from "@/store/research";
 
@@ -131,18 +132,22 @@ function Consent() {
         </div>
 
         <div className="mt-10 rounded-lg border border-border bg-card p-5">
-          <label className="flex cursor-pointer items-start gap-3">
+          <div className="flex items-start gap-3">
             <Checkbox
+              id="consent-check"
               checked={consent}
               onCheckedChange={(v) => setConsent(v === true)}
               className="mt-0.5"
             />
-            <span className="text-sm leading-relaxed">
+            <Label
+              htmlFor="consent-check"
+              className="cursor-pointer text-sm font-normal leading-relaxed"
+            >
               Dichiaro di aver letto l'informativa, di avere almeno 18 anni e di
               acconsentire liberamente al trattamento dei miei dati in forma
               pseudonimizzata per gli scopi della presente ricerca.
-            </span>
-          </label>
+            </Label>
+          </div>
         </div>
 
         <div className="mt-8 flex items-center justify-between">

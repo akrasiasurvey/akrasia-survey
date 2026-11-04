@@ -1,12 +1,8 @@
 # Attività
-- [x] Semplificare testi, poli e avanzamento dello Step 2 mantenendo lo stile esistente.
-- [x] Rendere leggibili le etichette brevi nella Mappa dei Valori senza modificare i dati raccolti.
-- [x] Verificare che lo Step 3 si abiliti solo dopo aver posizionato tutte le voci: sette test superati, percorso completo con due voci e controllo degli schermi senza errori.
-- [x] Accorciare gli esempi dello Step 1 preservando inserimento contestuale e dimensioni della mappa.
-- [x] Richiedere almeno una voce complessiva anche nella navigazione dell'intestazione.
-- [x] Verificare inserimento, reset dei campi, raggi della mappa, persistenza e avanzamento nello Step 1: sei test superati e prova nel sito senza errori.
-- [x] Rimuovere le sezioni superate dal consenso mantenendo lo stile attuale.
-- [x] Evidenziare la scala e incoraggiare le voci personali nello Step 1.
-- [x] Eliminare i blocchi di conteggio e verificare navigazione e casi vuoti.
-- [x] Verificare le modifiche: cinque test superati, navigazione verificata con zero e una voce, nessun errore nel sito.
+- [x] Step 2: nuovi poli dello slider (Valori, Relazioni e Benessere / Risultati, Numeri e Compiti) senza emoji.
+- [x] Step 3: nuova consegna e menu di reazione Adotta/Subisce/Rifiuta con etichetta sul cerchio.
+- [x] Step 4: rimossa la scelta multipla, aggiunto il campo Vissuto emotivo.
+- [x] Rimosso il motore diagnostico a colori da dashboard, PDF ed export.
+- [x] Corretto il checkbox del consenso che non si attivava (doppio toggle del label).
+- [x] Verifiche: 7 test superati, flusso completo e dashboard provati nel browser, nessun emoji residuo.
 - [ ] Sincronizzazione GitHub: non verificabile dagli strumenti disponibili; gestita dal collegamento GitHub di Lovable.

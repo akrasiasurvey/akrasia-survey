@@ -101,18 +101,45 @@ export interface ContinuumEntry {
 }
 
 export type ScenarioId = "s1" | "s2" | "s3";
-export type ScenarioChoice = "A" | "B" | "C";
 
-export const CHOICE_POLARITY: Record<ScenarioChoice, string> = {
-  A: "Autotutela",
-  B: "Iper-performance",
-  C: "Compromesso",
+/**
+ * Reazione di una voce a un'affermazione diffusa (Step 3): la voce può
+ * adottare la frase, subirla oppure rifiutarla.
+ */
+export type ColonizationMode = "adotta" | "subisce" | "rifiuta";
+
+export const COLONIZATION_OPTIONS: readonly {
+  key: ColonizationMode;
+  label: string;
+  description: string;
+}[] = [
+  {
+    key: "adotta",
+    label: "La adotta",
+    description: "La pronuncia con convinzione e ne fa una regola.",
+  },
+  {
+    key: "subisce",
+    label: "La subisce",
+    description: "Sente la pressione o il senso di colpa se non la rispetta.",
+  },
+  {
+    key: "rifiuta",
+    label: "La rifiuta",
+    description: "Non è d'accordo e cerca di opporsi.",
+  },
+];
+
+export const COLONIZATION_BADGE: Record<ColonizationMode, string> = {
+  adotta: "Adotta",
+  subisce: "Subisce",
+  rifiuta: "Rifiuta",
 };
 
 export interface ScenarioEntry {
   openResponse: string;
   locked: boolean;
-  choice: ScenarioChoice | null;
+  emotionalResponse: string;
   winningVoiceIds: string[];
   losingVoiceIds: string[];
 }
@@ -122,9 +149,6 @@ export interface ScenarioDef {
   title: string;
   theme: string;
   text: string;
-  optionA: string;
-  optionB: string;
-  optionC: string;
 }
 
 export const SCENARIOS: readonly ScenarioDef[] = [
@@ -134,12 +158,6 @@ export const SCENARIOS: readonly ScenarioDef[] = [
     theme: "Tempo relazionale vs. dedizione lavorativa, riconoscimento professionale",
     text:
       "Dopo settimane di lavoro molto intenso, in cui non hai avuto modo di trascorrere molto tempo in famiglia, finalmente arriva venerdì e la sera stessa partirai per il fine settimana fuori porta che avevi promesso al tuo partner. Ne parlate da tempo e siete entrambi felici di avere un momento di tranquillità in cui non dover pensare agli impegni della settimana. Appena prima di lasciare l’ufficio, però, ricevi una comunicazione dal tuo capo: ti offre la possibilità di occuparti delle pratiche per un cliente di rilievo, un compito importante ma che deve essere portato a termine tassativamente entro lunedì. Sai che accettare la proposta ti richiederebbe qualche ora di lavoro extra, straordinari pagati che ti farebbero comodo, e ti permetterebbe di dimostrare il tuo valore, ma sei consapevole che ciò significherebbe rimandare la gita tanto attesa.",
-    optionA:
-      "Declino la proposta e parto come previsto. Ritengo che il tempo promesso al mio partner e alla mia vita affettiva non sia negoziabile in cambio di un riconoscimento professionale.",
-    optionB:
-      "Accetto l'incarico e rimando la partenza. Un'occasione così per dimostrare il proprio valore, con in più gli straordinari pagati, non si può lasciar passare: la famiglia capirà.",
-    optionC:
-      "Cerco un compromesso: parto comunque, ma porto con me il lavoro e mi ritaglio qualche ora durante il fine settimana per completare le pratiche entro lunedì.",
   },
   {
     id: "s2",
@@ -147,12 +165,6 @@ export const SCENARIOS: readonly ScenarioDef[] = [
     theme: "Abnegazione psicofisica, competitività, immagine di produttività",
     text:
       "Sul posto di lavoro è un periodo molto teso a causa di possibili ridimensionamenti e promozioni nel prossimo trimestre. Sei tornato sul posto di lavoro da appena qualche giorno dopo quasi una settimana di assenza per malattia a causa di un virus influenzale che ti ha costretto a letto. Una mattina, ti svegli con una forte sensazione di malessere; hai la febbre alta ed una forte emicrania. Sembra essere una ricaduta che dovresti contenere per evitare di stare peggio. In ufficio, però, c’è aria di competizione per ottenere la promozione ed evitare il ridimensionamento e temi che la tua seconda richiesta di malattia nel giro di poche settimane possa alimentare voci tra i colleghi circa il tuo impegno e la tua produttività ed influenzare la decisione.",
-    optionA:
-      "Resto a casa e mi curo. Riconosco il limite del mio corpo e accetto il rischio che questa assenza venga letta come scarsa dedizione: la salute viene prima della reputazione.",
-    optionB:
-      "Prendo un antipiretico e vado comunque al lavoro. In un momento così delicato mostrare presenza e resistenza è l'unico modo per non compromettere la mia posizione.",
-    optionC:
-      "Cerco una via di mezzo: avviso che lavorerò da casa, così evito l'assenza formale pur restando a letto, senza però potermi davvero riposare.",
   },
   {
     id: "s3",
@@ -160,12 +172,6 @@ export const SCENARIOS: readonly ScenarioDef[] = [
     theme: "Interesse economico, produttività come scopo supremo, etica relazionale",
     text:
       "Sei incaricato di gestire la trattativa per un importante contratto di consulenza. Ti accorgi che, applicando in modo estremamente rigido ma lecito e legale le clausole, potresti far guadagnare alla tua azienda il 15% in più di quanto preventivato, a spese però del cliente, un’azienda a gestione familiare per la quale costituirebbe un danno economico considerevole. Cerchi un confronto con il tuo capo, il quale ti ricorda quali sono gli obiettivi dell’azienda. Inoltre, sei consapevole che i tuoi KPI (punteggio di produttività personale) dipendono in larga misura dal valore di questo contratto.",
-    optionA:
-      "Non applico le clausole in modo rigido e mantengo le condizioni preventivate, accettando di non massimizzare i miei KPI: la correttezza verso il cliente viene prima del guadagno.",
-    optionB:
-      "Applico rigidamente le clausole e porto a casa il 15% in più. È lecito, è ciò che l'azienda chiede e i miei risultati personali ne beneficiano.",
-    optionC:
-      "Provo a mediare: applico le clausole come richiesto dal capo, ma propongo informalmente al cliente una dilazione dei pagamenti o uno sconto futuro per attenuare il danno.",
   },
 ];
 
@@ -178,7 +184,7 @@ interface ResearchState {
   endedAt: number | null;
   positions: IPosition[];
   continuum: Record<string, ContinuumEntry>;
-  narrativeColonization: Record<string, string[]>;
+  narrativeColonization: Record<string, Record<string, ColonizationMode>>;
   scenarios: Record<ScenarioId, ScenarioEntry>;
   interviews: Record<string, InterviewData>;
   clinicalNotes: Record<string, Partial<Record<ScenarioId, string>>>;
@@ -201,12 +207,16 @@ interface ResearchState {
   removePosition: (id: string) => void;
   updatePositionDimension: (id: string, dimension: DimensionKey) => void;
   setContinuumValue: (id: string, value: number) => void;
-  toggleColonization: (narrative: string, positionId: string) => void;
+  setColonization: (
+    narrative: string,
+    positionId: string,
+    mode: ColonizationMode | null,
+  ) => void;
   markNarrativeSeen: (index: number) => void;
   ensureNarrativeOrder: () => void;
   setScenarioResponse: (id: ScenarioId, text: string) => void;
   lockScenarioResponse: (id: ScenarioId) => void;
-  setScenarioChoice: (id: ScenarioId, choice: ScenarioChoice) => void;
+  setScenarioEmotion: (id: ScenarioId, text: string) => void;
   toggleScenarioVoice: (
     id: ScenarioId,
     kind: "winning" | "losing",
@@ -240,7 +250,7 @@ export interface Profile {
   endedAt?: number;
   positions: IPosition[];
   continuum: Record<string, ContinuumEntry>;
-  narrativeColonization: Record<string, string[]>;
+  narrativeColonization: Record<string, Record<string, ColonizationMode>>;
   scenarios: Record<ScenarioId, ScenarioEntry>;
   demo?: boolean;
 }
@@ -296,7 +306,7 @@ export const RATIONALIST_LEXICON: readonly string[] = [
 const emptyScenario = (): ScenarioEntry => ({
   openResponse: "",
   locked: false,
-  choice: null,
+  emotionalResponse: "",
   winningVoiceIds: [],
   losingVoiceIds: [],
 });
@@ -430,9 +440,10 @@ export const useResearchStore = create<ResearchState>()(
   removePosition: (id) =>
     set((s) => {
       const { [id]: _, ...rest } = s.continuum;
-      const nc: Record<string, string[]> = {};
-      for (const [k, arr] of Object.entries(s.narrativeColonization)) {
-        nc[k] = arr.filter((x) => x !== id);
+      const nc: Record<string, Record<string, ColonizationMode>> = {};
+      for (const [k, modes] of Object.entries(s.narrativeColonization)) {
+        const { [id]: _removed, ...others } = modes;
+        nc[k] = others;
       }
       const scenarios = { ...s.scenarios };
       (Object.keys(scenarios) as ScenarioId[]).forEach((sid) => {
@@ -464,16 +475,15 @@ export const useResearchStore = create<ResearchState>()(
         ? s.continuumTouched
         : [...s.continuumTouched, id],
     })),
-  toggleColonization: (narrative, positionId) =>
+  setColonization: (narrative, positionId, mode) =>
     set((s) => {
-      const list = s.narrativeColonization[narrative] ?? [];
-      const has = list.includes(positionId);
+      const current = { ...(s.narrativeColonization[narrative] ?? {}) };
+      if (mode === null) delete current[positionId];
+      else current[positionId] = mode;
       return {
         narrativeColonization: {
           ...s.narrativeColonization,
-          [narrative]: has
-            ? list.filter((x) => x !== positionId)
-            : [...list, positionId],
+          [narrative]: current,
         },
       };
     }),
@@ -503,9 +513,12 @@ export const useResearchStore = create<ResearchState>()(
     set((s) => ({
       scenarios: { ...s.scenarios, [id]: { ...s.scenarios[id], locked: true } },
     })),
-  setScenarioChoice: (id, choice) =>
+  setScenarioEmotion: (id, text) =>
     set((s) => ({
-      scenarios: { ...s.scenarios, [id]: { ...s.scenarios[id], choice } },
+      scenarios: {
+        ...s.scenarios,
+        [id]: { ...s.scenarios[id], emotionalResponse: text },
+      },
     })),
   toggleScenarioVoice: (id, kind, positionId) =>
     set((s) => {
@@ -595,12 +608,22 @@ export const useResearchStore = create<ResearchState>()(
       storage: createJSONStorage(() =>
         typeof window !== "undefined" ? window.localStorage : noopStorage,
       ),
-      version: 2,
+      version: 3,
       migrate: (persisted) => {
-        // Il set di narrazioni è stato sostituito integralmente:
-        // azzeriamo le associazioni e il tracciamento dello Step 3.
+        // v3: le associazioni dello Step 3 sono diventate tipizzate
+        // (adotta/subisce/rifiuta) e gli scenari non hanno più la scelta
+        // multipla ma il vissuto emotivo: azzeriamo i dati incompatibili.
         const s = (persisted ?? {}) as Record<string, unknown>;
-        return { ...s, narrativeColonization: {}, narrativesSeen: 0 } as never;
+        return {
+          ...s,
+          narrativeColonization: {},
+          narrativesSeen: 0,
+          scenarios: {
+            s1: emptyScenario(),
+            s2: emptyScenario(),
+            s3: emptyScenario(),
+          },
+        } as never;
       },
     },
   ),

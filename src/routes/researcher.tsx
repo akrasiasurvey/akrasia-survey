@@ -5,11 +5,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import { SelfGraph, type DiagnosticColor } from "@/components/SelfGraph";
+import { SelfGraph } from "@/components/SelfGraph";
 import { InterviewSection } from "@/components/InterviewSection";
 import { buildSegments, MATRIX_LABEL } from "@/lib/lexicon";
 import {
-  CHOICE_POLARITY,
+  COLONIZATION_BADGE,
   PERFORMATIVE_NARRATIVES,
   PROTECTIVE_NARRATIVES,
   SCENARIOS,
@@ -36,7 +36,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Trash2 } from "lucide-react";
 
 export const Route = createFileRoute("/researcher")({
   head: () => ({ meta: [{"title": "Dashboard Ricercatore — AKRASIA"}, {"name": "description", "content": "Analisi dialogica dei processi decisionali akratici nelle sessioni raccolte."}, {"property": "og:title", "content": "Dashboard Ricercatore — AKRASIA"}, {"property": "og:description", "content": "Analisi dialogica dei processi decisionali akratici nelle sessioni raccolte."}, {"property": "og:type", "content": "website"}, {"name": "twitter:card", "content": "summary"}] }),
@@ -112,7 +111,7 @@ function Dashboard() {
       const e = store.scenarios[s.id];
       return (
         e.locked &&
-        !!e.choice &&
+        e.emotionalResponse.trim().length > 0 &&
         e.winningVoiceIds.length > 0 &&
         e.losingVoiceIds.length > 0
       );
@@ -424,9 +423,9 @@ function Dashboard() {
                     e.stopPropagation();
                     setPendingDelete(p);
                   }}
-                  className="absolute right-2 top-2 rounded-md p-1.5 text-destructive/70 transition-colors hover:bg-destructive/10 hover:text-destructive"
+                  className="absolute right-2 top-2 rounded-md px-1.5 py-1 text-[9px] uppercase tracking-widest text-destructive/70 transition-colors hover:bg-destructive/10 hover:text-destructive"
                 >
-                  <Trash2 className="h-4 w-4" />
+                  Elimina
                 </button>
               )}
               </div>
@@ -506,24 +505,6 @@ function ProfileAnalysis({
   const hoveredValue =
     displayId != null ? profile.continuum[displayId]?.value ?? 50 : null;
 
-  const diagnostics = useMemo(
-    () =>
-      Object.fromEntries(
-        SCENARIOS.map((s) => [s.id, classifyScenario(profile, s.id)] as const),
-      ) as Record<ScenarioId, DiagnosticColor>,
-    [profile],
-  );
-
-  const highlights: Record<string, DiagnosticColor> | undefined = useMemo(() => {
-    if (!activeScenario) return undefined;
-    const e = profile.scenarios[activeScenario];
-    const color = diagnostics[activeScenario];
-    const map: Record<string, DiagnosticColor> = {};
-    e.winningVoiceIds.forEach((id) => (map[id] = color));
-    e.losingVoiceIds.forEach((id) => (map[id] = color));
-    return map;
-  }, [activeScenario, diagnostics, profile]);
-
   const emphasizedIds: string[] | undefined = useMemo(() => {
     if (!activeScenario) return undefined;
     return profile.scenarios[activeScenario].winningVoiceIds;
@@ -562,7 +543,6 @@ function ProfileAnalysis({
             onClick={() => {
               void exportProfilePDF(
                 profile,
-                diagnostics,
                 interview,
                 clinicalNotes,
               );
@@ -591,7 +571,6 @@ function ProfileAnalysis({
               <SelfGraph
                 positions={profile.positions}
                 continuum={profile.continuum}
-                highlights={highlights}
                 emphasizedIds={emphasizedIds}
                 selectedIds={pinnedId ? [pinnedId] : undefined}
                 onSelect={(id) =>
@@ -617,7 +596,7 @@ function ProfileAnalysis({
                 >
                   Nessuno
                 </button>
-                {SCENARIOS.map((s, i) => (
+                 {SCENARIOS.map((s, i) => (
                   <button
                     key={s.id}
                     onClick={() => setActiveScenario(s.id)}
@@ -628,15 +607,10 @@ function ProfileAnalysis({
                         : "border-border text-muted-foreground hover:text-foreground",
                     )}
                   >
-                    <span
-                      className="mr-1 inline-block h-2 w-2 rounded-full align-middle"
-                      style={{ background: diagnosticHex(diagnostics[s.id]) }}
-                    />
                     Scenario {i + 1}
                   </button>
                 ))}
               </div>
-              <DiagnosticLegend />
             </div>
             <div className="rounded-md border border-border bg-background p-4 text-xs">
             {hovered ? (
@@ -756,23 +730,14 @@ function ProfileAnalysis({
         <div className="space-y-6">
           {SCENARIOS.map((s) => {
             const e = profile.scenarios[s.id];
-            const diag = diagnostics[s.id];
             return (
               <article
                 key={s.id}
                 className="rounded-md border-l-4 border border-border bg-background p-5"
-                style={{ borderLeftColor: diagnosticHex(diag) }}
+                style={{ borderLeftColor: "var(--color-foreground)" }}
               >
-                <div className="flex items-center justify-between">
-                  <div className="text-[10px] uppercase tracking-widest text-muted-foreground">
-                    {s.theme}
-                  </div>
-                  <div
-                    className="rounded-full px-2 py-0.5 text-[10px] uppercase tracking-widest text-background"
-                    style={{ background: diagnosticHex(diag) }}
-                  >
-                    {DIAGNOSTIC_LABEL[diag]}
-                  </div>
+                <div className="text-[10px] uppercase tracking-widest text-muted-foreground">
+                  {s.theme}
                 </div>
                 <h3 className="mt-1 font-serif text-lg">{s.title}</h3>
 
@@ -780,15 +745,13 @@ function ProfileAnalysis({
                   «{e.openResponse}»
                 </blockquote>
 
-                <div className="mt-4 flex flex-wrap items-center gap-2 text-xs">
-                  <span className="rounded-full border border-foreground/60 bg-foreground px-2.5 py-0.5 text-background">
-                    Opzione {e.choice ?? "—"}
-                  </span>
-                  {e.choice && (
-                    <span className="text-muted-foreground">
-                      Polarità: {CHOICE_POLARITY[e.choice]}
-                    </span>
-                  )}
+                <div className="mt-4">
+                  <div className="text-[10px] uppercase tracking-widest text-muted-foreground">
+                    Vissuto emotivo
+                  </div>
+                  <p className="mt-1 text-sm leading-relaxed text-foreground">
+                    {e.emotionalResponse?.trim() || "—"}
+                  </p>
                 </div>
 
                 <div className="mt-4 grid gap-4 md:grid-cols-2">
@@ -904,7 +867,9 @@ function NarrativeBlock({
       </div>
       <ul className="space-y-3">
         {items.map((n) => {
-          const ids = profile.narrativeColonization[n] ?? [];
+          const entries = Object.entries(
+            profile.narrativeColonization[n] ?? {},
+          );
           return (
             <li
               key={n}
@@ -912,12 +877,12 @@ function NarrativeBlock({
             >
               <p className="text-xs italic text-foreground">«{n}»</p>
               <div className="mt-2 flex flex-wrap gap-1">
-                {ids.length === 0 ? (
+                {entries.length === 0 ? (
                   <span className="text-[10px] text-muted-foreground">
-                    Nessuna voce colonizzata.
+                    Nessuna voce attivata.
                   </span>
                 ) : (
-                  ids.map((id) => {
+                  entries.map(([id, mode]) => {
                     const p = profile.positions.find((x) => x.id === id);
                     if (!p) return null;
                     return (
@@ -926,6 +891,9 @@ function NarrativeBlock({
                         className="rounded-full border border-border bg-muted px-2 py-0.5 text-[11px]"
                       >
                         {p.label}
+                        <span className="ml-1 text-muted-foreground">
+                          · {COLONIZATION_BADGE[mode]}
+                        </span>
                       </span>
                     );
                   })
@@ -1011,126 +979,6 @@ function formatDuration(startedAt: number, endedAt?: number): string {
   return h > 0 ? `${h}h ${m}min` : `${m} min`;
 }
 
-// ---------- Diagnostic classification ----------
-
-const DIAGNOSTIC_LABEL: Record<DiagnosticColor, string> = {
-  green: "Continente",
-  yellow: "Continente razionalizzato",
-  orange: "Akrasia razionalizzata",
-  red: "Akrasia neoliberista",
-};
-
-const DIAGNOSTIC_DESCRIPTION: Record<DiagnosticColor, string> = {
-  green:
-    "Le voci più centrali e orientate al benessere prevalgono senza essere ricodificate in termini performativi: la decisione è coerente con il Sé morale e l'akrasia non emerge.",
-  yellow:
-    "Il partecipante mantiene la coerenza con le voci più orientate al benessere: l'akrasia è contenuta e la decisione è razionalizzata come atto di autodeterminazione.",
-  orange:
-    "La scelta è razionalizzata a favore della logica produttiva: le voci morali vengono argomentativamente ridimensionate per legittimare la sottomissione al KPI.",
-  red:
-    "Le voci morali e centrali vengono messe a tacere in favore di voci quantitative anche periferiche: la razionalità neoliberista colonizza il Sé e l'akrasia diventa dissonanza aperta.",
-};
-
-const DIAGNOSTIC_HEX: Record<DiagnosticColor, string> = {
-  green: "#4a9d6c",
-  yellow: "#d4b23a",
-  orange: "#d78544",
-  red: "#c14b45",
-};
-
-function diagnosticHex(c: DiagnosticColor): string {
-  return DIAGNOSTIC_HEX[c];
-}
-
-function DiagnosticLegend() {
-  return (
-    <div className="mt-3 space-y-1 border-t border-border pt-2">
-      {(Object.keys(DIAGNOSTIC_LABEL) as DiagnosticColor[]).map((k) => (
-        <div key={k} className="flex items-center gap-2 text-[10px]">
-          <span
-            className="h-2 w-2 rounded-full"
-            style={{ background: DIAGNOSTIC_HEX[k] }}
-          />
-          <span className="uppercase tracking-widest text-muted-foreground">
-            {DIAGNOSTIC_LABEL[k]}
-          </span>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function avg(xs: number[]): number {
-  if (xs.length === 0) return 0;
-  return xs.reduce((a, b) => a + b, 0) / xs.length;
-}
-
-function classifyScenario(profile: Profile, sid: ScenarioId): DiagnosticColor {
-  const e = profile.scenarios[sid];
-  const posById = (id: string) => profile.positions.find((p) => p.id === id);
-  const contById = (id: string) => profile.continuum[id]?.value ?? 50;
-
-  const wins = e.winningVoiceIds
-    .map(posById)
-    .filter(Boolean) as NonNullable<ReturnType<typeof posById>>[];
-  const loses = e.losingVoiceIds
-    .map(posById)
-    .filter(Boolean) as NonNullable<ReturnType<typeof posById>>[];
-
-  if (wins.length === 0 || loses.length === 0) {
-    // fallback su polarità della scelta
-    if (e.choice === "A") return "green";
-    if (e.choice === "C") return "yellow";
-    if (e.choice === "B") return "orange";
-    return "green";
-  }
-
-  const avgRadWin = avg(wins.map((p) => p.radius));
-  const avgRadLose = avg(loses.map((p) => p.radius));
-  const avgContWin = avg(wins.map((p) => contById(p.id)));
-  const avgContLose = avg(loses.map((p) => contById(p.id)));
-
-  // Quota di voci colonizzate da narrazioni performative in ciascun gruppo
-  const colonizedBy = (id: string, dom: "performative" | "protective") => {
-    for (const [narr, ids] of Object.entries(profile.narrativeColonization)) {
-      if (ids.includes(id) && narrativeDomain(narr) === dom) return true;
-    }
-    return false;
-  };
-  const winPerfShare =
-    wins.filter((p) => colonizedBy(p.id, "performative")).length / wins.length;
-  const losePerfShare =
-    loses.filter((p) => colonizedBy(p.id, "performative")).length /
-    loses.length;
-
-  // Regole:
-  //  - YELLOW (Continente razionalizzato): le vincenti sono più morali
-  //    (continuum più basso) e almeno tanto grandi quanto le perdenti →
-  //    coerenza con il Sé centrale morale.
-  if (avgContWin < avgContLose - 5 && avgRadWin >= avgRadLose - 2) {
-    // Continente puro: nessuna colonizzazione performativa sulle vincenti
-    // e nessuna razionalizzazione manifesta sulle perdenti.
-    if (winPerfShare === 0 && losePerfShare < 0.34) return "green";
-    return "yellow";
-  }
-  //  - RED: le perdenti sono più morali e più grandi delle vincenti che
-  //    invece sono razionali → sottomissione aperta.
-  if (
-    avgContWin > avgContLose + 5 &&
-    avgRadWin < avgRadLose - 2 &&
-    losePerfShare < 0.4
-  ) {
-    return "red";
-  }
-  //  - ORANGE: vincenti razionali che neutralizzano perdenti (di solito
-  //    piccole/marginali o già colonizzate dal performativo).
-  if (avgContWin > avgContLose && winPerfShare >= 0.5) {
-    return "orange";
-  }
-  //  - YELLOW: compromesso, o entrambi i gruppi mescolano performativo e cura.
-  return "yellow";
-}
-
 // ---------- Continuum × Colonization matrix ----------
 
 function ContinuumMatrix({
@@ -1144,8 +992,8 @@ function ContinuumMatrix({
     const v = profile.continuum[p.id]?.value ?? 50;
     let perf = 0;
     let prot = 0;
-    for (const [narr, ids] of Object.entries(profile.narrativeColonization)) {
-      if (!ids.includes(p.id)) continue;
+    for (const [narr, modes] of Object.entries(profile.narrativeColonization)) {
+      if (!(p.id in modes)) continue;
       const d = narrativeDomain(narr);
       if (d === "performative") perf++;
       else if (d === "protective") prot++;
@@ -1254,27 +1102,12 @@ function AggregateAnalysis({
   const interviews = useResearchStore((s) => s.interviews);
   const n = profiles.length;
 
-  // distribuzione diagnostica per scenario
-  const dist = useMemo(() => {
-    const out: Record<ScenarioId, Record<DiagnosticColor, number>> = {
-      s1: { green: 0, yellow: 0, orange: 0, red: 0 },
-      s2: { green: 0, yellow: 0, orange: 0, red: 0 },
-      s3: { green: 0, yellow: 0, orange: 0, red: 0 },
-    };
-    for (const p of profiles) {
-      for (const s of SCENARIOS) {
-        out[s.id][classifyScenario(p, s.id)]++;
-      }
-    }
-    return out;
-  }, [profiles]);
-
-  // Ranking narrazioni performative più diffuse (totale colonizzazioni)
+  // Ranking narrazioni più diffuse (totale attivazioni)
   const narrTotals = useMemo(() => {
     const counts: Record<string, number> = {};
     for (const p of profiles) {
-      for (const [narr, ids] of Object.entries(p.narrativeColonization)) {
-        counts[narr] = (counts[narr] ?? 0) + ids.length;
+      for (const [narr, modes] of Object.entries(p.narrativeColonization)) {
+        counts[narr] = (counts[narr] ?? 0) + Object.keys(modes).length;
       }
     }
     return counts;
@@ -1322,54 +1155,14 @@ function AggregateAnalysis({
           <Button
             size="sm"
             variant="outline"
-            onClick={() => exportAggregatePDF(profiles, dist)}
+            onClick={() => exportAggregatePDF(profiles)}
           >
             Esporta report aggregato (PDF)
           </Button>
         </div>
       </Card>
 
-      <Card title="Distribuzione diagnostica per scenario">
-        <div className="space-y-4">
-          {SCENARIOS.map((s, i) => (
-            <div key={s.id}>
-              <div className="mb-1 flex items-center justify-between text-xs">
-                <span className="font-medium">
-                  Scenario {i + 1} — {s.title.replace(/^Scenario \d+ — /, "")}
-                </span>
-                <span className="text-[10px] text-muted-foreground">
-                  {n} risposte
-                </span>
-              </div>
-              <div className="flex h-4 w-full overflow-hidden rounded">
-                {(Object.keys(DIAGNOSTIC_LABEL) as DiagnosticColor[]).map(
-                  (k) => {
-                    const c = dist[s.id][k];
-                    if (c === 0) return null;
-                    const pct = (c / Math.max(n, 1)) * 100;
-                    return (
-                      <div
-                        key={k}
-                        title={`${DIAGNOSTIC_LABEL[k]}: ${c}`}
-                        style={{
-                          width: `${pct}%`,
-                          background: DIAGNOSTIC_HEX[k],
-                        }}
-                        className="flex items-center justify-center text-[10px] text-background"
-                      >
-                        {showNumbers && pct > 8 ? c : ""}
-                      </div>
-                    );
-                  },
-                )}
-              </div>
-            </div>
-          ))}
-          <DiagnosticLegend />
-        </div>
-      </Card>
-
-      <Card title="Narrazioni più colonizzanti">
+      <Card title="Narrazioni più attivanti">
         <ul className="space-y-2">
           {Object.entries(narrTotals)
             .sort((a, b) => b[1] - a[1])
@@ -1393,7 +1186,7 @@ function AggregateAnalysis({
                   <span className="flex-1 italic">«{narr}»</span>
                   {showNumbers && (
                     <span className="tabular-nums text-muted-foreground">
-                      {count} colonizzazioni
+                      {count} attivazioni
                     </span>
                   )}
                 </li>
@@ -1431,9 +1224,6 @@ function exportProfileJSON(profile: Profile, interview?: InterviewData) {
           title: s.title,
           theme: s.theme,
           text: s.text,
-          optionA: s.optionA,
-          optionB: s.optionB,
-          optionC: s.optionC,
         })),
       },
       null,
@@ -1457,9 +1247,6 @@ function exportAllJSON(
           title: s.title,
           theme: s.theme,
           text: s.text,
-          optionA: s.optionA,
-          optionB: s.optionB,
-          optionC: s.optionC,
         })),
         profiles: profiles.map((p) => ({
           ...p,
@@ -1541,7 +1328,6 @@ async function renderSelfGraphImage(
 
 async function exportProfilePDF(
   profile: Profile,
-  diagnostics: Record<ScenarioId, DiagnosticColor>,
   interview?: InterviewData,
   clinicalNotes?: Partial<Record<ScenarioId, string>>,
 ) {
@@ -1861,12 +1647,15 @@ async function exportProfilePDF(
         x: M + 8,
         maxW: CONTENT_W - 16,
       });
-      const ids = profile.narrativeColonization[n] ?? [];
-      const labels = ids
-        .map((id) => profile.positions.find((p) => p.id === id)?.label)
+      const entries = Object.entries(profile.narrativeColonization[n] ?? {});
+      const labels = entries
+        .map(([id, mode]) => {
+          const label = profile.positions.find((p) => p.id === id)?.label;
+          return label ? `${label} (${COLONIZATION_BADGE[mode]})` : null;
+        })
         .filter(Boolean)
         .join(" · ");
-      text(labels || "Nessuna voce colonizzata.", {
+      text(labels || "Nessuna voce attivata.", {
         size: 9,
         color: MUTED,
         lineGap: 12,
@@ -1901,8 +1690,8 @@ async function exportProfilePDF(
       const v = profile.continuum[p.id]?.value ?? 50;
       let perf = 0;
       let prot = 0;
-      for (const [narr, ids] of Object.entries(profile.narrativeColonization)) {
-        if (!ids.includes(p.id)) continue;
+      for (const [narr, modes] of Object.entries(profile.narrativeColonization)) {
+        if (!(p.id in modes)) continue;
         const d = narrativeDomain(narr);
         if (d === "performative") perf++;
         else if (d === "protective") prot++;
@@ -1924,13 +1713,7 @@ async function exportProfilePDF(
   rule();
   for (const s of SCENARIOS) {
     const e = profile.scenarios[s.id];
-    const d = diagnostics[s.id];
-    const hex = DIAGNOSTIC_HEX[d];
-    const rgb: [number, number, number] = [
-      parseInt(hex.slice(1, 3), 16),
-      parseInt(hex.slice(3, 5), 16),
-      parseInt(hex.slice(5, 7), 16),
-    ];
+    const rgb: [number, number, number] = ACCENT;
     ensureSpace(120);
     const top = y;
     const startPage = currentPage();
@@ -1963,30 +1746,6 @@ async function exportProfilePDF(
     });
     y += 12;
 
-    // Diagnostic badge
-    ensureSpace(24);
-    setFill(rgb);
-    const badge = DIAGNOSTIC_LABEL[d].toUpperCase();
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(7.5);
-    doc.setCharSpace(1.2);
-    const badgeW = doc.getTextWidth(badge) + badge.length * 1.2 + 14;
-    doc.roundedRect(M + 10, y - 10, badgeW, 15, 7, 7, "F");
-    setInk([255, 255, 255]);
-    doc.text(badge, M + 10 + 7, y);
-    doc.setCharSpace(0);
-    // Choice pill
-    const choiceStr = `OPZIONE ${e.choice ?? "—"}${
-      e.choice ? ` · ${CHOICE_POLARITY[e.choice].toUpperCase()}` : ""
-    }`;
-    const chX = M + 10 + badgeW + 8;
-    setFill(INK);
-    const chW = doc.getTextWidth(choiceStr) + choiceStr.length * 1.2 + 14;
-    doc.roundedRect(chX, y - 10, chW, 15, 7, 7, "F");
-    setInk([255, 255, 255]);
-    doc.text(choiceStr, chX + 7, y);
-    y += 24;
-
     // Open response — as blockquote
     uppercase("Riflessione del partecipante", { size: 7.5, color: MUTED, x: M + 10 });
     text(`« ${e.openResponse} »`, {
@@ -1997,6 +1756,17 @@ async function exportProfilePDF(
       x: M + 18,
       maxW: CONTENT_W - 36,
       lineGap: 16,
+    });
+
+    // Vissuto emotivo
+    y += 6;
+    uppercase("Vissuto emotivo", { size: 7.5, color: MUTED, x: M + 10 });
+    text(e.emotionalResponse?.trim() || "(Non compilato.)", {
+      size: 10,
+      color: e.emotionalResponse?.trim() ? INK : MUTED,
+      x: M + 18,
+      maxW: CONTENT_W - 36,
+      lineGap: 15,
     });
 
     const winLabels = e.winningVoiceIds
@@ -2014,18 +1784,6 @@ async function exportProfilePDF(
     y += 6;
     uppercase("Voci perdenti (sottomissione)", { size: 7.5, color: MUTED, x: M + 10 });
     text(loseLabels || "—", { size: 10, lineGap: 14, x: M + 10, maxW: CONTENT_W - 24 });
-
-    y += 8;
-    // description
-    text(DIAGNOSTIC_DESCRIPTION[d], {
-      size: 9.5,
-      italic: true,
-      color: MUTED,
-      font: "times",
-      lineGap: 14,
-      x: M + 10,
-      maxW: CONTENT_W - 24,
-    });
 
     // Note cliniche del ricercatore
     const note = clinicalNotes?.[s.id]?.trim();
@@ -2150,10 +1908,7 @@ async function exportProfilePDF(
   void cardClose;
 }
 
-function exportAggregatePDF(
-  profiles: Profile[],
-  dist: Record<ScenarioId, Record<DiagnosticColor, number>>,
-) {
+function exportAggregatePDF(profiles: Profile[]) {
   const doc = new jsPDF({ unit: "pt", format: "a4" });
   const M = 40;
   let y = M;
@@ -2175,12 +1930,9 @@ function exportAggregatePDF(
   line(`Generato il ${formatDateTime(Date.now())}`);
   y += 8;
 
+  line("Scenari somministrati", 12, true);
   for (const s of SCENARIOS) {
-    line(s.title, 12, true);
-    (Object.keys(DIAGNOSTIC_LABEL) as DiagnosticColor[]).forEach((k) => {
-      line(`  ${DIAGNOSTIC_LABEL[k]}: ${dist[s.id][k]}`);
-    });
-    y += 4;
+    line(`  ${s.title} — ${s.theme}`);
   }
 
   y += 8;

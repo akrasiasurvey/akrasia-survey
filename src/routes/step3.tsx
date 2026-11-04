@@ -5,7 +5,12 @@ import { ProgressSteps } from "@/components/ProgressSteps";
 import { Instruction } from "@/components/Instruction";
 import { SelfGraph } from "@/components/SelfGraph";
 import { StepGate } from "@/lib/stepGating";
-import { ALL_NARRATIVES, useResearchStore } from "@/store/research";
+import {
+  ALL_NARRATIVES,
+  COLONIZATION_BADGE,
+  COLONIZATION_OPTIONS,
+  useResearchStore,
+} from "@/store/research";
 
 export const Route = createFileRoute("/step3")({
   head: () => ({ meta: [{"title": "Valutazione delle Narrazioni — AKRASIA"}, {"name": "description", "content": "Valutazione delle dieci affermazioni culturali e della loro influenza sulle voci del Sé."}, {"property": "og:title", "content": "Valutazione delle Narrazioni — AKRASIA"}, {"property": "og:description", "content": "Valutazione delle dieci affermazioni culturali e della loro influenza sulle voci del Sé."}, {"property": "og:type", "content": "website"}, {"name": "twitter:card", "content": "summary"}] }),
@@ -22,7 +27,7 @@ function Step3() {
   const narrativeColonization = useResearchStore(
     (s) => s.narrativeColonization,
   );
-  const toggleColonization = useResearchStore((s) => s.toggleColonization);
+  const setColonization = useResearchStore((s) => s.setColonization);
   const narrativesSeen = useResearchStore((s) => s.narrativesSeen ?? 0);
   const markNarrativeSeen = useResearchStore((s) => s.markNarrativeSeen);
   const narrativeOrder = useResearchStore((s) => s.narrativeOrder);
@@ -30,6 +35,7 @@ function Step3() {
 
   const [narrIdx, setNarrIdx] = useState(0);
   const [warn, setWarn] = useState(false);
+  const [menuFor, setMenuFor] = useState<string | null>(null);
 
   useEffect(() => {
     ensureNarrativeOrder();
@@ -42,12 +48,17 @@ function Step3() {
 
   useEffect(() => {
     markNarrativeSeen(narrIdx);
+    setMenuFor(null);
   }, [narrIdx, markNarrativeSeen]);
 
   const allSeen = narrativesSeen >= ALL_NARRATIVES.length - 1;
 
   const activeNarrative = order[narrIdx];
-  const colonizedIds = narrativeColonization[activeNarrative] ?? [];
+  const colonized = narrativeColonization[activeNarrative] ?? {};
+  const colonizedIds = Object.keys(colonized);
+  const menuPosition = menuFor
+    ? positions.find((p) => p.id === menuFor)
+    : undefined;
 
   return (
     <main className="min-h-screen bg-background text-foreground">
@@ -62,7 +73,7 @@ function Step3() {
 
         <div className="mt-6">
           <Instruction>
-            {'\u00a0Nella vita di tutti i giorni incontriamo idee e frasi fatte molto diffuse su lavoro, efficienza, benessere e relazioni. Leggi l’affermazione a sinistra, che rappresenta una convinzione diffusa e clicca direttamente sui cerchi nella tua mappa a destra per selezionare quali dei tuoi ruoli o quali persone esterne sono d’accordo o pronuncerebbero questa frase.\u00a0'}
+            Nella vita quotidiana ci confrontiamo con idee molto diffuse sul lavoro e sul successo. Leggi l'affermazione. Clicca direttamente sui cerchi nella tua mappa per selezionare le tue voci che vengono "attivate" da questa frase, sia in positivo che in negativo.
           </Instruction>
         </div>
 
@@ -79,12 +90,12 @@ function Step3() {
                 «{activeNarrative}»
               </blockquote>
               <p className="mt-6 text-sm text-muted-foreground">
-                Clicca sui cerchi nel grafico per indicare quali ruoli o persone condividono questa frase. Puoi selezionarne più di una.
+                Clicca sui cerchi nel grafico e scegli come reagisce ciascuna voce a questa frase. Puoi selezionarne più di una.
               </p>
               {colonizedIds.length > 0 && (
                 <div className="mt-4 rounded-md border border-border bg-background p-3 text-xs">
                   <span className="mb-2 block text-[10px] uppercase tracking-widest text-muted-foreground">
-                    Posizioni influenzate
+                    Voci attivate
                   </span>
                   <ul className="flex flex-wrap gap-1.5">
                     {colonizedIds.map((id) => {
@@ -96,6 +107,9 @@ function Step3() {
                           className="rounded-full border border-border bg-muted px-2 py-0.5"
                         >
                           {p.label}
+                          <span className="ml-1 text-muted-foreground">
+                            · {COLONIZATION_BADGE[colonized[id]]}
+                          </span>
                         </li>
                       );
                     })}
@@ -136,9 +150,68 @@ function Step3() {
                   positions={positions}
                   continuum={continuum}
                   selectedIds={colonizedIds}
-                  onSelect={(id) => toggleColonization(activeNarrative, id)}
+                  nodeBadges={Object.fromEntries(
+                    colonizedIds.map((id) => [
+                      id,
+                      COLONIZATION_BADGE[colonized[id]],
+                    ]),
+                  )}
+                  onSelect={(id) =>
+                    setMenuFor((cur) => (cur === id ? null : id))
+                  }
                 />
               </div>
+              {menuFor && menuPosition && (
+                <div className="mt-4 rounded-md border border-border bg-background p-4">
+                  <p className="text-xs text-muted-foreground">
+                    Come reagisce la voce{" "}
+                    <span className="font-medium text-foreground">
+                      {menuPosition.label}
+                    </span>{" "}
+                    a questa affermazione?
+                  </p>
+                  <ul className="mt-3 space-y-2">
+                    {COLONIZATION_OPTIONS.map((opt) => {
+                      const active = colonized[menuFor] === opt.key;
+                      return (
+                        <li key={opt.key}>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setColonization(activeNarrative, menuFor, opt.key);
+                              setMenuFor(null);
+                            }}
+                            className={
+                              active
+                                ? "w-full rounded-md border border-foreground bg-muted px-3 py-2 text-left"
+                                : "w-full rounded-md border border-border bg-card px-3 py-2 text-left transition-colors hover:border-foreground/40"
+                            }
+                          >
+                            <span className="block text-sm font-medium">
+                              {opt.label}
+                            </span>
+                            <span className="block text-xs text-muted-foreground">
+                              {opt.description}
+                            </span>
+                          </button>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                  {colonized[menuFor] && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setColonization(activeNarrative, menuFor, null);
+                        setMenuFor(null);
+                      }}
+                      className="mt-3 text-[11px] uppercase tracking-widest text-muted-foreground underline hover:text-foreground"
+                    >
+                      Rimuovi associazione
+                    </button>
+                  )}
+                </div>
+              )}
               <p className="mt-4 border-t border-border pt-3 text-[11px] leading-relaxed text-muted-foreground">
                 <span className="font-medium text-foreground">—</span> Linea
                 continua: voce orientata a compiti e scadenze
