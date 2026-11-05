@@ -12,7 +12,7 @@ const PHASE = Math.PI / 5;
 
 type LaidOut = IPosition & { x: number; y: number };
 
-function computeLayout(positions: IPosition[]): LaidOut[] {
+export function computeLayout(positions: IPosition[], voiceMap = false): LaidOut[] {
   const internal = positions.filter((p) => p.belonging === "internal");
   const external = positions.filter((p) => p.belonging === "external");
 
@@ -51,7 +51,7 @@ function computeLayout(positions: IPosition[]): LaidOut[] {
   // allontaniamo lungo la loro linea di congiunzione. Vincolo di zona:
   // i nodi interni restano dentro INNER_RADIUS; gli esterni restano
   // nella corona INNER..OUTER.
-  const PAD = 4;
+  const PAD = voiceMap ? 14 : 4;
   const ITER = 80;
   for (let iter = 0; iter < ITER; iter++) {
     let moved = false;
@@ -59,7 +59,7 @@ function computeLayout(positions: IPosition[]): LaidOut[] {
       for (let j = i + 1; j < nodes.length; j++) {
         const a = nodes[i];
         const b = nodes[j];
-        const dx = b.x - a.x;
+        const dx = b.x - a.x || (voiceMap && b.y === a.y ? 0.001 : 0);
         const dy = b.y - a.y;
         const dist = Math.hypot(dx, dy) || 0.0001;
         const minDist = a.radius + b.radius + PAD;
@@ -130,6 +130,8 @@ export interface SelfGraphProps {
   emptyMessage?: string;
   /** Short display labels and fitted text, without changing research data. */
   compactLabels?: boolean;
+  /** Step 1-only neutral selection and label wrapping; other views stay unchanged. */
+  voiceMap?: boolean;
   /**
    * Sottoinsieme di id (tipicamente le "voci vincenti" di uno scenario) da
    * mettere maggiormente in evidenza: fill più carico, contorno più marcato
@@ -153,8 +155,9 @@ export function SelfGraph({
   emphasizedIds,
   nodeBadges,
   compactLabels = false,
+  voiceMap = false,
 }: SelfGraphProps) {
-  const laidOut = useMemo(() => computeLayout(positions), [positions]);
+  const laidOut = useMemo(() => computeLayout(positions, voiceMap), [positions, voiceMap]);
   const selected = new Set(selectedIds ?? []);
   const emphasized = new Set(emphasizedIds ?? []);
   const clickable = !!onSelect;
@@ -163,7 +166,7 @@ export function SelfGraph({
     <svg
       viewBox={`0 0 ${SVG_SIZE} ${SVG_SIZE}`}
       className="w-full max-w-[620px]"
-      role="img"
+      role={clickable ? "group" : "img"}
       aria-label="Grafico del Sé"
     >
       <circle
@@ -219,15 +222,25 @@ export function SelfGraph({
         const fitLabel = compactLabels && showInside && displayLabel.length * labelSize * 0.55 > labelWidth;
         const badge = nodeBadges?.[p.id];
 
-        const baseStroke = isActive
+        const baseStroke = voiceMap ? "var(--color-primary)" : isActive
           ? "oklch(0.55 0.18 25)"
           : isSelected
             ? "oklch(0.55 0.18 145)"
             : "oklch(0.35 0.05 240)";
-        const baseFill = isSelected
+        const baseFill = voiceMap ? "var(--color-muted-foreground)" : isSelected
           ? "oklch(0.75 0.15 145)"
           : "oklch(0.55 0.05 240)";
-        const fillOpacity = continuum ? 0.15 : 0.55;
+        const fillOpacity = voiceMap ? (isSelected ? 0.4 : 0.18) : continuum ? 0.15 : 0.55;
+        const words = displayLabel.split(/(?<=-)|\s+/);
+        const lines: string[] = [];
+        if (voiceMap) {
+          const maxChars = showInside ? Math.max(5, Math.floor(labelWidth / 5.5)) : 18;
+          for (const word of words) {
+            const last = lines[lines.length - 1];
+            if (last && last.length + word.length + 1 <= maxChars) lines[lines.length - 1] = `${last} ${word}`;
+            else lines.push(word);
+          }
+        }
         const strokeW = isEmphasized
           ? Math.max(sw, 2.5)
           : isActive
@@ -238,16 +251,22 @@ export function SelfGraph({
           <g
             key={p.id}
             onClick={clickable ? () => onSelect?.(p.id) : undefined}
+            role={clickable ? "button" : undefined}
+            tabIndex={clickable ? 0 : undefined}
+            aria-label={clickable ? p.label : undefined}
+            aria-pressed={clickable ? isSelected : undefined}
+            onKeyDown={clickable ? (event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); onSelect?.(p.id); } } : undefined}
+            className={voiceMap ? "outline-none focus-visible:stroke-primary" : undefined}
             style={{ cursor: clickable ? "pointer" : "default" }}
           >
-            {compactLabels && <title>{p.label}</title>}
+            {(compactLabels || voiceMap) && <title>{p.label}</title>}
             {isSelected && (
               <circle
                 cx={p.x}
                 cy={p.y}
                 r={displayRadius + 5}
                 fill="none"
-                stroke="oklch(0.55 0.18 145)"
+                stroke={voiceMap ? "var(--color-primary)" : "oklch(0.55 0.18 145)"}
                 strokeWidth={2}
               />
             )}
@@ -277,7 +296,11 @@ export function SelfGraph({
                   "stroke-dasharray 200ms, stroke-width 200ms, stroke 200ms, fill 200ms",
               }}
             />
-            {showInside ? (
+            {voiceMap ? (
+              <text x={p.x} y={showInside ? p.y - (lines.length - 1) * 5.5 : p.y + displayRadius + 11} textAnchor="middle" dominantBaseline="middle" className="pointer-events-none fill-foreground" fontSize={showInside ? labelSize : 10} fontWeight={500}>
+                {lines.map((line, i) => <tspan key={i} x={p.x} dy={i === 0 ? 0 : 11} textLength={showInside && line.length * labelSize * 0.55 > labelWidth ? labelWidth : undefined} lengthAdjust="spacingAndGlyphs">{line}</tspan>)}
+              </text>
+            ) : showInside ? (
               <text
                 x={p.x}
                 y={p.y}

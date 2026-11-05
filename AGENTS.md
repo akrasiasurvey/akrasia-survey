@@ -12,3 +12,4 @@
 - Keep navigation eligibility in `src/lib/stepGating.tsx` shared by route guards and the progress header, so both enforce the same prerequisites.
 - Preserve empty-map compatibility in archival and downstream data handling; enforce entry prerequisites through the shared step-gating logic so header navigation cannot bypass them.
 - Use opt-in display label fitting in the shared SelfGraph for participant value maps; preserve original labels in stored research data and other graph views.
+- Keep Step 1 map selection and label wrapping opt-in through SelfGraph's voiceMap prop and local UI state, so research data and other graph views remain unchanged.
