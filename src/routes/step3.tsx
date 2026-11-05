@@ -1,9 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import type { CSSProperties } from "react";
 import { Button } from "@/components/ui/button";
 import { ProgressSteps } from "@/components/ProgressSteps";
 import { Instruction } from "@/components/Instruction";
-import { SelfGraph } from "@/components/SelfGraph";
+import { Progress } from "@/components/ui/progress";
+import { SelfGraph, SVG_SIZE, computeLayout } from "@/components/SelfGraph";
 import { StepGate } from "@/lib/stepGating";
 import {
   ALL_NARRATIVES,
@@ -67,13 +69,20 @@ function Step3() {
         <p className="text-xs uppercase tracking-[0.25em] text-muted-foreground">
           STEP 3 DI 4
         </p>
+        <Progress value={75} aria-label="Avanzamento dei quattro passaggi" className="mt-3 h-1 max-w-sm" />
         <h1 className="mt-3 font-serif text-3xl font-medium">
           Convinzioni Diffuse
         </h1>
 
         <div className="mt-6">
           <Instruction>
-            Nella vita quotidiana ci confrontiamo con idee molto diffuse sul lavoro e sul successo. Leggi l'affermazione. Clicca direttamente sui cerchi nella tua mappa per selezionare le tue voci che vengono "attivate" da questa frase, sia in positivo che in negativo.
+            Nel parlare di lavoro, successo e vita quotidiana circolano diverse idee e aspettative che possono influenzare il modo in cui interpretiamo le nostre esperienze e prendiamo decisioni.
+
+            Leggi le affermazioni che ti verranno presentate una alla volta. Per ciascuna, seleziona direttamente sulla mappa le voci che, secondo la tua esperienza, si rapportano a quell'affermazione.
+
+            Una voce può riconoscere l'affermazione come valida, sentirne la pressione oppure prenderne le distanze.
+
+            Non ci sono risposte giuste o sbagliate: ci interessa comprendere come queste idee si rapportano alle diverse voci che hai individuato.
           </Instruction>
         </div>
 
