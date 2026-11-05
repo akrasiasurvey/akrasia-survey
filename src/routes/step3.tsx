@@ -232,20 +232,22 @@ function Step3() {
                       );
                     })}
                   </ul>
-                  {colonized[menuFor] && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setColonization(activeNarrative, menuFor, null);
-                        setMenuFor(null);
-                      }}
-                      className="mt-3 text-[11px] uppercase tracking-widest text-muted-foreground underline hover:text-foreground"
-                    >
-                      Rimuovi associazione
-                    </button>
+                      {colonized[menuFor] && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setColonization(activeNarrative, menuFor, null);
+                            setMenuFor(null);
+                          }}
+                          className="mt-3 text-[11px] uppercase tracking-widest text-muted-foreground underline hover:text-foreground"
+                        >
+                          Rimuovi associazione
+                        </button>
+                      )}
+                    </div>
                   )}
                 </div>
-              )}
+              </div>
               <p className="mt-4 border-t border-border pt-3 text-[11px] leading-relaxed text-muted-foreground">
                 <span className="font-medium text-foreground">—</span> Linea
                 continua: voce orientata a compiti e scadenze
