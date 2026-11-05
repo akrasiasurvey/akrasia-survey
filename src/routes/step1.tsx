@@ -27,7 +27,7 @@ const CENTRALITY_HELP = [
   "ha un ruolo molto limitato nella definizione di chi sono.",
   "è presente, ma incide poco sul mio senso di identità.",
   "è significativa, ma non tra le componenti principali.",
-  "contribuisce in modo riconoscibile a definire chi sono.",
+  "contribuisce in modo stabile a definire chi sono.",
   "è una componente rilevante della mia identità.",
   "è una delle componenti principali del mio senso di identità.",
   "è fondamentale per il modo in cui definisco me stesso.",
@@ -288,21 +288,21 @@ function Step1() {
         </h1>
         <div className="mt-6 rounded-md border border-border bg-muted/40 px-5 py-4">
           <h2 className="mb-2 text-sm font-semibold">La mappa delle tue voci</h2>
-          <p className="text-sm leading-relaxed">Ognuno di noi è influenzato da diverse parti di sé, dalle persone che incontra e dagli ambienti in cui vive. Queste voci possono avere un ruolo importante nel modo in cui pensiamo e prendiamo le decisioni.</p>
+          <p className="text-sm leading-relaxed">Ognuno di noi è influenzato da diverse parti di sé, dalle persone che lo circondano e dagli ambienti in cui vive. Queste "voci" possono avere un ruolo importante nel modo in cui pensiamo e prendiamo le decisioni.</p>
           <p className="mt-2 text-sm leading-relaxed">In questo primo passaggio costruirai una mappa personale delle voci che senti più significative nella tua vita.</p>
           <div className="mt-4 grid gap-4 text-xs leading-relaxed md:grid-cols-3">
             <div><h3 className="mb-1 font-semibold">1. Le voci interne</h3><p>Pensa ai diversi aspetti di te, ai ruoli che ricopri e ai modi in cui ti comporti nelle diverse situazioni.</p><p className="mt-1 text-muted-foreground">Esempi: Io-lavoratore, Io-genitore, Io-perfezionista, Io nel tempo libero.</p></div>
             <div><h3 className="mb-1 font-semibold">2. Le voci esterne</h3><p>Pensa alle persone, ai gruppi e agli ambienti che influenzano il tuo modo di pensare e prendere decisioni.</p><p className="mt-1 text-muted-foreground">Esempi: Famiglia, amici, colleghi, capo, università.</p></div>
             <div><h3 className="mb-1 font-semibold">3. Quanto sono importanti?</h3><p>Per ogni voce indica quanto la consideri importante nella definizione di chi sei.</p></div>
           </div>
-          <p className="mt-3 text-xs leading-relaxed text-muted-foreground">Non esistono risposte giuste o sbagliate. Inserisci le voci che senti più vicine alla tua esperienza.</p>
+          <p className="mt-3 text-xs leading-relaxed text-muted-foreground">Ricorda: Non esistono risposte giuste o sbagliate. Inserisci le voci che senti più vicine alla tua esperienza.</p>
         </div>
 
         <div className="mt-8 grid gap-6 lg:grid-cols-2">
           <VoiceColumn
             belonging="internal"
             title="Le tue Voci Interne (Chi sei tu nei diversi momenti)"
-            instruction="Individua i ruoli, gli aspetti e i modi di percepirti che riconosci come tuoi nei diversi contesti."
+            instruction="Identifica i ruoli, gli aspetti e i modi di percepirti che riconosci come tuoi nei diversi contesti."
             suggestions={INTERNAL_SUGGESTIONS}
             placeholder="Scrivi una tua voce personalizzata…"
             addLabel="Aggiungi"
@@ -316,8 +316,8 @@ function Step1() {
           <VoiceColumn
             belonging="external"
             title="Le Voci Esterne e i Contesti (Chi o cosa ti influenza da fuori)"
-            instruction="Individua le persone, i gruppi, le istituzioni o i contesti le cui aspettative, prospettive o modalità di valutazione influenzano il tuo modo di pensare e decidere."
-            note="Una voce esterna può rappresentare anche il modo in cui percepisci le aspettative di una persona o di un ambiente, non necessariamente ciò che pensano realmente."
+            instruction="Identifica le persone, i gruppi, le istituzioni o i contesti le cui aspettative, valutazioni e modi di pensare influenzano il tuo modo di pensare e decidere."
+            note="Una voce esterna può rappresentare il modo in cui tu percepisci le aspettative di una persona o di un ambiente, non necessariamente ciò che pensano realmente."
             suggestions={EXTERNAL_SUGGESTIONS}
             placeholder="Scrivi una figura o un contesto…"
             addLabel="Aggiungi"
