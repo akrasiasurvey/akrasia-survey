@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import type { IPosition } from "@/store/research";
 
-const SVG_SIZE = 620;
+export const SVG_SIZE = 620;
 const CENTER = SVG_SIZE / 2;
 const INNER_RADIUS = 170;
 const OUTER_RADIUS = 290;

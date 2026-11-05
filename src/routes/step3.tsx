@@ -1,9 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import type { CSSProperties } from "react";
 import { Button } from "@/components/ui/button";
 import { ProgressSteps } from "@/components/ProgressSteps";
 import { Instruction } from "@/components/Instruction";
-import { SelfGraph } from "@/components/SelfGraph";
+import { Progress } from "@/components/ui/progress";
+import { SelfGraph, SVG_SIZE, computeLayout } from "@/components/SelfGraph";
 import { StepGate } from "@/lib/stepGating";
 import {
   ALL_NARRATIVES,
@@ -60,6 +62,28 @@ function Step3() {
     ? positions.find((p) => p.id === menuFor)
     : undefined;
 
+  // Posizione del cerchio selezionato nel sistema di coordinate del grafico,
+  // per ancorare la finestra di risposta accanto alla voce.
+  const laidOut = useMemo(() => computeLayout(positions), [positions]);
+  const menuNode = menuFor
+    ? laidOut.find((n) => n.id === menuFor)
+    : undefined;
+  const menuStyle: CSSProperties = {};
+  if (menuNode) {
+    const xPct = (menuNode.x / SVG_SIZE) * 100;
+    const yPct = (menuNode.y / SVG_SIZE) * 100;
+    const off = menuNode.radius + 10;
+    menuStyle.left =
+      menuNode.x <= SVG_SIZE / 2
+        ? `min(calc(${xPct}% + ${off}px), calc(100% - 244px))`
+        : `max(calc(${xPct}% - ${off + 240}px), 4px)`;
+    if (menuNode.y <= SVG_SIZE / 2) {
+      menuStyle.top = `calc(${yPct}% + 10px)`;
+    } else {
+      menuStyle.bottom = `calc(${100 - yPct}% + 10px)`;
+    }
+  }
+
   return (
     <main className="min-h-screen bg-background text-foreground">
       <ProgressSteps current={4} />
@@ -67,13 +91,20 @@ function Step3() {
         <p className="text-xs uppercase tracking-[0.25em] text-muted-foreground">
           STEP 3 DI 4
         </p>
+        <Progress value={75} aria-label="Avanzamento dei quattro passaggi" className="mt-3 h-1 max-w-sm" />
         <h1 className="mt-3 font-serif text-3xl font-medium">
           Convinzioni Diffuse
         </h1>
 
         <div className="mt-6">
           <Instruction>
-            Nella vita quotidiana ci confrontiamo con idee molto diffuse sul lavoro e sul successo. Leggi l'affermazione. Clicca direttamente sui cerchi nella tua mappa per selezionare le tue voci che vengono "attivate" da questa frase, sia in positivo che in negativo.
+            Nel parlare di lavoro, successo e vita quotidiana circolano diverse idee e aspettative che possono influenzare il modo in cui interpretiamo le nostre esperienze e prendiamo decisioni.
+
+            Leggi le affermazioni che ti verranno presentate una alla volta. Per ciascuna, seleziona direttamente sulla mappa le voci che, secondo la tua esperienza, si rapportano a quell'affermazione.
+
+            Una voce può riconoscere l'affermazione come valida, sentirne la pressione oppure prenderne le distanze.
+
+            Non ci sono risposte giuste o sbagliate: ci interessa comprendere come queste idee si rapportano alle diverse voci che hai individuato.
           </Instruction>
         </div>
 
@@ -146,30 +177,33 @@ function Step3() {
                 <span>Clicca per associare</span>
               </div>
               <div className="flex justify-center">
-                <SelfGraph
-                  positions={positions}
-                  continuum={continuum}
-                  selectedIds={colonizedIds}
-                  nodeBadges={Object.fromEntries(
-                    colonizedIds.map((id) => [
-                      id,
-                      COLONIZATION_BADGE[colonized[id]],
-                    ]),
-                  )}
-                  onSelect={(id) =>
-                    setMenuFor((cur) => (cur === id ? null : id))
-                  }
-                />
-              </div>
-              {menuFor && menuPosition && (
-                <div className="mt-4 rounded-md border border-border bg-background p-4">
-                  <p className="text-xs text-muted-foreground">
-                    Come reagisce la voce{" "}
-                    <span className="font-medium text-foreground">
-                      {menuPosition.label}
-                    </span>{" "}
-                    a questa affermazione?
-                  </p>
+                <div className="relative w-full max-w-[620px]">
+                  <SelfGraph
+                    positions={positions}
+                    continuum={continuum}
+                    selectedIds={colonizedIds}
+                    nodeBadges={Object.fromEntries(
+                      colonizedIds.map((id) => [
+                        id,
+                        COLONIZATION_BADGE[colonized[id]],
+                      ]),
+                    )}
+                    onSelect={(id) =>
+                      setMenuFor((cur) => (cur === id ? null : id))
+                    }
+                  />
+                  {menuFor && menuPosition && menuNode && (
+                    <div
+                      className="absolute z-10 w-60 max-w-[calc(100%-0.5rem)] rounded-md border border-border bg-background p-3 shadow-lg"
+                      style={menuStyle}
+                    >
+                      <p className="text-xs text-muted-foreground">
+                        Nel modo in cui percepisci la voce{" "}
+                        <span className="font-medium text-foreground">
+                          {menuPosition.label}
+                        </span>
+                        , come si rapporta a questa affermazione?
+                      </p>
                   <ul className="mt-3 space-y-2">
                     {COLONIZATION_OPTIONS.map((opt) => {
                       const active = colonized[menuFor] === opt.key;
@@ -198,20 +232,22 @@ function Step3() {
                       );
                     })}
                   </ul>
-                  {colonized[menuFor] && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setColonization(activeNarrative, menuFor, null);
-                        setMenuFor(null);
-                      }}
-                      className="mt-3 text-[11px] uppercase tracking-widest text-muted-foreground underline hover:text-foreground"
-                    >
-                      Rimuovi associazione
-                    </button>
+                      {colonized[menuFor] && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setColonization(activeNarrative, menuFor, null);
+                            setMenuFor(null);
+                          }}
+                          className="mt-3 text-[11px] uppercase tracking-widest text-muted-foreground underline hover:text-foreground"
+                        >
+                          Rimuovi associazione
+                        </button>
+                      )}
+                    </div>
                   )}
                 </div>
-              )}
+              </div>
               <p className="mt-4 border-t border-border pt-3 text-[11px] leading-relaxed text-muted-foreground">
                 <span className="font-medium text-foreground">—</span> Linea
                 continua: voce orientata a compiti e scadenze
