@@ -291,18 +291,18 @@ function Step1() {
           <p className="text-sm leading-relaxed">Ognuno di noi è influenzato da diverse parti di sé, dalle persone che lo circondano e dagli ambienti in cui vive. Queste "voci" possono avere un ruolo importante nel modo in cui pensiamo e prendiamo le decisioni.</p>
           <p className="mt-2 text-sm leading-relaxed">In questo primo passaggio costruirai una mappa personale delle voci che senti più significative nella tua vita.</p>
           <div className="mt-4 grid gap-4 text-xs leading-relaxed md:grid-cols-3">
-            <div><h3 className="mb-1 font-semibold">1. Le voci interne</h3><p>Pensa ai diversi aspetti di te, ai ruoli che ricopri e ai modi in cui ti comporti nelle diverse situazioni.</p><p className="mt-1 text-muted-foreground">Esempi: Io-lavoratore, Io-genitore, Io-perfezionista, Io nel tempo libero.</p></div>
-            <div><h3 className="mb-1 font-semibold">2. Le voci esterne</h3><p>Pensa alle persone, ai gruppi e agli ambienti che influenzano il tuo modo di pensare e prendere decisioni.</p><p className="mt-1 text-muted-foreground">Esempi: Famiglia, amici, colleghi, capo, università.</p></div>
-            <div><h3 className="mb-1 font-semibold">3. Quanto sono importanti?</h3><p>Per ogni voce indica quanto la consideri importante nella definizione di chi sei.</p></div>
+            <div><h3 className="mb-1 font-semibold">{"\n"}</h3><p>{"\n"}</p><p className="mt-1 text-muted-foreground">{"\n"}</p></div>
+            <div><h3 className="mb-1 font-semibold">{"\n"}</h3><p>{"\n"}</p><p className="mt-1 text-muted-foreground">{"\n"}</p></div>
+            <div><h3 className="mb-1 font-semibold">{"\n"}</h3><p>{"\n"}</p></div>
           </div>
-          <p className="mt-3 text-xs leading-relaxed text-muted-foreground">Ricorda: Non esistono risposte giuste o sbagliate. Inserisci le voci che senti più vicine alla tua esperienza.</p>
+          <p className="mt-3 text-xs leading-relaxed text-muted-foreground">Ricorda: Non esistono risposte giuste o sbagliate. Gli esempi sono solo alcune delle possibilità, inserisci le voci che senti più vicine alla tua esperienza.</p>
         </div>
 
         <div className="mt-8 grid gap-6 lg:grid-cols-2">
           <VoiceColumn
             belonging="internal"
             title="Le tue Voci Interne (Chi sei tu nei diversi momenti)"
-            instruction="Identifica i ruoli, gli aspetti e i modi di percepirti che riconosci come tuoi nei diversi contesti."
+            instruction="Identifica gli aspetti di te e i ruoli che assumi nei diversi contesti."
             suggestions={INTERNAL_SUGGESTIONS}
             placeholder="Scrivi una tua voce personalizzata…"
             addLabel="Aggiungi"
@@ -316,8 +316,8 @@ function Step1() {
           <VoiceColumn
             belonging="external"
             title="Le Voci Esterne e i Contesti (Chi o cosa ti influenza da fuori)"
-            instruction="Identifica le persone, i gruppi, le istituzioni o i contesti le cui aspettative, valutazioni e modi di pensare influenzano il tuo modo di pensare e decidere."
-            note="Una voce esterna può rappresentare il modo in cui tu percepisci le aspettative di una persona o di un ambiente, non necessariamente ciò che pensano realmente."
+            instruction="Identifica le persone, le istituzioni o i contesti le cui aspettative e valutazioni influenzano il tuo modo di pensare e decidere."
+            note="Una voce esterna può rappresentare il modo in cui tu percepisci le aspettative di una persona o di un ambiente, non ciò che essi pensano realmente."
             suggestions={EXTERNAL_SUGGESTIONS}
             placeholder="Scrivi una figura o un contesto…"
             addLabel="Aggiungi"
