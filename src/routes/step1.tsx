@@ -2,6 +2,9 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Progress } from "@/components/ui/progress";
+import { cn } from "@/lib/utils";
 import {
   Select,
   SelectContent,
@@ -19,7 +22,35 @@ import {
   type DimensionKey,
   type IPosition,
 } from "@/store/research";
-import { Lightbulb, Plus, X } from "lucide-react";
+
+const CENTRALITY_HELP = [
+  "ha un ruolo molto limitato nella definizione di chi sono.",
+  "è presente, ma incide poco sul mio senso di identità.",
+  "è significativa, ma non tra le componenti principali.",
+  "contribuisce in modo riconoscibile a definire chi sono.",
+  "è una componente rilevante della mia identità.",
+  "è una delle componenti principali del mio senso di identità.",
+  "è fondamentale per il modo in cui definisco me stesso.",
+];
+
+function CentralityHelp() {
+  const [open, setOpen] = useState(false);
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button type="button" variant="ghost" size="icon" className="h-9 w-9 shrink-0" aria-label="Informazioni sui sette livelli di centralità" onMouseEnter={() => setOpen(true)}>
+          <span aria-hidden="true" className="flex h-4 w-4 items-center justify-center rounded-full border border-muted-foreground text-xs">?</span>
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-80 max-w-[calc(100vw-2rem)]" align="start">
+        <h3 className="mb-3 text-sm font-semibold">Centralità nel Sé</h3>
+        <ul className="space-y-2 text-xs leading-relaxed">
+          {DIMENSIONS.map((d, i) => <li key={d.key}><strong>{d.label}:</strong> {CENTRALITY_HELP[i]}</li>)}
+        </ul>
+      </PopoverContent>
+    </Popover>
+  );
+}
 
 export const Route = createFileRoute("/step1")({
   head: () => ({ meta: [{"title": "Mappa delle Voci — AKRASIA"}, {"name": "description", "content": "Mappatura delle voci interne ed esterne e valutazione della loro importanza nelle scelte quotidiane."}, {"property": "og:title", "content": "Mappa delle Voci — AKRASIA"}, {"property": "og:description", "content": "Mappatura delle voci interne ed esterne e valutazione della loro importanza nelle scelte quotidiane."}, {"property": "og:type", "content": "website"}, {"name": "twitter:card", "content": "summary"}] }),
@@ -54,6 +85,7 @@ interface VoiceColumnProps {
   belonging: Belonging;
   title: string;
   instruction: string;
+  note?: string;
   suggestions: readonly string[];
   placeholder: string;
   addLabel: string;
@@ -61,12 +93,15 @@ interface VoiceColumnProps {
   onAdd: (label: string, belonging: Belonging, dimension: DimensionKey) => void;
   onRemove: (id: string) => void;
   onDimensionChange: (id: string, dimension: DimensionKey) => void;
+  selectedId: string | null;
+  onSelect: (id: string) => void;
 }
 
 function VoiceColumn({
   belonging,
   title,
   instruction,
+  note,
   suggestions,
   placeholder,
   addLabel,
@@ -74,6 +109,8 @@ function VoiceColumn({
   onAdd,
   onRemove,
   onDimensionChange,
+  selectedId,
+  onSelect,
 }: VoiceColumnProps) {
   const [custom, setCustom] = useState("");
   const [dimension, setDimension] = useState<DimensionKey | "">("");
@@ -98,11 +135,8 @@ function VoiceColumn({
         {instruction}
       </p>
 
-      <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-        Gli esempi selezionabili di seguito sono solo alcune delle possibili
-        opzioni. Ti invitiamo a inserire e scrivere liberamente le voci più
-        personali che pensi ti guidino.
-      </p>
+      {note && <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{note}</p>}
+      <p className="mt-4 text-[10px] uppercase tracking-widest text-muted-foreground">Alcuni esempi</p>
 
       <div className="mt-4 flex flex-wrap gap-2">
         {available.map((s) => (
@@ -111,7 +145,7 @@ function VoiceColumn({
             type="button"
             variant="outline"
             onClick={() => setCustom(s)}
-            className="h-auto whitespace-normal rounded-full px-3 py-1.5 text-left text-xs"
+            className="h-auto min-h-10 whitespace-normal rounded-full px-3 py-1.5 text-left text-xs"
           >
             + {s}
           </Button>
@@ -124,6 +158,7 @@ function VoiceColumn({
       </div>
 
       <div className="mt-4 space-y-3 rounded-md border border-border bg-background p-4">
+        <p className="text-xs text-muted-foreground">Oppure aggiungi una tua voce</p>
         <Input
           value={custom}
           onChange={(e) => setCustom(e.target.value)}
@@ -132,14 +167,16 @@ function VoiceColumn({
           aria-label={placeholder}
         />
         <div>
-          <p className="mb-1.5 text-[10px] uppercase tracking-widest text-muted-foreground">
-            Imposta l'importanza prima di aggiungere
-          </p>
+          <div className="flex items-center justify-between gap-2">
+            <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Centralità nel Sé</p>
+            <CentralityHelp />
+          </div>
+          <p id={`centrality-question-${belonging}`} className="mb-2 text-xs leading-relaxed text-muted-foreground">Quanto è centrale questa voce nel definire chi sei?</p>
           <Select
             value={dimension}
             onValueChange={(v) => setDimension(v as DimensionKey)}
           >
-            <SelectTrigger className="h-9 text-xs" aria-label="Importanza">
+            <SelectTrigger className="h-10 text-xs" aria-label="Centralità nel Sé" aria-describedby={`centrality-question-${belonging}`}>
               <SelectValue placeholder="Seleziona un valore…" />
             </SelectTrigger>
             <SelectContent>
@@ -157,7 +194,6 @@ function VoiceColumn({
           disabled={!canAdd}
           className="w-full"
         >
-          <Plus className="mr-1 h-3.5 w-3.5" />
           {addLabel}
         </Button>
       </div>
@@ -175,34 +211,35 @@ function VoiceColumn({
             {positions.map((p) => (
               <li
                 key={p.id}
-                className="rounded-md border border-border bg-background px-3 py-2"
+                id={`voice-${p.id}`}
+                className={cn("rounded-md border border-border bg-background px-3 py-2", selectedId === p.id && "border-primary bg-accent ring-1 ring-primary")}
               >
                 <div className="flex items-center justify-between gap-2">
-                  <span className="min-w-0 flex-1 truncate text-sm font-medium">
+                  <Button type="button" variant="ghost" onClick={() => onSelect(p.id)} aria-pressed={selectedId === p.id} className="h-auto min-h-10 min-w-0 flex-1 justify-start whitespace-normal break-words px-0 text-left text-sm font-medium">
                     {p.label}
-                  </span>
+                  </Button>
                   <Button
                     type="button"
                     variant="ghost"
-                    size="icon"
                     onClick={() => onRemove(p.id)}
-                    className="h-6 w-6 shrink-0 text-muted-foreground hover:text-destructive"
+                    className="h-10 shrink-0 px-2 text-xs text-muted-foreground hover:text-destructive"
                     aria-label={`Elimina ${p.label}`}
                   >
-                    <X className="h-3.5 w-3.5" />
+                    Elimina
                   </Button>
                 </div>
-                <div className="mt-2 flex items-center gap-2">
-                  <span className="text-[10px] uppercase tracking-widest text-muted-foreground">
-                    Importanza
-                  </span>
+                <div className="mt-2 space-y-2">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-[10px] uppercase tracking-widest text-muted-foreground">Centralità nel Sé</span>
+                    <CentralityHelp />
+                  </div>
                   <Select
                     value={p.dimension}
                     onValueChange={(v) =>
                       onDimensionChange(p.id, v as DimensionKey)
                     }
                   >
-                    <SelectTrigger className="h-8 flex-1 text-xs">
+                    <SelectTrigger className="h-10 text-xs" aria-label={`Centralità di ${p.label}`}>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -224,6 +261,7 @@ function VoiceColumn({
 }
 
 function Step1() {
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const positions = useResearchStore((s) => s.positions);
   const addPosition = useResearchStore((s) => s.addPosition);
   const removePosition = useResearchStore((s) => s.removePosition);
@@ -233,6 +271,7 @@ function Step1() {
 
   const internal = positions.filter((p) => p.belonging === "internal");
   const external = positions.filter((p) => p.belonging === "external");
+  const selectVoice = (id: string) => setSelectedId((current) => current === id ? null : id);
   function handleAdd(label: string, belonging: Belonging, dimension: DimensionKey) {
     const dim = DIMENSIONS.find((d) => d.key === dimension);
     if (!dim) return;
@@ -246,34 +285,27 @@ function Step1() {
         <p className="text-xs uppercase tracking-[0.25em] text-muted-foreground">
           STEP 1 DI 4
         </p>
+        <Progress value={25} aria-label="Avanzamento dei quattro passaggi" className="mt-3 h-1 max-w-sm" />
         <h1 className="mt-3 font-serif text-3xl font-medium">
           Step 1: Mappa le tue Voci
         </h1>
-        <p className="mt-2 max-w-3xl text-sm leading-relaxed text-muted-foreground"></p>
-
         <div className="mt-6 rounded-md border border-border bg-muted/40 px-5 py-4">
-          <div className="mb-2 text-[10px] font-semibold uppercase tracking-[0.25em] text-muted-foreground">
-            Consegna
+          <h2 className="mb-2 text-sm font-semibold">La mappa delle tue voci</h2>
+          <p className="text-sm leading-relaxed">Ognuno di noi è influenzato da diverse parti di sé, dalle persone che incontra e dagli ambienti in cui vive. Queste voci possono avere un ruolo importante nel modo in cui pensiamo e prendiamo le decisioni.</p>
+          <p className="mt-2 text-sm leading-relaxed">In questo primo passaggio costruirai una mappa personale delle voci che senti più significative nella tua vita.</p>
+          <div className="mt-4 grid gap-4 text-xs leading-relaxed md:grid-cols-3">
+            <div><h3 className="mb-1 font-semibold">1. Le voci interne</h3><p>Pensa ai diversi aspetti di te, ai ruoli che ricopri e ai modi in cui ti comporti nelle diverse situazioni.</p><p className="mt-1 text-muted-foreground">Esempi: Io-lavoratore, Io-genitore, Io-perfezionista, Io nel tempo libero.</p></div>
+            <div><h3 className="mb-1 font-semibold">2. Le voci esterne</h3><p>Pensa alle persone, ai gruppi e agli ambienti che influenzano il tuo modo di pensare e prendere decisioni.</p><p className="mt-1 text-muted-foreground">Esempi: Famiglia, amici, colleghi, capo, università.</p></div>
+            <div><h3 className="mb-1 font-semibold">3. Quanto sono importanti?</h3><p>Per ogni voce indica quanto la consideri importante nella definizione di chi sei.</p></div>
           </div>
-          <p className="text-sm leading-relaxed text-foreground">
-            Gli uomini non sono macchine che si comportano sempre allo stesso
-            modo, ognuno di noi ha molte sfaccettature: ci comportiamo in modo
-            diverso a seconda che siamo al lavoro, in famiglia, stanchi o
-            arrabbiati. Siamo tutti influenzati da persone importanti o da
-            contesti esterni che ci guidano quando dobbiamo prendere una
-            decisione. In questo primo passaggio, crea la tua mappa personale,
-            scegliendo o scrivendo i ruoli interni che senti di interpretare e
-            le persone/ambienti esterni che contano di più per te. Per ogni
-            "voce" che aggiungi stabilisci quanto la senti importante per te
-            sull'apposita scala.
-          </p>
+          <p className="mt-3 text-xs leading-relaxed text-muted-foreground">Non esistono risposte giuste o sbagliate. Inserisci le voci che senti più vicine alla tua esperienza.</p>
         </div>
 
         <div className="mt-8 grid gap-6 lg:grid-cols-2">
           <VoiceColumn
             belonging="internal"
             title="Le tue Voci Interne (Chi sei tu nei diversi momenti)"
-            instruction="Seleziona o scrivi i diversi aspetti che descrivono come ti percepisci o ti comporti."
+            instruction="Individua i ruoli, gli aspetti e i modi di percepirti che riconosci come tuoi nei diversi contesti."
             suggestions={INTERNAL_SUGGESTIONS}
             placeholder="Scrivi una tua voce personalizzata…"
             addLabel="Aggiungi"
@@ -281,11 +313,14 @@ function Step1() {
             onAdd={handleAdd}
             onRemove={removePosition}
             onDimensionChange={updatePositionDimension}
+            selectedId={selectedId}
+            onSelect={selectVoice}
           />
           <VoiceColumn
             belonging="external"
             title="Le Voci Esterne e i Contesti (Chi o cosa ti influenza da fuori)"
-            instruction="Seleziona o scrivi le persone o gli ambienti che hanno influenza sulle tue scelte."
+            instruction="Individua le persone, i gruppi, le istituzioni o i contesti le cui aspettative, prospettive o modalità di valutazione influenzano il tuo modo di pensare e decidere."
+            note="Una voce esterna può rappresentare anche il modo in cui percepisci le aspettative di una persona o di un ambiente, non necessariamente ciò che pensano realmente."
             suggestions={EXTERNAL_SUGGESTIONS}
             placeholder="Scrivi una figura o un contesto…"
             addLabel="Aggiungi"
@@ -293,26 +328,35 @@ function Step1() {
             onAdd={handleAdd}
             onRemove={removePosition}
             onDimensionChange={updatePositionDimension}
+            selectedId={selectedId}
+            onSelect={selectVoice}
           />
         </div>
 
         <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_380px]">
           <section className="rounded-lg border border-border bg-card p-4">
-            <div className="mb-3 flex items-center justify-between text-[10px] uppercase tracking-widest text-muted-foreground">
+            <div className="mb-2 flex flex-wrap items-center justify-between gap-2 text-[10px] uppercase tracking-widest text-muted-foreground">
               <span>La tua mappa delle voci</span>
               <span>Visualizzazione automatica</span>
+            </div>
+            <div className="mb-3 space-y-1 text-xs leading-relaxed text-muted-foreground">
+              <p><span className="font-medium">Dimensione del cerchio:</span> rappresenta la centralità che hai attribuito a quella voce.</p>
+              <p><span className="font-medium">Posizione nella mappa:</span> distingue le voci interne da quelle esterne.</p>
             </div>
             <div className="flex justify-center">
               <SelfGraph
                 positions={positions}
                 emptyMessage="Aggiungi una voce per iniziare"
+                voiceMap
+                selectedIds={selectedId ? [selectedId] : []}
+                onSelect={selectVoice}
               />
             </div>
+            <p className="mt-3 text-xs leading-relaxed text-muted-foreground">La mappa è una rappresentazione personale delle voci che hai individuato.</p>
           </section>
 
           <aside className="rounded-lg border border-border bg-muted/40 p-5">
             <div className="flex items-center gap-2">
-              <Lightbulb className="h-4 w-4 text-muted-foreground" />
               <h2 className="text-sm font-semibold">
                 Come scegliere le voci giuste?
               </h2>

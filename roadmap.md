@@ -1,4 +1,6 @@
 # Attività
+- [x] Step 1: consegna, descrizioni, centralità con aiuto, legenda e selezione bidirezionale.
+- [x] Step 1: verificati inserimento, modifica della centralità, eliminazione, persistenza e trasferimento allo Step 2; controllati desktop/tablet/mobile e 28 voci di dimensioni miste.
 - [x] Step 2: nuovi poli dello slider (Valori, Relazioni e Benessere / Risultati, Numeri e Compiti) senza emoji.
 - [x] Step 3: nuova consegna e menu di reazione Adotta/Subisce/Rifiuta con etichetta sul cerchio.
 - [x] Step 4: rimossa la scelta multipla, aggiunto il campo Vissuto emotivo.
