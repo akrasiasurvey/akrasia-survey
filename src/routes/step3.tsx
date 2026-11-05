@@ -98,13 +98,13 @@ function Step3() {
 
         <div className="mt-6">
           <Instruction>
-            Nel parlare di lavoro, successo e vita quotidiana circolano diverse idee e aspettative che possono influenzare il modo in cui interpretiamo le nostre esperienze e prendiamo decisioni.
+            Nella vita di tutti i giorni incontriamo diverse idee e aspettative che possono influenzare il modo in cui prendiamo decisioni.
 
-            Leggi le affermazioni che ti verranno presentate una alla volta. Per ciascuna, seleziona direttamente sulla mappa le voci che, secondo la tua esperienza, si rapportano a quell'affermazione.
+            Leggi le affermazioni che ti verranno presentate una alla volta. Per ciascuna, seleziona direttamente sulla mappa le voci che, secondo la tua esperienza, sono attivate da quell'affermazione.
 
-            Una voce può riconoscere l'affermazione come valida, sentirne la pressione oppure prenderne le distanze.
+            Una voce può sentire l'affermazione come valida, sentirne la pressione oppure prenderne le distanze.
 
-            Non ci sono risposte giuste o sbagliate: ci interessa comprendere come queste idee si rapportano alle diverse voci che hai individuato.
+            Non ci sono risposte giuste o sbagliate: ci interessa comprendere come queste idee si relazionano alle diverse voci che hai individuato.
           </Instruction>
         </div>
 
