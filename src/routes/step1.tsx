@@ -289,7 +289,7 @@ function Step1() {
         <div className="mt-6 rounded-md border border-border bg-muted/40 px-5 py-4">
           <h2 className="mb-2 text-sm font-semibold">La mappa delle tue voci</h2>
           <p className="text-sm leading-relaxed">Ognuno di noi è influenzato da diverse parti di sé, dalle persone che lo circondano e dagli ambienti in cui vive. Queste "voci" possono avere un ruolo importante nel modo in cui pensiamo e prendiamo le decisioni.</p>
-          <p className="mt-2 text-sm leading-relaxed">In questo primo passaggio costruirai una mappa personale delle voci che senti più significative nella tua vita.</p>
+          <p className="mt-2 text-sm leading-relaxed">{"In questo primo passaggio costruirai una mappa personale delle voci che senti più significative nella tua vita.\n\n\nPer ogni voce indica quanto la senti importante per la\u00a0"}</p>
           <div className="mt-4 grid gap-4 text-xs leading-relaxed md:grid-cols-3">
             <div><h3 className="mb-1 font-semibold">{"\n"}</h3><p>{"\n"}</p><p className="mt-1 text-muted-foreground">{"\n"}</p></div>
             <div><h3 className="mb-1 font-semibold">{"\n"}</h3><p>{"\n"}</p><p className="mt-1 text-muted-foreground">{"\n"}</p></div>
