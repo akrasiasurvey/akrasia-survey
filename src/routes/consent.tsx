@@ -54,29 +54,38 @@ function Consent() {
                 </h3>
                 <ul className="mt-2 list-disc space-y-3 pl-5">
                   <li>
-                    <span className="font-semibold">La mappa delle “voci”:</span>{" "}
-                    Ti verrà chiesto di identificare i ruoli che ricopri nel
-                    quotidiano (es. madre/padre-lavoratrice/lavoratore) e le
-                    persone (es. genitori-amici-colleghi-capi) esterne che guidano
-                    le tue decisioni. Mentre le elenchi dovrai definire
-                    l’importanza che queste “voci” hanno per te.
+                    <span className="font-semibold">La mappa delle "voci":</span>{" "}
+                    Ti verrà chiesto di identificare le diverse parti di te che
+                    riconosci nella tua vita quotidiana (ad esempio Io-lavoratore,
+                    Io-genitore, Io-ambizioso) e le persone o i contesti esterni
+                    (ad esempio familiari, amici, colleghi, università o ambiente
+                    di lavoro) che influenzano le tue decisioni. Potrai scegliere
+                    tra alcuni esempi oppure aggiungere liberamente le "voci" che
+                    ritieni più significative, indicando quanto ciascuna sia
+                    importante per il tuo senso di identità.
                   </li>
                   <li>
                     <span className="font-semibold">La scala dei valori:</span>{" "}
-                    Successivamente dovrai disporre le “voci” che hai identificato
-                    su un asse tra produttività e cura di sé in base a quanto le
-                    senti compatibili con un estremo o l’altro.
+                    Successivamente dovrai collocare ciascuna voce lungo un
+                    continuum tra due orientamenti: da un lato Valori, Relazioni
+                    e Benessere, dall'altro Risultati, Numeri e Compiti. Ti
+                    chiederemo di indicare verso quale di questi due orientamenti
+                    senti che ciascuna voce tende maggiormente.
                   </li>
                   <li>
                     <span className="font-semibold">Convinzioni diffuse:</span>{" "}
-                    In questo passaggio ti sarà chiesto di associare alcune
-                    affermazioni di senso comune alle diverse voci in base a
-                    quanto le senti compatibili.
+                    Ti verranno presentate alcune affermazioni relative al
+                    lavoro, alla produttività e al benessere. Per ciascuna potrai
+                    individuare le voci che senti "attivarsi" e indicare se,
+                    secondo la tua percezione, la adottano, ne subiscono la
+                    pressione oppure la rifiutano.
                   </li>
                   <li>
                     <span className="font-semibold">Tre situazioni reali:</span>{" "}
-                    Infine dovrai descrivere brevemente come ti comporteresti in
-                    tre semplici scenari quotidiani.
+                    Infine ti verranno presentate tre brevi situazioni della vita
+                    quotidiana. Ti chiederemo di descrivere liberamente come ti
+                    comporteresti, quale decisione prenderesti e come ti
+                    sentiresti dopo averla presa.
                   </li>
                 </ul>
               </div>
@@ -85,13 +94,18 @@ function Consent() {
                   Parte 2: Breve colloquio (circa 15-20 minuti)
                 </h3>
                 <p className="mt-2">
-                  A conclusione del percorso, ci accorderemo per una breve
-                  conversazione per commentare insieme le tue risposte.
+                  A conclusione della compilazione, ci accorderemo per una breve
+                  conversazione durante la quale ripercorreremo insieme alcune
+                  delle tue risposte. Sarà un'occasione per comprendere meglio le
+                  motivazioni delle tue scelte e riflettere sulle eventuali
+                  tensioni tra le diverse voci che ti guidano.
                 </p>
               </div>
               <p className="border-l-2 border-primary bg-muted/40 px-4 py-3 text-sm font-medium leading-relaxed text-foreground">
-                Ricorda: “Non ci sono risposte giuste o sbagliate, ci interessa
-                solo la tua prospettiva personale.”
+                Ricorda: Questo questionario non costituisce un test clinico o
+                di personalità, non ci sono risposte giuste o sbagliate. Ci
+                interessa unicamente comprendere la tua prospettiva personale e
+                il modo in cui interpreti le tue esperienze.
               </p>
             </div>
           </section>
