@@ -71,7 +71,11 @@ function Step2() {
 
         <div className="mt-6">
           <Instruction>
-            Ogni ruolo guida le nostre scelte secondo priorità diverse. Per ognuna delle voci che hai elencato, sposta il cursore lungo la linea per indicare da cosa è maggiormente influenzata: da Valori, Relazioni e Benessere (a sinistra) o da Risultati, Numeri e Compiti (a destra). Osserva come cambia la tua mappa a destra.
+            Ogni voce può orientare le tue scelte secondo criteri e priorità differenti. Per ciascuna delle voci che hai individuato, sposta il cursore lungo la linea per indicare a quali aspetti tende maggiormente: Valori, Relazioni e Benessere (a sinistra) oppure Risultati, Misurazione e Performance (a destra).
+
+            Non esistono risposte giuste o sbagliate: una voce può essere influenzata da entrambi gli aspetti. Indica semplicemente verso quale tende maggiormente.
+
+            Osserva come cambia la tua mappa a destra.
           </Instruction>
         </div>
 
@@ -87,7 +91,7 @@ function Step2() {
                 {activeLabel}
               </h2>
               <p className="mt-3 text-sm text-muted-foreground">
-                Quando ascolti o interpreti questa voce, cosa viene al primo posto?
+                Quando questa voce orienta le tue scelte, a quali aspetti dà maggiore importanza?
               </p>
 
               <div className="mt-10">
@@ -106,13 +110,13 @@ function Step2() {
                     <span className="mb-1 block text-sm font-medium text-foreground">
                       Valori, Relazioni e Benessere
                     </span>
-                    Aspetti non quantificabili matematicamente (es. affetti, morale, salute psicofisica).
+                    Aspetti non facilmente quantificabili o riducibili a parametri comuni (es. affetti, morale, salute psicofisica, qualità delle relazioni).
                   </div>
                   <div className="text-right">
                     <span className="mb-1 block text-sm font-medium text-foreground">
-                      Risultati, Numeri e Compiti
+                      Risultati, Misurazione e Performance
                     </span>
-                    Aspetti misurabili e quantificabili (es. performance, produttività, obiettivi e guadagno).
+                    Aspetti valutabili attraverso criteri misurabili e comparabili (es. performance, produttività, efficienza, obiettivi e risultati).
                   </div>
                 </div>
               </div>
@@ -157,11 +161,11 @@ function Step2() {
                 />
               </div>
               <p className="mt-4 border-t border-border pt-3 text-[11px] leading-relaxed text-muted-foreground">
-                <span className="font-medium text-foreground">—</span> Linea
-                continua: Risultati, Numeri e Compiti
-                {"  |  "}
-                <span className="font-medium text-foreground">- -</span> Linea
-                tratteggiata: Valori, Relazioni e Benessere
+                Il contorno dei cerchi cambia in base alla posizione che hai
+                assegnato a ciascuna voce: più è frammentato, maggiore è
+                l'orientamento verso valori, relazioni e benessere; più è
+                fitto, maggiore è l'orientamento verso criteri misurabili e
+                comparabili.
               </p>
             </div>
           </section>
