@@ -62,6 +62,28 @@ function Step3() {
     ? positions.find((p) => p.id === menuFor)
     : undefined;
 
+  // Posizione del cerchio selezionato nel sistema di coordinate del grafico,
+  // per ancorare la finestra di risposta accanto alla voce.
+  const laidOut = useMemo(() => computeLayout(positions), [positions]);
+  const menuNode = menuFor
+    ? laidOut.find((n) => n.id === menuFor)
+    : undefined;
+  const menuStyle: CSSProperties = {};
+  if (menuNode) {
+    const xPct = (menuNode.x / SVG_SIZE) * 100;
+    const yPct = (menuNode.y / SVG_SIZE) * 100;
+    const off = menuNode.radius + 10;
+    menuStyle.left =
+      menuNode.x <= SVG_SIZE / 2
+        ? `min(calc(${xPct}% + ${off}px), calc(100% - 244px))`
+        : `max(calc(${xPct}% - ${off + 240}px), 4px)`;
+    if (menuNode.y <= SVG_SIZE / 2) {
+      menuStyle.top = `calc(${yPct}% + 10px)`;
+    } else {
+      menuStyle.bottom = `calc(${100 - yPct}% + 10px)`;
+    }
+  }
+
   return (
     <main className="min-h-screen bg-background text-foreground">
       <ProgressSteps current={4} />
