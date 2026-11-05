@@ -229,10 +229,7 @@ function VoiceColumn({
                   </Button>
                 </div>
                 <div className="mt-2 space-y-2">
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="text-[10px] uppercase tracking-widest text-muted-foreground">Centralità nel Sé</span>
-                    <CentralityHelp />
-                  </div>
+                  <span className="block text-[10px] uppercase tracking-widest text-muted-foreground">Centralità nel Sé</span>
                   <Select
                     value={p.dimension}
                     onValueChange={(v) =>
