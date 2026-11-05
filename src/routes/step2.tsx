@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { ProgressSteps } from "@/components/ProgressSteps";
+import { Progress } from "@/components/ui/progress";
 import { Instruction } from "@/components/Instruction";
 import { SelfGraph } from "@/components/SelfGraph";
 import { StepGate } from "@/lib/stepGating";
@@ -62,6 +63,7 @@ function Step2() {
         <p className="text-xs uppercase tracking-[0.25em] text-muted-foreground">
           STEP 2 DI 4
         </p>
+        <Progress value={50} aria-label="Avanzamento dei quattro passaggi" className="mt-3 h-1 max-w-sm" />
         <h1 className="mt-3 font-serif text-3xl font-medium">
           Step 2: La Scala dei Valori
         </h1>

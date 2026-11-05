@@ -116,17 +116,20 @@ export const COLONIZATION_OPTIONS: readonly {
   {
     key: "adotta",
     label: "La adotta",
-    description: "La pronuncia con convinzione e ne fa una regola.",
+    description:
+      "La riconosce e la fa propria. La considera valida e la utilizza come criterio per orientare il proprio modo di pensare o agire.",
   },
   {
     key: "subisce",
     label: "La subisce",
-    description: "Sente la pressione o il senso di colpa se non la rispetta.",
+    description:
+      "Ne avverte la pressione. Sente di doverla rispettare oppure prova disagio, senso di colpa o inadeguatezza quando non riesce a farlo.",
   },
   {
     key: "rifiuta",
     label: "La rifiuta",
-    description: "Non è d'accordo e cerca di opporsi.",
+    description:
+      "Prende le distanze da essa. Non la riconosce come valida e tende a contestarla o a opporsi.",
   },
 ];
 

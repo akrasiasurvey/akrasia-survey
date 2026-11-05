@@ -5,6 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ProgressSteps } from "@/components/ProgressSteps";
+import { Progress } from "@/components/ui/progress";
 import { Instruction } from "@/components/Instruction";
 import {
   SCENARIOS,
@@ -90,6 +91,7 @@ function Step3() {
         <p className="text-xs uppercase tracking-[0.25em] text-muted-foreground">
           STEP 4 DI 4
         </p>
+        <Progress value={100} aria-label="Avanzamento dei quattro passaggi" className="mt-3 h-1 max-w-sm" />
         <h1 className="mt-3 font-serif text-3xl font-medium">
           Situazioni Reali
         </h1>
