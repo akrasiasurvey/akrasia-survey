@@ -177,30 +177,33 @@ function Step3() {
                 <span>Clicca per associare</span>
               </div>
               <div className="flex justify-center">
-                <SelfGraph
-                  positions={positions}
-                  continuum={continuum}
-                  selectedIds={colonizedIds}
-                  nodeBadges={Object.fromEntries(
-                    colonizedIds.map((id) => [
-                      id,
-                      COLONIZATION_BADGE[colonized[id]],
-                    ]),
-                  )}
-                  onSelect={(id) =>
-                    setMenuFor((cur) => (cur === id ? null : id))
-                  }
-                />
-              </div>
-              {menuFor && menuPosition && (
-                <div className="mt-4 rounded-md border border-border bg-background p-4">
-                  <p className="text-xs text-muted-foreground">
-                    Come reagisce la voce{" "}
-                    <span className="font-medium text-foreground">
-                      {menuPosition.label}
-                    </span>{" "}
-                    a questa affermazione?
-                  </p>
+                <div className="relative w-full max-w-[620px]">
+                  <SelfGraph
+                    positions={positions}
+                    continuum={continuum}
+                    selectedIds={colonizedIds}
+                    nodeBadges={Object.fromEntries(
+                      colonizedIds.map((id) => [
+                        id,
+                        COLONIZATION_BADGE[colonized[id]],
+                      ]),
+                    )}
+                    onSelect={(id) =>
+                      setMenuFor((cur) => (cur === id ? null : id))
+                    }
+                  />
+                  {menuFor && menuPosition && menuNode && (
+                    <div
+                      className="absolute z-10 w-60 max-w-[calc(100%-0.5rem)] rounded-md border border-border bg-background p-3 shadow-lg"
+                      style={menuStyle}
+                    >
+                      <p className="text-xs text-muted-foreground">
+                        Nel modo in cui percepisci la voce{" "}
+                        <span className="font-medium text-foreground">
+                          {menuPosition.label}
+                        </span>
+                        , come si rapporta a questa affermazione?
+                      </p>
                   <ul className="mt-3 space-y-2">
                     {COLONIZATION_OPTIONS.map((opt) => {
                       const active = colonized[menuFor] === opt.key;
