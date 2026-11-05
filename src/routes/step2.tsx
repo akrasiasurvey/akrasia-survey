@@ -73,11 +73,11 @@ function Step2() {
 
         <div className="mt-6">
           <Instruction>
-            Ogni voce può orientare le tue scelte secondo criteri e priorità differenti. Per ciascuna delle voci che hai individuato, sposta il cursore lungo la linea per indicare a quali aspetti tende maggiormente: Valori, Relazioni e Benessere (a sinistra) oppure Risultati, Misurazione e Performance (a destra).
+            Ogni voce può orientare le tue scelte sulla base di diversi criteri. Per ciascuna delle voci che hai individuato, sposta il cursore lungo la linea per indicare a quali aspetti tende maggiormente: Valori, Relazioni e Benessere (a sinistra) oppure Risultati, Misurazione e Performance (a destra).
 
             Non esistono risposte giuste o sbagliate: una voce può essere influenzata da entrambi gli aspetti. Indica semplicemente verso quale tende maggiormente.
 
-            Osserva come cambia la tua mappa a destra.
+            Osserva come cambia la tua mappa.
           </Instruction>
         </div>
 
