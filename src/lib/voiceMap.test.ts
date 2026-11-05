@@ -18,5 +18,8 @@ test("Step 1 layout preserves seven radii and belonging bounds with numerous voi
     else { assert.ok(distance - node.radius >= 170); assert.ok(distance + node.radius <= 290 + 0.001); }
   });
   assert.ok(result.every((node) => Number.isFinite(node.x) && Number.isFinite(node.y)));
+  result.forEach((node, i) => result.slice(i + 1).forEach((other) => {
+    assert.ok(Math.hypot(node.x - other.x, node.y - other.y) >= node.radius + other.radius, "28 mixed-size voices do not overlap");
+  }));
   assert.ok(voices.every((node) => !("x" in node)), "layout does not mutate saved voices");
 });
