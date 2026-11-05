@@ -55,29 +55,25 @@ function Consent() {
                 <ul className="mt-2 list-disc space-y-3 pl-5">
                   <li>
                     <span className="font-semibold">La mappa delle "voci":</span>{" "}
-                    Ti verrà chiesto di identificare le diverse parti di te che
-                    riconosci nella tua vita quotidiana (ad esempio Io-lavoratore,
+                    Ti verrà chiesto di identificare le diverse parti di te (es.,
                     Io-genitore, Io-ambizioso) e le persone o i contesti esterni
-                    (ad esempio familiari, amici, colleghi, università o ambiente
-                    di lavoro) che influenzano le tue decisioni. Potrai scegliere
-                    tra alcuni esempi oppure aggiungere liberamente le "voci" che
-                    ritieni più significative, indicando quanto ciascuna sia
-                    importante per il tuo senso di identità.
+                    (es. genitori, colleghi, luogo di lavoro) che influenzano le
+                    tue decisioni, indicando quanto ciascuna sia importante per
+                    il tuo senso di identità.
                   </li>
                   <li>
                     <span className="font-semibold">La scala dei valori:</span>{" "}
-                    Successivamente dovrai collocare ciascuna voce lungo un
-                    continuum tra due orientamenti: da un lato Valori, Relazioni
-                    e Benessere, dall'altro Risultati, Numeri e Compiti. Ti
-                    chiederemo di indicare verso quale di questi due orientamenti
-                    senti che ciascuna voce tende maggiormente.
+                    Successivamente dovrai posizionare ciascuna voce lungo una
+                    linea in cui a un estremo troverai la dimensione Valori,
+                    Relazioni e Benessere, e all'altro Risultati, Numeri e
+                    Compiti. Ti chiederemo di indicare verso quale di questi
+                    orientamenti senti che ciascuna voce tende maggiormente.
                   </li>
                   <li>
                     <span className="font-semibold">Convinzioni diffuse:</span>{" "}
-                    Ti verranno presentate alcune affermazioni relative al
-                    lavoro, alla produttività e al benessere. Per ciascuna potrai
-                    individuare le voci che senti "attivarsi" e indicare se,
-                    secondo la tua percezione, la adottano, ne subiscono la
+                    Ti verranno presentate alcune affermazioni di senso comune.
+                    Per ciascuna potrai individuare le voci che senti
+                    "attivarsi" e indicare se la adottano, ne subiscono la
                     pressione oppure la rifiutano.
                   </li>
                   <li>
@@ -96,9 +92,8 @@ function Consent() {
                 <p className="mt-2">
                   A conclusione della compilazione, ci accorderemo per una breve
                   conversazione durante la quale ripercorreremo insieme alcune
-                  delle tue risposte. Sarà un'occasione per comprendere meglio le
-                  motivazioni delle tue scelte e riflettere sulle eventuali
-                  tensioni tra le diverse voci che ti guidano.
+                  delle tue risposte per comprendere meglio le motivazioni delle
+                  tue scelte.
                 </p>
               </div>
               <p className="border-l-2 border-primary bg-muted/40 px-4 py-3 text-sm font-medium leading-relaxed text-foreground">
