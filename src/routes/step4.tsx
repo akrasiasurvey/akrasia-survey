@@ -210,7 +210,7 @@ function Step3() {
                   />
                   <VoiceMultiSelect
                     title="Voci contrarie sconfitte"
-                    hint="Quali parti di te senti che sono state messe a tacere, ignorate o sacrificate?"
+                    hint="Quali parti di te senti che sono state messe a tacere o ignorate nel prendere questa decisione?"
                     positions={positions}
                     selectedIds={entry.losingVoiceIds}
                     onToggle={(pid) =>
